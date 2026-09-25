@@ -183,7 +183,7 @@ export async function selectRestaurantAction(restaurantIdOrCode: string) {
         action: "SELECT_RESTAURANT",
         entity: "Restaurant",
         entityId: restaurant.id,
-        details: `${session.name} ${restaurant.name} alakartını seçti ve kilitlendi.`,
+        details: `${session.name} ${restaurant.name} alakartına giriş yaptı.`,
         restaurantId: restaurant.id,
       });
     } catch (auditErr) {
@@ -205,6 +205,9 @@ export async function clearActiveRestaurantAction() {
     const cookieStore = await cookies();
     const session = await getSessionUser();
     if (session) {
+      const prevRestId = session.activeRestaurantId;
+      const prevRestName = session.activeRestaurantName;
+
       session.activeRestaurantId = null;
       session.activeRestaurantName = null;
       cookieStore.set("alacarte_session", JSON.stringify(session), {
@@ -214,6 +217,23 @@ export async function clearActiveRestaurantAction() {
         maxAge: 60 * 60 * 24 * 7,
         path: "/",
       });
+
+      if (prevRestId) {
+        try {
+          await logAudit({
+            userId: session.id,
+            userName: session.name,
+            userRole: session.role,
+            action: "SWITCH_RESTAURANT",
+            entity: "Restaurant",
+            entityId: prevRestId,
+            details: `${session.name} ${prevRestName || "Alakart"} restoranından çıkış yaptı (Restoran Değiştirme).`,
+            restaurantId: prevRestId,
+          });
+        } catch (auditErr) {
+          console.warn("Audit log notice:", auditErr);
+        }
+      }
     }
     return { success: true };
   } catch (error: any) {

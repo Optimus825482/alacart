@@ -15,6 +15,7 @@ import {
   UserCheck,
   Armchair,
   LogOut,
+  AlertCircle,
   Image as ImageIcon,
 } from "lucide-react";
 import { getTables, getCategoriesTree, getRestaurants } from "@/actions/definitions";
@@ -67,6 +68,9 @@ export default function WaiterTerminalPage() {
 
   // Özel Not Modal State (Geriye uyumluluk için)
   const [editingItemNote, setEditingItemNote] = useState<{ id: string; name: string; note: string } | null>(null);
+
+  // Restoran Değiştirme Onay Modalı State
+  const [isSwitchConfirmOpen, setIsSwitchConfirmOpen] = useState(false);
 
   // Oturum ve Restoran Doğrulaması
   useEffect(() => {
@@ -159,8 +163,14 @@ export default function WaiterTerminalPage() {
     }
   };
 
-  // Restoran Değiştirme
-  const handleSwitchRestaurant = async () => {
+  // Restoran Değiştirme Talebi (Onay Modalını Açar)
+  const handleSwitchRestaurant = () => {
+    setIsSwitchConfirmOpen(true);
+  };
+
+  // Restoran Değiştirme Onaylandığında Çıkış Yap
+  const handleConfirmSwitchRestaurant = async () => {
+    setIsSwitchConfirmOpen(false);
     setLoading(true);
     try {
       await clearActiveRestaurantAction();
@@ -171,7 +181,7 @@ export default function WaiterTerminalPage() {
       setTables([]);
       setCategoriesTree([]);
     } catch (err) {
-      console.error("handleSwitchRestaurant error:", err);
+      console.error("handleConfirmSwitchRestaurant error:", err);
     } finally {
       setLoading(false);
     }
@@ -1280,6 +1290,52 @@ export default function WaiterTerminalPage() {
                     : `Sepete Ekle (${modalQuantity} Adet)`}
                 </span>
                 <span className="text-base font-bold">→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Restoran Değiştirme Onay Modalı */}
+      {isSwitchConfirmOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-[#0f1422] border border-amber-500/40 rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/10">
+              <Utensils className="w-6 h-6" />
+            </div>
+
+            <div className="text-center">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500/80 block">
+                Restoran Değişikliği
+              </span>
+              <h3 className="text-base font-extrabold text-white mt-1">
+                Bu restorandan çıkış yapıyorsunuz, emin misiniz?
+              </h3>
+              <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
+                <strong className="text-amber-300">{session?.activeRestaurantName || currentRestaurant?.name}</strong> alakartındaki oturumunuz sonlandırılacak ve farklı bir a la carte restoran seçebileceksiniz.
+              </p>
+              {cart.length > 0 && (
+                <div className="mt-3 p-2.5 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-[11px] font-medium text-left flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
+                  <span>Dikkat: Henüz mutfağa gönderilmemiş {cart.length} çeşit sepet ürününüz temizlenecektir.</span>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2 border-t border-zinc-800 flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setIsSwitchConfirmOpen(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold transition"
+              >
+                Vazgeç
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmSwitchRestaurant}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 text-xs font-black shadow-lg shadow-amber-500/20 transition active:scale-95"
+              >
+                Evet, Çıkış Yap
               </button>
             </div>
           </div>

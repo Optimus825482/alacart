@@ -222,3 +222,125 @@ export async function getAuditLogs(params?: {
     return { success: false, error: error.message };
   }
 }
+
+// ==========================================
+// GARSON GİRİŞ & ALAKART TAKİBİ (ŞEF MODÜLÜ İÇİN)
+// ==========================================
+export async function getWaiterSessionsAndLogins(params?: { restaurantId?: string }) {
+  try {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    // 1. Tüm aktif garsonları çek
+    const waiters = await prisma.user.findMany({
+      where: { role: "WAITER", active: true },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        assignedTo: {
+          include: { restaurant: { select: { id: true, name: true, code: true } } },
+        },
+      },
+      orderBy: { name: "asc" },
+    });
+
+    // 2. Garsonlara ait giriş ve restoran seçim audit loglarını çek
+    const logs = await prisma.auditLog.findMany({
+      where: {
+        userRole: "WAITER",
+        action: { in: ["LOGIN", "SELECT_RESTAURANT", "SWITCH_RESTAURANT", "LOGOUT"] },
+        ...(params?.restaurantId && params.restaurantId !== "ALL"
+          ? { restaurantId: params.restaurantId }
+          : {}),
+      },
+      orderBy: { createdAt: "desc" },
+      take: 150,
+      include: {
+        restaurant: { select: { id: true, name: true, code: true } },
+      },
+    });
+
+    // 3. Garson başına sipariş sayılarını çek (Bugün)
+    const todayOrders = await prisma.order.findMany({
+      where: {
+        createdAt: { gte: todayStart },
+      },
+      select: {
+        waiterId: true,
+        restaurantId: true,
+      },
+    });
+
+    // 4. Her garsonun durumunu derle
+    const waiterCards = waiters.map((waiter) => {
+      const userLogs = logs.filter((l) => l.userId === waiter.id || l.userName === waiter.name);
+
+      const latestLogin = userLogs.find((l) => l.action === "LOGIN");
+      const latestSelect = userLogs.find((l) => l.action === "SELECT_RESTAURANT");
+      const latestSwitchOrLogout = userLogs.find((l) =>
+        ["SWITCH_RESTAURANT", "LOGOUT"].includes(l.action)
+      );
+
+      let isActiveInRestaurant = false;
+      let activeRestaurant: { id: string; name: string; code: string } | null = null;
+      let restaurantEntryTime: Date | null = null;
+
+      if (latestSelect) {
+        if (
+          !latestSwitchOrLogout ||
+          new Date(latestSelect.createdAt) > new Date(latestSwitchOrLogout.createdAt)
+        ) {
+          isActiveInRestaurant = true;
+          activeRestaurant = latestSelect.restaurant;
+          restaurantEntryTime = latestSelect.createdAt;
+        }
+      }
+
+      const systemLoginTime = latestLogin?.createdAt || (latestSelect?.createdAt ?? null);
+      const waiterTodayOrders = todayOrders.filter((o) => o.waiterId === waiter.id);
+
+      return {
+        id: waiter.id,
+        name: waiter.name,
+        username: waiter.username,
+        assignedRestaurants: waiter.assignedTo.map((a) => a.restaurant),
+        isActiveInRestaurant,
+        activeRestaurant,
+        restaurantEntryTime: restaurantEntryTime ? restaurantEntryTime.toISOString() : null,
+        systemLoginTime: systemLoginTime ? new Date(systemLoginTime).toISOString() : null,
+        todayOrderCount: waiterTodayOrders.length,
+        lastAction: userLogs[0]?.action || "GİRİŞ YOK",
+        lastActionTime: userLogs[0]?.createdAt ? new Date(userLogs[0].createdAt).toISOString() : null,
+      };
+    });
+
+    let filteredCards = waiterCards;
+    if (params?.restaurantId && params.restaurantId !== "ALL") {
+      filteredCards = waiterCards.filter(
+        (w) =>
+          w.activeRestaurant?.id === params.restaurantId ||
+          w.assignedRestaurants.some((r) => r.id === params.restaurantId)
+      );
+    }
+
+    return {
+      success: true,
+      data: {
+        waiters: filteredCards,
+        history: logs.map((l) => ({
+          id: l.id,
+          waiterName: l.userName,
+          action: l.action,
+          restaurantName: l.restaurant?.name || "-",
+          restaurantCode: l.restaurant?.code || "-",
+          details: l.details,
+          createdAt: l.createdAt.toISOString(),
+        })),
+      },
+    };
+  } catch (error: any) {
+    console.error("getWaiterSessionsAndLogins error:", error);
+    return { success: false, error: error.message };
+  }
+}

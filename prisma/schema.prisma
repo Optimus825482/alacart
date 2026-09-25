@@ -111,6 +111,7 @@ model MenuItem {
   description  String?      // Özellikler, pişme bilgisi, garnitür detayı
   allergens    String?      // Alerjen uyarıları
   imageUrl     String?      // Yiyecek/İçecek fotoğrafı URL veya base64
+  defaultNotes String?      // Özel Pişirme / Servis Notu Varsayılanları (örn: "Az Pişmiş, Orta Pişmiş, İyi Pişmiş, Sosu Ayrı" veya "Buzlu, Limonlu, Şekersiz")
   active       Boolean      @default(true)
   displayOrder Int          @default(0)
 

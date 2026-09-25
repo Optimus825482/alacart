@@ -45,6 +45,7 @@ export default function AdminMenuPage() {
   const [itemDescription, setItemDescription] = useState("");
   const [itemAllergens, setItemAllergens] = useState("");
   const [itemImageUrl, setItemImageUrl] = useState("");
+  const [itemDefaultNotes, setItemDefaultNotes] = useState("");
   const [itemCategoryId, setItemCategoryId] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
@@ -117,6 +118,7 @@ export default function AdminMenuPage() {
         description: itemDescription,
         allergens: itemAllergens,
         imageUrl: itemImageUrl,
+        defaultNotes: itemDefaultNotes,
         categoryId: itemCategoryId,
       });
     } else {
@@ -125,6 +127,7 @@ export default function AdminMenuPage() {
         description: itemDescription,
         allergens: itemAllergens,
         imageUrl: itemImageUrl,
+        defaultNotes: itemDefaultNotes,
         categoryId: itemCategoryId,
       });
     }
@@ -134,6 +137,7 @@ export default function AdminMenuPage() {
     setItemDescription("");
     setItemAllergens("");
     setItemImageUrl("");
+    setItemDefaultNotes("");
     loadData();
   };
 
@@ -143,6 +147,7 @@ export default function AdminMenuPage() {
     setItemDescription("");
     setItemAllergens("");
     setItemImageUrl("");
+    setItemDefaultNotes("");
     if (preselectedCatId) setItemCategoryId(preselectedCatId);
     setIsItemModalOpen(true);
   };
@@ -153,6 +158,7 @@ export default function AdminMenuPage() {
     setItemDescription(item.description || "");
     setItemAllergens(item.allergens || "");
     setItemImageUrl(item.imageUrl || "");
+    setItemDefaultNotes(item.defaultNotes || "");
     setItemCategoryId(item.categoryId);
     setIsItemModalOpen(true);
   };
@@ -257,11 +263,18 @@ export default function AdminMenuPage() {
                       {item.description}
                     </p>
                   )}
-                  {item.allergens && (
-                    <span className="text-[9px] text-amber-400/80 bg-amber-400/10 px-1.5 py-0.2 rounded mt-1 inline-block">
-                      Alerjen: {item.allergens}
-                    </span>
-                  )}
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                    {item.allergens && (
+                      <span className="text-[9px] text-amber-400/80 bg-amber-400/10 px-1.5 py-0.2 rounded inline-block">
+                        Alerjen: {item.allergens}
+                      </span>
+                    )}
+                    {item.defaultNotes && (
+                      <span className="text-[9px] text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.2 rounded inline-block font-medium">
+                        ✨ Servis Notları: {item.defaultNotes}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0">
@@ -568,6 +581,52 @@ export default function AdminMenuPage() {
                   onChange={(e) => setItemAllergens(e.target.value)}
                   className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
                 />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-zinc-400 block font-semibold">
+                    Özel Pişirme & Servis Notu Seçenekleri (Varsayılan)
+                  </label>
+                  <span className="text-[10px] text-amber-400 font-medium">Garson ekranında hızlı buton olarak çıkar</span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Örn: Az Pişmiş, Orta Pişmiş, İyi Pişmiş, Sosu Ayrı (virgülle ayırın)"
+                  value={itemDefaultNotes}
+                  onChange={(e) => setItemDefaultNotes(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                />
+
+                {/* Hızlı Şablon Butonları */}
+                <div className="mt-2 space-y-1.5">
+                  <span className="text-[10px] text-zinc-500 block">Hızlı Not Şablonu Ekle / Uygula:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: "🥩 Et / Izgara", notes: "Az Pişmiş, Orta Pişmiş, İyi Pişmiş, Sosu Ayrı, Hardal Eşliğinde" },
+                      { label: "🐟 Balık / Deniz", notes: "Izgara, Tava, Buğulama, Limonlu, Kılçıksız, Sosu Ayrı" },
+                      { label: "🍸 Kokteyl / Meşrubat", notes: "Buzlu, Buzsuz, Bol Buzlu, Limonlu, Şekersiz, Pipetli" },
+                      { label: "☕ Kahve / Çay", notes: "Sade, Orta Şekerli, Şekerli, Sütlü, Soğuk Sütlü, Yulaf Sütlü" },
+                      { label: "🍝 Makarna / Başlangıç", notes: "Glutensiz, Ekstra Parmesanlı, Sosu Ayrı, Acısız" },
+                      { label: "🍰 Tatlı", notes: "Dondurmalı, Dondurmasız, Ekstra Çikolata Soslu, Fındıksız" },
+                    ].map((tpl) => (
+                      <button
+                        key={tpl.label}
+                        type="button"
+                        onClick={() => {
+                          if (!itemDefaultNotes.trim()) {
+                            setItemDefaultNotes(tpl.notes);
+                          } else {
+                            setItemDefaultNotes(`${itemDefaultNotes}, ${tpl.notes}`);
+                          }
+                        }}
+                        className="text-[10px] px-2 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/60 font-medium transition"
+                      >
+                        + {tpl.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div>

@@ -257,21 +257,25 @@ export default function WaiterTerminalPage() {
     );
   }
 
-  // Hızlı Not Seçenekleri
-  const quickNoteOptions = [
-    "Az Pişmiş",
-    "Orta Pişmiş",
-    "İyi Pişmiş",
-    "Buzlu",
-    "Buzsuz",
-    "Limonlu",
-    "Şekersiz",
-    "Glutensiz",
-    "Sossuz",
-    "Sosu Ayrı",
-    "Acısız",
-    "Sıcak Servis",
-  ];
+  // Seçili Ürüne veya Kategoriye Göre Dinamik Hızlı Not Seçenekleri
+  const getActiveQuickNotes = (item: any) => {
+    if (item?.defaultNotes && item.defaultNotes.trim().length > 0) {
+      return item.defaultNotes
+        .split(",")
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+    }
+    // Fallback: Kategoriye göre akıllı varsayılanlar
+    const isBeverage =
+      currentRoot?.name?.toLowerCase().includes("içki") ||
+      currentRoot?.name?.toLowerCase().includes("içecek") ||
+      currentRoot?.name?.toLowerCase().includes("bar") ||
+      currentRoot?.name?.toLowerCase().includes("kokteyl");
+
+    return isBeverage
+      ? ["Buzlu", "Buzsuz", "Bol Buzlu", "Limonlu", "Şekersiz", "Pipetli"]
+      : ["Az Pişmiş", "Orta Pişmiş", "İyi Pişmiş", "Sosu Ayrı", "Glutensiz", "Acısız", "Sıcak Servis"];
+  };
 
   // Menü Öğesine Tıklandığında Adet & Not Modalını Aç
   const handleOpenItemModal = (item: any) => {
@@ -901,6 +905,17 @@ export default function WaiterTerminalPage() {
                           ⚠️ {item.allergens}
                         </span>
                       )}
+
+                      {item.defaultNotes && (
+                        <div className="mt-1 flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[10px] text-amber-400 font-semibold flex items-center gap-1">
+                            <span>✨</span> Seçenekler:
+                          </span>
+                          <span className="text-[10px] text-zinc-400 italic line-clamp-1">
+                            {item.defaultNotes}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Alt Kontrol: Ekle / Düzenle Butonu */}
@@ -1290,13 +1305,22 @@ export default function WaiterTerminalPage() {
             {/* Özel Pişirme & Servis Notu */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-semibold text-zinc-300">Özel Pişirme & Servis Notu</label>
-                <span className="text-[10px] text-zinc-500">İsteğe bağlı</span>
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-zinc-300">
+                    {selectedItemForModal?.defaultNotes ? "Özel Pişirme & Servis Tercihleri" : "Özel Pişirme & Servis Notu"}
+                  </label>
+                  {selectedItemForModal?.defaultNotes && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold flex items-center gap-1">
+                      <span>✨</span> Ürüne Özel
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-zinc-400">Tek tıkla ekleyin</span>
               </div>
 
               {/* Hızlı Notlar */}
               <div className="flex flex-wrap gap-1.5 mb-2.5">
-                {quickNoteOptions.map((quick) => {
+                {getActiveQuickNotes(selectedItemForModal).map((quick: string) => {
                   const isSelected = modalItemNote.includes(quick);
                   return (
                     <button
@@ -1315,13 +1339,14 @@ export default function WaiterTerminalPage() {
                           setModalItemNote((prev) => (prev ? `${prev}, ${quick}` : quick));
                         }
                       }}
-                      className={`text-[11px] px-2.5 py-1 rounded-lg transition font-medium ${
+                      className={`text-[11px] px-3 py-1.5 rounded-xl transition font-medium flex items-center gap-1.5 active:scale-95 ${
                         isSelected
-                          ? "bg-amber-500/20 border border-amber-500/60 text-amber-300 font-semibold"
-                          : "bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/50 text-zinc-300"
+                          ? "bg-amber-500 text-zinc-950 font-bold shadow-md shadow-amber-500/20 border border-amber-400"
+                          : "bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-700/60 text-zinc-300"
                       }`}
                     >
-                      {quick}
+                      {isSelected ? <span>✓</span> : <span className="text-amber-400/80">•</span>}
+                      <span>{quick}</span>
                     </button>
                   );
                 })}
@@ -1329,7 +1354,11 @@ export default function WaiterTerminalPage() {
 
               <input
                 type="text"
-                placeholder="Örn: Az pişmiş olsun, buzsuz servis edilsin..."
+                placeholder={
+                  selectedItemForModal?.defaultNotes
+                    ? "Yukarıdaki butonlardan seçebilir veya ekstra özel istek yazabilirsiniz..."
+                    : "Örn: Az pişmiş olsun, buzsuz servis edilsin..."
+                }
                 value={modalItemNote}
                 onChange={(e) => setModalItemNote(e.target.value)}
                 className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"

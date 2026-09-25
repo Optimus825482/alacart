@@ -323,6 +323,7 @@ export async function createMenuItem(data: {
   description?: string;
   allergens?: string;
   imageUrl?: string;
+  defaultNotes?: string;
   categoryId: string;
   displayOrder?: number;
 }) {
@@ -333,6 +334,7 @@ export async function createMenuItem(data: {
         description: data.description?.trim(),
         allergens: data.allergens?.trim(),
         imageUrl: data.imageUrl?.trim() || null,
+        defaultNotes: data.defaultNotes?.trim() || null,
         categoryId: data.categoryId,
         displayOrder: data.displayOrder ?? 0,
       },
@@ -352,6 +354,7 @@ export async function updateMenuItem(
     description?: string;
     allergens?: string;
     imageUrl?: string;
+    defaultNotes?: string;
     categoryId?: string;
     displayOrder?: number;
     active?: boolean;
@@ -365,6 +368,7 @@ export async function updateMenuItem(
         ...(data.description !== undefined && { description: data.description?.trim() }),
         ...(data.allergens !== undefined && { allergens: data.allergens?.trim() }),
         ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl?.trim() || null }),
+        ...(data.defaultNotes !== undefined && { defaultNotes: data.defaultNotes?.trim() || null }),
         ...(data.categoryId && { categoryId: data.categoryId }),
         ...(data.displayOrder !== undefined && { displayOrder: data.displayOrder }),
         ...(data.active !== undefined && { active: data.active }),

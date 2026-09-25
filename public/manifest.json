@@ -1,0 +1,17 @@
+{
+  "name": "Merit A La Carte - Ultra All-Inclusive",
+  "short_name": "Merit Alacarte",
+  "description": "5 Yıldızlı Otel Ultra Her Şey Dahil A La Carte Sipariş ve Mutfak KDS Sistemi",
+  "start_url": "/login",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070a12",
+  "theme_color": "#eab308",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { OrderStatus, TableStatus } from "@/lib/types";
+import { logAudit } from "@/lib/audit";
 
 // ==========================================
 // SİPARİŞ OLUŞTURMA (GARSON EKRANI)
@@ -64,9 +65,21 @@ export async function createOrder(data: {
       return order;
     });
 
+    await logAudit({
+      userId: newOrder.waiterId,
+      userName: newOrder.waiter?.name || "Garson",
+      userRole: "WAITER",
+      action: "ORDER_CREATED",
+      entity: "Order",
+      entityId: newOrder.id,
+      details: `${newOrder.restaurant.name} - Masa: ${newOrder.table.name} (#${newOrder.orderNumber}) için ${newOrder.items.length} kalem sipariş verildi.`,
+      restaurantId: newOrder.restaurantId,
+    });
+
     revalidatePath("/kitchen");
     revalidatePath("/waiter");
     revalidatePath("/admin");
+    revalidatePath("/chef");
 
     return { success: true, data: newOrder };
   } catch (error: any) {
@@ -119,17 +132,26 @@ export async function getActiveKitchenOrders(restaurantId?: string) {
 
 export async function updateOrderStatus(
   orderId: string,
-  newStatus: OrderStatus
+  newStatus: OrderStatus,
+  user?: { id?: string; name?: string; role?: string }
 ) {
   try {
     const updatedOrder = await prisma.$transaction(async (tx) => {
+      const existing = await tx.order.findUnique({
+        where: { id: orderId },
+        include: { restaurant: true, table: true },
+      });
+
       const order = await tx.order.update({
         where: { id: orderId },
         data: {
           status: newStatus as any,
+          ...(newStatus === "PREPARING" && !existing?.preparingStartedAt
+            ? { preparingStartedAt: new Date() }
+            : {}),
           ...(newStatus === "COMPLETED" ? { completedAt: new Date() } : {}),
         },
-        include: { items: true },
+        include: { items: true, restaurant: true, table: true },
       });
 
       // Kalemlerin durumunu da güncelle
@@ -160,9 +182,21 @@ export async function updateOrderStatus(
       return order;
     });
 
+    await logAudit({
+      userId: user?.id,
+      userName: user?.name || "Mutfak / Şef",
+      userRole: user?.role || "KITCHEN",
+      action: `STATUS_${newStatus}`,
+      entity: "Order",
+      entityId: orderId,
+      details: `${updatedOrder.restaurant.name} - Masa ${updatedOrder.table.name} (#${updatedOrder.orderNumber}) durumu '${newStatus}' yapıldı.`,
+      restaurantId: updatedOrder.restaurantId,
+    });
+
     revalidatePath("/kitchen");
     revalidatePath("/waiter");
     revalidatePath("/admin");
+    revalidatePath("/chef");
 
     return { success: true, data: updatedOrder };
   } catch (error: any) {
@@ -175,13 +209,30 @@ export async function updateOrderStatus(
 // YAZICI İÇİN ADİSYON BASILDI İŞARETİ
 // ==========================================
 
-export async function markOrderPrinted(orderId: string) {
+export async function markOrderPrinted(
+  orderId: string,
+  user?: { id?: string; name?: string; role?: string }
+) {
   try {
     const order = await prisma.order.update({
       where: { id: orderId },
       data: { printedAt: new Date() },
+      include: { restaurant: true, table: true },
     });
+
+    await logAudit({
+      userId: user?.id,
+      userName: user?.name || "Mutfak Personeli",
+      userRole: user?.role || "KITCHEN",
+      action: "ORDER_PRINTED",
+      entity: "Order",
+      entityId: orderId,
+      details: `${order.restaurant.name} - Masa ${order.table.name} (#${order.orderNumber}) için 80mm mutfak termal fişi basıldı.`,
+      restaurantId: order.restaurantId,
+    });
+
     revalidatePath("/kitchen");
+    revalidatePath("/chef");
     return { success: true, data: order };
   } catch (error: any) {
     return { success: false, error: error.message };

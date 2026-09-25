@@ -306,6 +306,7 @@ export async function createMenuItem(data: {
   name: string;
   description?: string;
   allergens?: string;
+  imageUrl?: string;
   categoryId: string;
   displayOrder?: number;
 }) {
@@ -315,6 +316,7 @@ export async function createMenuItem(data: {
         name: data.name.trim(),
         description: data.description?.trim(),
         allergens: data.allergens?.trim(),
+        imageUrl: data.imageUrl?.trim() || null,
         categoryId: data.categoryId,
         displayOrder: data.displayOrder ?? 0,
       },
@@ -333,6 +335,7 @@ export async function updateMenuItem(
     name?: string;
     description?: string;
     allergens?: string;
+    imageUrl?: string;
     categoryId?: string;
     displayOrder?: number;
     active?: boolean;
@@ -345,6 +348,7 @@ export async function updateMenuItem(
         ...(data.name && { name: data.name.trim() }),
         ...(data.description !== undefined && { description: data.description?.trim() }),
         ...(data.allergens !== undefined && { allergens: data.allergens?.trim() }),
+        ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl?.trim() || null }),
         ...(data.categoryId && { categoryId: data.categoryId }),
         ...(data.displayOrder !== undefined && { displayOrder: data.displayOrder }),
         ...(data.active !== undefined && { active: data.active }),
@@ -370,7 +374,7 @@ export async function deleteMenuItem(id: string) {
 }
 
 // ==========================================
-// KULLANICI & GARSON/MUTFAK TANIMLARI
+// KULLANICI & GARSON/MUTFAK/ŞEF TANIMLARI
 // ==========================================
 
 export async function getUsers() {
@@ -392,6 +396,7 @@ export async function getUsers() {
 export async function createUser(data: {
   name: string;
   username: string;
+  password?: string;
   pin: string;
   role: Role;
   restaurantIds?: string[];
@@ -401,6 +406,7 @@ export async function createUser(data: {
       data: {
         name: data.name.trim(),
         username: data.username.trim().toLowerCase(),
+        password: data.password?.trim() || data.pin.trim(),
         pin: data.pin.trim(),
         role: data.role as any,
         ...(data.restaurantIds && data.restaurantIds.length > 0 && {
@@ -424,6 +430,7 @@ export async function updateUser(
   data: {
     name?: string;
     username?: string;
+    password?: string;
     pin?: string;
     role?: Role;
     active?: boolean;
@@ -436,6 +443,7 @@ export async function updateUser(
       data: {
         ...(data.name && { name: data.name.trim() }),
         ...(data.username && { username: data.username.trim().toLowerCase() }),
+        ...(data.password !== undefined && { password: data.password.trim() }),
         ...(data.pin && { pin: data.pin.trim() }),
         ...(data.role && { role: data.role as any }),
         ...(data.active !== undefined && { active: data.active }),

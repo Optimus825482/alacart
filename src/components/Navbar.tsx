@@ -1,58 +1,98 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UtensilsCrossed, ChefHat, Settings, Smartphone, Home } from "lucide-react";
+import {
+  UtensilsCrossed,
+  ChefHat,
+  Settings,
+  Smartphone,
+  LogOut,
+  User,
+  Shield,
+  Award,
+} from "lucide-react";
+import { getSessionUser, logoutAction, SessionUser } from "@/actions/auth";
+import { getRestaurantTheme } from "@/lib/themes";
 import clsx from "clsx";
 
 export function Navbar() {
   const pathname = usePathname();
+  const [session, setSession] = useState<SessionUser | null>(null);
 
-  const navItems = [
-    {
+  useEffect(() => {
+    async function loadSession() {
+      const user = await getSessionUser();
+      setSession(user);
+    }
+    loadSession();
+  }, [pathname]);
+
+  // Login sayfasında navbar gizlensin veya sade görünsün
+  if (pathname === "/login") return null;
+
+  // Rol bazlı gezinme linkleri
+  const navItems = [];
+
+  if (session?.role === "ADMIN" || session?.role === "WAITER") {
+    navItems.push({
       label: "Garson Terminali",
       href: "/waiter",
       icon: Smartphone,
-      description: "Mobil Sipariş Terminali",
       badge: "Mobil",
-    },
-    {
-      label: "Mutfak Ekranı (KDS)",
+    });
+  }
+
+  if (session?.role === "ADMIN" || session?.role === "KITCHEN" || session?.role === "CHEF") {
+    navItems.push({
+      label: "Mutfak (KDS)",
       href: "/kitchen",
       icon: ChefHat,
-      description: "Sipariş Takip & Yazdırma",
-      badge: "Canlı",
-    },
-    {
+      badge: "Mutfak",
+    });
+  }
+
+  if (session?.role === "ADMIN" || session?.role === "CHEF") {
+    navItems.push({
+      label: "Şef Modülü",
+      href: "/chef",
+      icon: Award,
+      badge: "Master KDS & Rapor",
+    });
+  }
+
+  if (session?.role === "ADMIN") {
+    navItems.push({
       label: "Tanımlar & Yönetim",
       href: "/admin",
       icon: Settings,
-      description: "Alakart, Masa & Menü",
-    },
-  ];
+      badge: "Admin",
+    });
+  }
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0d121f]/95 backdrop-blur-md border-b border-amber-500/20 px-4 lg:px-8 py-2.5">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-[#070a12]/95 backdrop-blur-md border-b border-amber-500/20 px-3 sm:px-6 py-2.5">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-            <UtensilsCrossed className="w-5 h-5 text-zinc-950 font-bold" />
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+            <UtensilsCrossed className="w-4 h-4 text-zinc-950 font-bold" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-[0.25em] text-amber-400 font-semibold">
-                MERİT HOTELS & RESORTS
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-amber-400 font-bold">
+                MERİT HOTELS
               </span>
             </div>
-            <h1 className="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
-              A LA CARTE <span className="text-amber-400 font-normal text-xs px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/30">LÜKS OPERASYON</span>
+            <h1 className="text-xs sm:text-sm font-black tracking-tight text-white flex items-center gap-1">
+              A LA CARTE <span className="text-amber-400 font-normal text-[9px] px-1 py-0.2 rounded bg-amber-400/10 border border-amber-400/30">LÜKS OPERASYON</span>
             </h1>
           </div>
         </Link>
 
         {/* Navigation Tabs */}
-        <nav className="flex items-center gap-1.5 sm:gap-2">
+        <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname.startsWith(item.href);
@@ -62,23 +102,53 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={clsx(
-                  "flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all",
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all",
                   isActive
-                    ? "bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/25 font-semibold"
+                    ? "bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/25 font-bold"
                     : "text-zinc-300 hover:text-white hover:bg-zinc-800/60"
                 )}
               >
-                <Icon className={clsx("w-4 h-4", isActive ? "text-zinc-950" : "text-amber-400")} />
-                <span className="hidden sm:inline">{item.label}</span>
-                {item.badge && !isActive && (
-                  <span className="hidden md:inline-block text-[10px] px-1.5 py-0.2 rounded-full bg-amber-400/15 text-amber-300 border border-amber-400/30">
-                    {item.badge}
-                  </span>
-                )}
+                <Icon className={clsx("w-3.5 h-3.5", isActive ? "text-zinc-950" : "text-amber-400")} />
+                <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
+
+        {/* Right User & Logout Section */}
+        <div className="flex items-center gap-2">
+          {session ? (
+            <div className="flex items-center gap-2">
+              <div className="text-right hidden sm:block">
+                <span className="text-xs font-bold text-white block leading-tight">
+                  {session.name}
+                </span>
+                <span className="text-[10px] text-amber-400 font-mono">
+                  {session.role}
+                </span>
+              </div>
+
+              <form action={logoutAction}>
+                <button
+                  type="submit"
+                  title="Güvenli Çıkış Yap"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/30 text-rose-300 text-xs font-bold transition-all active:scale-95"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Çıkış</span>
+                </button>
+              </form>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-bold shadow-md shadow-amber-500/20"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Giriş Yap</span>
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );

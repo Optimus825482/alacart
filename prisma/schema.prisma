@@ -8,9 +8,10 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
-  WAITER
-  KITCHEN
+  ADMIN     // Sistem Yöneticisi (Tüm sistem tanımları, kullanıcılar, genel ayarlar)
+  CHEF      // Şef Modülü (Tüm alakartlar arası geçiş, master KDS, tarih filtreli PDF/Excel raporlar, audit)
+  KITCHEN   // Mutfak Modülü (Sadece görevli olduğu alakartın KDS ekranı ve adisyon yazıcısı)
+  WAITER    // Garson Modülü (Görevli olduğu alakartın mobil sipariş terminali ve masa yönetimi)
 }
 
 enum TableStatus {
@@ -20,36 +21,45 @@ enum TableStatus {
 
 enum OrderStatus {
   PENDING      // Mutfakta bekliyor / Yeni sipariş
-  PREPARING    // Mutfakta hazırlanıyor
-  COMPLETED    // Mutfakta tamamlandı
+  PREPARING    // Mutfakta hazırlanıyor (ocakta)
+  COMPLETED    // Mutfakta tamamlandı (servise hazır)
   CANCELLED    // İptal edildi
 }
 
 model User {
   id           String             @id @default(uuid())
-  name         String
-  username     String             @unique
-  pin          String             // Hızlı garson/mutfak dokunmatik giriş PIN kodu (örn: 1234)
+  name         String             // Ad Soyad
+  username     String             @unique // Giriş Kullanıcı Adı
+  password     String             // Şifre (Giriş için)
+  pin          String?            // Hızlı PIN kodu (isteğe bağlı)
   role         Role               @default(WAITER)
   active       Boolean            @default(true)
   orders       Order[]
   assignedTo   RestaurantUser[]
+  auditLogs    AuditLog[]
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
 }
 
 model Restaurant {
-  id          String             @id @default(uuid())
-  name        String             // örn: "İtalyan A La Carte", "Ege & Balık A La Carte"
-  code        String             @unique // örn: "ITALIAN", "FISH"
-  description String?
-  active      Boolean            @default(true)
-  tables      RestaurantTable[]
-  categories  Category[]
-  orders      Order[]
-  users       RestaurantUser[]
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  id           String             @id @default(uuid())
+  name         String             // örn: "The Roof Garden", "The Steak House", "Blue Sea", "Mandarin", "Bella Merit"
+  code         String             @unique // örn: "ROOF_GARDEN", "STEAK_HOUSE", "BLUE_SEA", "MANDARIN", "BELLA_MERIT"
+  description  String?
+  themeKey     String             @default("DEFAULT") // Özel renk ve stil teması anahtarı
+  primaryColor String             @default("#eab308") // Ana tema rengi
+  accentColor  String             @default("#ca8a04") // İkincil renk
+  coverImage   String?            // Restoran kapak görseli
+  active       Boolean            @default(true)
+  
+  tables       RestaurantTable[]
+  categories   Category[]
+  orders       Order[]
+  users        RestaurantUser[]
+  auditLogs    AuditLog[]
+
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
 }
 
 model RestaurantUser {
@@ -64,7 +74,7 @@ model RestaurantUser {
 
 model RestaurantTable {
   id           String       @id @default(uuid())
-  name         String       // örn: "Masa 1", "Teras 04", "VIP Loca 1"
+  name         String       // örn: "Masa 1", "Teras 04", "VIP Panoramik"
   capacity     Int          @default(4)
   status       TableStatus  @default(EMPTY)
   restaurantId String
@@ -76,17 +86,17 @@ model RestaurantTable {
 
 model Category {
   id           String       @id @default(uuid())
-  name         String       // örn: "Yiyecekler", "İçecekler", "Sıcak İçecekler", "Soğuk İçecekler", "Alkollü İçecekler"
+  name         String       // örn: "Yiyecekler", "İçecekler", "Başlangıçlar", "Soğuk Başlangıçlar"
   description  String?
   displayOrder Int          @default(0)
   active       Boolean      @default(true)
   
-  // Hiyerarşik Kategori Ağacı (Self-relation: Kategori -> Alt Kategori -> Alt Kategori...)
+  // Hiyerarşik Kategori Ağacı (Self-relation)
   parentId     String?
   parent       Category?    @relation("SubCategories", fields: [parentId], references: [id], onDelete: Cascade)
   children     Category[]   @relation("SubCategories")
 
-  // Belirli bir alakarta özel olabilir (örn sadece İtalyan Alakart'ta geçerli menü) veya null ise tüm alakartlarda görünür
+  // Belirli bir alakarta özel menü veya null (tüm alakartlar)
   restaurantId String?
   restaurant   Restaurant?  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   
@@ -97,9 +107,10 @@ model Category {
 
 model MenuItem {
   id           String       @id @default(uuid())
-  name         String       // örn: "T-Bone Steak", "Espresso", "Zeytinyağlı Enginar"
-  description  String?      // Yemeğin özellikleri, pişirme detayları, içeriği
-  allergens    String?      // Alerjen uyarıları (Gluten, Laktoz vb.)
+  name         String       // örn: "Wagyu Ribeye", "Pekin Ördeği", "Burrata", "Levrek Buğulama"
+  description  String?      // Özellikler, pişme bilgisi, garnitür detayı
+  allergens    String?      // Alerjen uyarıları
+  imageUrl     String?      // Yiyecek/İçecek fotoğrafı URL veya base64
   active       Boolean      @default(true)
   displayOrder Int          @default(0)
 
@@ -112,25 +123,28 @@ model MenuItem {
 }
 
 model Order {
-  id           String            @id @default(uuid())
-  orderNumber  Int               @default(autoincrement())
-  status       OrderStatus       @default(PENDING)
-  notes        String?           // Masaya özel genel not (örn: "Doğum günü kutlaması masası")
+  id                 String            @id @default(uuid())
+  orderNumber        Int               @default(autoincrement())
+  status             OrderStatus       @default(PENDING)
+  notes              String?           // Masaya özel genel not
   
-  restaurantId String
-  restaurant   Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId       String
+  restaurant         Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   
-  tableId      String
-  table        RestaurantTable   @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  tableId            String
+  table              RestaurantTable   @relation(fields: [tableId], references: [id], onDelete: Cascade)
 
-  waiterId     String
-  waiter       User              @relation(fields: [waiterId], references: [id], onDelete: Cascade)
+  waiterId           String
+  waiter             User              @relation(fields: [waiterId], references: [id], onDelete: Cascade)
 
-  items        OrderItem[]
-  printedAt    DateTime?         // Termal fişin mutfakta basıldığı zaman
-  completedAt  DateTime?         // Mutfakta "Tamamlandı" butonuna basıldığı an
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  items              OrderItem[]
+  
+  // Detaylı Zaman Damgaları (Zaman/Süre Raporları ve Audit için)
+  preparingStartedAt DateTime?         // Mutfakta "Hazırlanıyor" dendiği an
+  printedAt          DateTime?         // Termal fiş basılma anı
+  completedAt        DateTime?         // Mutfakta "Tamamlandı" dendiği an
+  createdAt          DateTime          @default(now()) // Garsonun siparişi mutfağa fırlattığı an
+  updatedAt          DateTime          @updatedAt
 }
 
 model OrderItem {
@@ -142,7 +156,28 @@ model OrderItem {
   menuItem    MenuItem    @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
 
   quantity    Int         @default(1)
-  itemNotes   String?     // örn: "Az pişmiş", "Buzsuz", "Sos ayrı", "Sütlü"
+  itemNotes   String?     // örn: "Az pişmiş", "Buzsuz", "Glutensiz"
   status      OrderStatus @default(PENDING)
   createdAt   DateTime    @default(now())
+}
+
+// ==========================================
+// AUDIT LOG (DENETİM İZİ TAKİP SİSTEMİ)
+// ==========================================
+model AuditLog {
+  id           String      @id @default(uuid())
+  userId       String?
+  user         User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userName     String      // İşlemi yapan kullanıcının adı
+  userRole     String      // İşlemi yapanın rolü (ADMIN, CHEF, KITCHEN, WAITER)
+  
+  action       String      // Örn: "LOGIN", "LOGOUT", "ORDER_CREATED", "STATUS_PREPARING", "STATUS_COMPLETED", "ORDER_PRINTED", "MENU_CREATED"
+  entity       String      // Örn: "Order", "User", "MenuItem", "Table", "Restaurant"
+  entityId     String?     // İlgili kaydın ID'si
+  details      String?     // İşlem detayları (Örn: "Masa 1 için 3 kalem sipariş oluşturuldu")
+  
+  restaurantId String?
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
+
+  createdAt    DateTime    @default(now())
 }

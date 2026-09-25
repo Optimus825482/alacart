@@ -43,6 +43,7 @@ export default function AdminMenuPage() {
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [itemAllergens, setItemAllergens] = useState("");
+  const [itemImageUrl, setItemImageUrl] = useState("");
   const [itemCategoryId, setItemCategoryId] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
@@ -111,6 +112,7 @@ export default function AdminMenuPage() {
         name: itemName,
         description: itemDescription,
         allergens: itemAllergens,
+        imageUrl: itemImageUrl,
         categoryId: itemCategoryId,
       });
     } else {
@@ -118,6 +120,7 @@ export default function AdminMenuPage() {
         name: itemName,
         description: itemDescription,
         allergens: itemAllergens,
+        imageUrl: itemImageUrl,
         categoryId: itemCategoryId,
       });
     }
@@ -126,6 +129,7 @@ export default function AdminMenuPage() {
     setItemName("");
     setItemDescription("");
     setItemAllergens("");
+    setItemImageUrl("");
     loadData();
   };
 
@@ -134,6 +138,7 @@ export default function AdminMenuPage() {
     setItemName("");
     setItemDescription("");
     setItemAllergens("");
+    setItemImageUrl("");
     if (preselectedCatId) setItemCategoryId(preselectedCatId);
     setIsItemModalOpen(true);
   };
@@ -143,6 +148,7 @@ export default function AdminMenuPage() {
     setItemName(item.name);
     setItemDescription(item.description || "");
     setItemAllergens(item.allergens || "");
+    setItemImageUrl(item.imageUrl || "");
     setItemCategoryId(item.categoryId);
     setIsItemModalOpen(true);
   };
@@ -496,6 +502,29 @@ export default function AdminMenuPage() {
                   onChange={(e) => setItemAllergens(e.target.value)}
                   className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
                 />
+              </div>
+
+              <div>
+                <label className="text-zinc-400 block mb-1 font-semibold">
+                  Yemek / İçecek Fotoğrafı URL (Görsel Önizlemeli)
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://images.unsplash.com/... (Görsel Web URL)"
+                  value={itemImageUrl}
+                  onChange={(e) => setItemImageUrl(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                />
+                {itemImageUrl && (
+                  <div className="mt-2 flex items-center gap-2 p-2 rounded-xl bg-zinc-900 border border-zinc-800">
+                    <img
+                      src={itemImageUrl}
+                      alt="Önizleme"
+                      className="w-12 h-12 rounded-lg object-cover border border-zinc-700"
+                    />
+                    <span className="text-[10px] text-zinc-400">Görsel Önizleme Başarılı</span>
+                  </div>
+                )}
               </div>
 
               <div className="pt-3 border-t border-zinc-800 flex items-center justify-end gap-2">

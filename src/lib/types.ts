@@ -1,4 +1,4 @@
-export type Role = "ADMIN" | "WAITER" | "KITCHEN";
+export type Role = "ADMIN" | "CHEF" | "KITCHEN" | "WAITER";
 export type TableStatus = "EMPTY" | "OCCUPIED";
 export type OrderStatus = "PENDING" | "PREPARING" | "COMPLETED" | "CANCELLED";
 
@@ -22,6 +22,7 @@ export interface MenuItemData {
   name: string;
   description?: string | null;
   allergens?: string | null;
+  imageUrl?: string | null;
   active: boolean;
   displayOrder: number;
   categoryId: string;

@@ -51,31 +51,29 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* 3 Main Action Modules */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      {/* 4 Main Action Modules */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* Module 1: Garson */}
         <Link
           href="/waiter"
-          className="group relative p-6 rounded-3xl bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 border border-zinc-800 hover:border-amber-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between"
+          className="group relative p-5 rounded-3xl bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 border border-zinc-800 hover:border-amber-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between"
         >
           <div>
-            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-5 text-amber-400 group-hover:scale-110 transition-transform">
-              <Smartphone className="w-7 h-7" />
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4 text-amber-400 group-hover:scale-110 transition-transform">
+              <Smartphone className="w-6 h-6" />
             </div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20">
-                MOBİL UYUMLU
-              </span>
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">
-              Garson Terminali
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20 mb-2 inline-block">
+              MOBİL TERMİNAL
+            </span>
+            <h3 className="text-lg font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">
+              Garson Modülü
             </h3>
-            <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-6">
-              Masayı seçin, çok kademeli menü ağacından talepleri ekleyin (pişme, buzsuz, alerjen notları) ve tek dokunuşla mutfağa fırlatın.
+            <p className="text-zinc-400 text-xs leading-relaxed mb-4">
+              Restoran kilidi, dokunmatik masa seçimi, fotoğraflı menüden talepleri girip mutfağa fırlatma.
             </p>
           </div>
-          <div className="flex items-center justify-between text-xs font-semibold text-amber-400 pt-4 border-t border-zinc-800/80">
-            <span>Sipariş Ekranını Aç</span>
+          <div className="flex items-center justify-between text-xs font-semibold text-amber-400 pt-3 border-t border-zinc-800/80">
+            <span>Terminali Aç</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
           </div>
         </Link>
@@ -83,52 +81,73 @@ export default async function HomePage() {
         {/* Module 2: Mutfak (KDS) */}
         <Link
           href="/kitchen"
-          className="group relative p-6 rounded-3xl bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 border border-zinc-800 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/10 flex flex-col justify-between"
+          className="group relative p-5 rounded-3xl bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 border border-zinc-800 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/10 flex flex-col justify-between"
         >
           <div>
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5 text-emerald-400 group-hover:scale-110 transition-transform">
-              <ChefHat className="w-7 h-7" />
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4 text-emerald-400 group-hover:scale-110 transition-transform">
+              <ChefHat className="w-6 h-6" />
             </div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-400/10 text-emerald-300 border border-emerald-400/20">
-                TABLET & DESKTOP KDS
-              </span>
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
-              Mutfak Ekranı & Yazıcı
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-400/10 text-emerald-300 border border-emerald-400/20 mb-2 inline-block">
+              TABLET & DESKTOP KDS
+            </span>
+            <h3 className="text-lg font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
+              Mutfak Ekranı
             </h3>
-            <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-6">
-              Anlık sesli bildirimle düşen siparişler, 80mm termal adisyon çıktısı, &quot;Hazırlanıyor&quot; ve &quot;Tamamlandı&quot; durum kontrolü.
+            <p className="text-zinc-400 text-xs leading-relaxed mb-4">
+              İzole restoran mutfağı, sesli zil uyarısı, 80mm ESC/POS fiş çıktısı ve hazırlık zaman sayacı.
             </p>
           </div>
-          <div className="flex items-center justify-between text-xs font-semibold text-emerald-400 pt-4 border-t border-zinc-800/80">
-            <span>Mutfak Ekranını Aç</span>
+          <div className="flex items-center justify-between text-xs font-semibold text-emerald-400 pt-3 border-t border-zinc-800/80">
+            <span>KDS Ekranını Aç</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
           </div>
         </Link>
 
-        {/* Module 3: Tanımlar & Yönetim */}
+        {/* Module 3: Şef Portalı */}
         <Link
-          href="/admin"
-          className="group relative p-6 rounded-3xl bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 border border-zinc-800 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/10 flex flex-col justify-between"
+          href="/chef"
+          className="group relative p-5 rounded-3xl bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 border border-zinc-800 hover:border-amber-400/50 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 flex flex-col justify-between"
         >
           <div>
-            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-5 text-cyan-400 group-hover:scale-110 transition-transform">
-              <Settings className="w-7 h-7" />
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4 text-amber-400 group-hover:scale-110 transition-transform">
+              <Sparkles className="w-6 h-6" />
             </div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-400/10 text-cyan-300 border border-cyan-400/20">
-                YÖNETİM & TANIMLAR
-              </span>
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
-              Tanımlar & Raporlama
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20 mb-2 inline-block">
+              BAŞ AŞÇI / ŞEF
+            </span>
+            <h3 className="text-lg font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">
+              Şef Koordinatör
             </h3>
-            <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-6">
-              Alakartlar, masalar, hiyerarşik menü ağacı (Kategori ➔ Alt Kategori), kullanıcılar ve anlık tüketim/performans raporları.
+            <p className="text-zinc-400 text-xs leading-relaxed mb-4">
+              Çoklu alakart izleme, tarih aralıklı süre analitiği, Excel (.xlsx) ihracı ve denetim logları.
             </p>
           </div>
-          <div className="flex items-center justify-between text-xs font-semibold text-cyan-400 pt-4 border-t border-zinc-800/80">
+          <div className="flex items-center justify-between text-xs font-semibold text-amber-400 pt-3 border-t border-zinc-800/80">
+            <span>Şef Portalına Git</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+          </div>
+        </Link>
+
+        {/* Module 4: Tanımlar & Yönetim */}
+        <Link
+          href="/admin"
+          className="group relative p-5 rounded-3xl bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 border border-zinc-800 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/10 flex flex-col justify-between"
+        >
+          <div>
+            <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4 text-cyan-400 group-hover:scale-110 transition-transform">
+              <Settings className="w-6 h-6" />
+            </div>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-400/10 text-cyan-300 border border-cyan-400/20 mb-2 inline-block">
+              YÖNETİM & TANIMLAR
+            </span>
+            <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
+              Yönetim Paneli
+            </h3>
+            <p className="text-zinc-400 text-xs leading-relaxed mb-4">
+              Alakartlar, masalar, hiyerarşik menü kategorileri, kullanıcı/garsonlar ve güvenlik logları.
+            </p>
+          </div>
+          <div className="flex items-center justify-between text-xs font-semibold text-cyan-400 pt-3 border-t border-zinc-800/80">
             <span>Yönetim Paneline Git</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
           </div>

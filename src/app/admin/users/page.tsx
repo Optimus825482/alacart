@@ -15,8 +15,9 @@ export default function AdminUsersPage() {
   const [editingUser, setEditingUser] = useState<any | null>(null);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [pin, setPin] = useState("");
-  const [role, setRole] = useState<"ADMIN" | "WAITER" | "KITCHEN">("WAITER");
+  const [role, setRole] = useState<"ADMIN" | "CHEF" | "WAITER" | "KITCHEN">("WAITER");
   const [selectedRestaurantIds, setSelectedRestaurantIds] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
@@ -36,6 +37,7 @@ export default function AdminUsersPage() {
     setEditingUser(null);
     setName("");
     setUsername("");
+    setPassword("");
     setPin("");
     setRole("WAITER");
     setSelectedRestaurantIds([]);
@@ -46,6 +48,7 @@ export default function AdminUsersPage() {
     setEditingUser(u);
     setName(u.name);
     setUsername(u.username);
+    setPassword(u.password || "");
     setPin(u.pin);
     setRole(u.role);
     setSelectedRestaurantIds(u.assignedTo?.map((a: any) => a.restaurantId) || []);
@@ -67,6 +70,7 @@ export default function AdminUsersPage() {
       await updateUser(editingUser.id, {
         name,
         username,
+        password: password.trim() || undefined,
         pin,
         role,
         restaurantIds: selectedRestaurantIds,
@@ -75,6 +79,7 @@ export default function AdminUsersPage() {
       await createUser({
         name,
         username,
+        password: password.trim() || undefined,
         pin,
         role,
         restaurantIds: selectedRestaurantIds,
@@ -96,10 +101,12 @@ export default function AdminUsersPage() {
     switch (r) {
       case "ADMIN":
         return { label: "Yönetici", bg: "bg-purple-500/20 text-purple-300 border-purple-500/30", icon: Shield };
+      case "CHEF":
+        return { label: "Koordinatör Şef", bg: "bg-amber-500/20 text-amber-300 border-amber-500/30", icon: ChefHat };
       case "KITCHEN":
-        return { label: "Mutfak / Şef", bg: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30", icon: ChefHat };
+        return { label: "Mutfak", bg: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30", icon: ChefHat };
       default:
-        return { label: "Garson", bg: "bg-amber-500/20 text-amber-300 border-amber-500/30", icon: Smartphone };
+        return { label: "Garson", bg: "bg-blue-500/20 text-blue-300 border-blue-500/30", icon: Smartphone };
     }
   };
 
@@ -247,18 +254,33 @@ export default function AdminUsersPage() {
                 />
               </div>
 
-              <div>
-                <label className="text-zinc-400 block mb-1 font-semibold">
-                  Kullanıcı Adı *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Örn: ahmetyilmaz"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white lowercase focus:outline-none focus:border-amber-500"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-zinc-400 block mb-1 font-semibold">
+                    Kullanıcı Adı *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Örn: ahmetyilmaz"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white lowercase focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-zinc-400 block mb-1 font-semibold">
+                    Şifre (Web Girişi)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Örn: 1234 (opsiyonel)"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -287,8 +309,9 @@ export default function AdminUsersPage() {
                     className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
                   >
                     <option value="WAITER">Garson</option>
-                    <option value="KITCHEN">Mutfak / Şef</option>
-                    <option value="ADMIN">Yönetici</option>
+                    <option value="CHEF">Koordinatör Şef</option>
+                    <option value="KITCHEN">Mutfak Personeli</option>
+                    <option value="ADMIN">Sistem Yöneticisi</option>
                   </select>
                 </div>
               </div>

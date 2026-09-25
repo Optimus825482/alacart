@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merit Hotels & Resorts - A La Carte Restoran ve Mutfak Yönetim Sistemi Sunumu</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            gold: {
+              300: '#fde047',
+              400: '#facc15',
+              500: '#eab308',
+              600: '#ca8a04',
+            },
+            dark: {
+              950: '#070a12',
+              900: '#0b101d',
+              850: '#0f1629',
+              800: '#151e36',
+              700: '#1e294b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #070a12;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+    
+    /* Luxury Glows */
+    .glow-gold {
+      box-shadow: 0 0 50px -10px rgba(234, 179, 8, 0.25);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.2);
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #fef08a 0%, #eab308 50%, #ca8a04 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Thermal receipt jagged bottom */
+    .receipt-tear {
+      background: #ffffff;
+      position: relative;
+    }
+    .receipt-tear::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: linear-gradient(135deg, #070a12 5px, transparent 0), linear-gradient(-135deg, #070a12 5px, transparent 0);
+      background-size: 14px 14px;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b101d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e294b;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-amber-500 selection:text-black">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-zinc-950 px-4 py-2 text-center text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2">
+    <span>★ MERİT HOTELS & RESORTS</span>
+    <span class="hidden sm:inline">•</span>
+    <span class="hidden sm:inline">5 YILDIZLI ULTRA ALL-INCLUSIVE A LA CARTE RESTORAN YÖNETİM SİSTEMİ</span>
+  </div>
+
+  <!-- Sticky Presentation Navigation -->
+  <header class="sticky top-0 z-50 bg-[#070a12]/90 backdrop-blur-xl border-b border-amber-500/20 px-4 sm:px-8 py-3.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-zinc-950 font-black shadow-lg shadow-amber-500/20">
+          M
+        </div>
+        <div>
+          <span class="text-[10px] tracking-widest uppercase text-amber-400 font-bold block">SİSTEM TANITIM SUNUMU</span>
+          <h1 class="text-sm sm:text-base font-black text-white">MERİT A LA CARTE KDS</h1>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-2 text-xs font-semibold">
+        <a href="#ozet" class="px-3 py-1.5 rounded-lg text-zinc-300 hover:text-white hover:bg-dark-800 transition-all">Genel Bakış</a>
+        <a href="#garson" class="px-3 py-1.5 rounded-lg text-amber-400 hover:bg-amber-400/10 transition-all">📱 Garson Terminali</a>
+        <a href="#mutfak" class="px-3 py-1.5 rounded-lg text-emerald-400 hover:bg-emerald-400/10 transition-all">👨‍🍳 Mutfak & Yazıcı</a>
+        <a href="#tanimlar" class="px-3 py-1.5 rounded-lg text-cyan-400 hover:bg-cyan-400/10 transition-all">⚙️ Menü Ağacı</a>
+        <a href="#mimari" class="px-3 py-1.5 rounded-lg text-purple-400 hover:bg-purple-400/10 transition-all">Teknoloji</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <span class="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold">
+          ★ Operasyon & Tanıtım Sunumu
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative pt-12 pb-20 px-4 sm:px-8 max-w-6xl mx-auto text-center overflow-hidden">
+    <!-- Glow Orb -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-bold mb-6 tracking-wider uppercase">
+      <span>✦</span> Sıfır Fiyat Karmaşası • Saf Operasyonel Hız • Anlık Mutfak Entegrasyonu
+    </div>
+
+    <h1 class="text-3xl sm:text-6xl font-black tracking-tight text-white mb-6 leading-tight">
+      Lüks A La Carte Restoranlar İçin <br>
+      <span class="gold-gradient-text">Uçtan Uca Dijital Operasyon</span>
+    </h1>
+
+    <p class="max-w-2xl mx-auto text-zinc-400 text-sm sm:text-base leading-relaxed mb-10">
+      Müşteri ekranı veya ödeme kasası olmadan; garson masadan saniyeler içinde siparişi girer, mutfak ekranına anlık sesli bildirimle düşer, 80mm termal yazıcıdan adisyon otomatik basılır ve şef tek dokunuşla siparişi tamamlar.
+    </p>
+
+    <!-- 3 Core Highlights Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left max-w-4xl mx-auto">
+      <div class="p-5 rounded-3xl bg-dark-900 border border-dark-700/80 shadow-xl relative overflow-hidden">
+        <div class="text-amber-400 font-mono text-2xl font-black mb-1">01</div>
+        <h3 class="text-white font-bold text-base mb-1">Fiyat Sistemi Yok</h3>
+        <p class="text-zinc-400 text-xs leading-relaxed">
+          5 yıldızlı Ultra All-Inclusive konseptine uygun. Fiyat, para üstü ve hesap kapama karmaşası bulunmaz.
+        </p>
+      </div>
+
+      <div class="p-5 rounded-3xl bg-dark-900 border border-dark-700/80 shadow-xl relative overflow-hidden">
+        <div class="text-emerald-400 font-mono text-2xl font-black mb-1">02</div>
+        <h3 class="text-white font-bold text-base mb-1">Sonsuz Menü Ağacı</h3>
+        <p class="text-zinc-400 text-xs leading-relaxed">
+          Kategori ➔ Alt Kategori ➔ Alt-Alt Kategori kırılımı. (Örn: İçecekler ➔ Soğuk ➔ Alkollü ➔ Kokteyl/Şarap).
+        </p>
+      </div>
+
+      <div class="p-5 rounded-3xl bg-dark-900 border border-dark-700/80 shadow-xl relative overflow-hidden">
+        <div class="text-blue-400 font-mono text-2xl font-black mb-1">03</div>
+        <h3 class="text-white font-bold text-base mb-1">KDS & Anlık Yazıcı</h3>
+        <p class="text-zinc-400 text-xs leading-relaxed">
+          Otel mutfak zili uyarısı, 80mm termal fiş formatı, geçen süre sayacı ve tek dokunuşla durum yönetimi.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Workflow Sequence -->
+  <section class="py-12 bg-dark-900/60 border-y border-dark-800 px-4 sm:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="text-xs uppercase tracking-widest text-amber-400 font-bold">OPERASYONEL ADIMLAR</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-white mt-1">Siparişten Masaya Akış Şeması</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+        <!-- Step 1 -->
+        <div class="p-5 rounded-3xl bg-dark-850 border border-dark-700 flex flex-col justify-between">
+          <div>
+            <div class="w-8 h-8 rounded-xl bg-amber-500 text-zinc-950 font-black flex items-center justify-center text-xs mb-3">1</div>
+            <h4 class="text-white font-bold text-sm mb-1">Masa & Menü Seçimi</h4>
+            <p class="text-zinc-400 text-xs leading-relaxed">
+              Garson masaya gider, telefondan masayı seçer (Örn: <em>Teras 02</em>). Hiyerarşik kategorilerden yemek ve içecekleri belirler.
+            </p>
+          </div>
+          <span class="text-[10px] text-amber-400 font-mono mt-3">📱 Mobil Garson Arayüzü</span>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="p-5 rounded-3xl bg-dark-850 border border-dark-700 flex flex-col justify-between">
+          <div>
+            <div class="w-8 h-8 rounded-xl bg-amber-500 text-zinc-950 font-black flex items-center justify-center text-xs mb-3">2</div>
+            <h4 class="text-white font-bold text-sm mb-1">Özel Notlar & Gönder</h4>
+            <p class="text-zinc-400 text-xs leading-relaxed">
+              Misafirin özel pişme (<em>Az pişmiş</em>), alerjen veya sunum istekleri girilir. "Mutfağa Gönder"e basılır.
+            </p>
+          </div>
+          <span class="text-[10px] text-amber-400 font-mono mt-3">⚡ Anlık Veritabanı Kaydı</span>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="p-5 rounded-3xl bg-dark-850 border border-dark-700 flex flex-col justify-between">
+          <div>
+            <div class="w-8 h-8 rounded-xl bg-emerald-500 text-zinc-950 font-black flex items-center justify-center text-xs mb-3">3</div>
+            <h4 class="text-white font-bold text-sm mb-1">Mutfak Zili & Yazıcı</h4>
+            <p class="text-zinc-400 text-xs leading-relaxed">
+              KDS ekranında çift tonlu zil çalar, sipariş kartı belirir ve 80mm termal adisyon yazıcıdan otomatik çıkar.
+            </p>
+          </div>
+          <span class="text-[10px] text-emerald-400 font-mono mt-3">👨‍🍳 Tablet / KDS & Yazıcı</span>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="p-5 rounded-3xl bg-dark-850 border border-dark-700 flex flex-col justify-between">
+          <div>
+            <div class="w-8 h-8 rounded-xl bg-emerald-500 text-zinc-950 font-black flex items-center justify-center text-xs mb-3">4</div>
+            <h4 class="text-white font-bold text-sm mb-1">Hazırlanıyor & Tamam</h4>
+            <p class="text-zinc-400 text-xs leading-relaxed">
+              Şef "Hazırlanıyor" butonuna basar. Tabak çıktığında "Tamamlandı"ya basılarak sipariş kapatılır, masa durumu güncellenir.
+            </p>
+          </div>
+          <span class="text-[10px] text-emerald-400 font-mono mt-3">📊 Yönetim Raporlarına Yansır</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 1: GARSON TERMINALI (MOBILE DEVICE MOCKUP) -->
+  <section id="garson" class="py-20 px-4 sm:px-8 max-w-6xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <!-- Info Left -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold">
+          EKRAN 1 • MOBİL ÖNCELİKLİ
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white leading-tight">
+          Garson Sipariş Terminali
+        </h2>
+        <p class="text-zinc-400 text-sm leading-relaxed">
+          Garsonların akıllı telefon ve el terminallerinden tek elle rahatça kullanabileceği ergonomik arayüz.
+        </p>
+
+        <ul class="space-y-3 text-xs sm:text-sm text-zinc-300">
+          <li class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong>Dinamik Masa Seçimi:</strong> Boş masalar yeşil, mutfakta siparişi olanlar kehribar rozetle gösterilir.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong>Hiyerarşik Kategori Hapları:</strong> Yiyecekler ➔ Başlangıçlar ➔ Soğuk Başlangıçlar arasında anında kaydırmalı geçiş.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong>Özel Pişme & Not Popover'ı:</strong> <em>"Az Pişmiş"</em>, <em>"Buzsuz"</em>, <em>"Glutensiz"</em> hızlı seçim butonları.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong>Alt Yüzen Sepet Barı:</strong> Toplam seçilen porsiyon sayısı ve tek tuşla sipariş onay modalı.</span>
+          </li>
+        </ul>
+
+        <div class="pt-2">
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 bg-dark-800 px-3 py-1.5 rounded-xl border border-dark-700">
+            📱 Tüm iOS & Android Tarayıcılarıyla %100 Uyumlu
+          </span>
+        </div>
+      </div>
+
+      <!-- Phone Frame Right -->
+      <div class="lg:col-span-7 flex justify-center">
+        <!-- Smartphone Mockup Container -->
+        <div class="w-full max-w-[340px] sm:max-w-[360px] bg-dark-950 border-[6px] border-zinc-700/80 rounded-[44px] shadow-2xl glow-gold p-3 relative overflow-hidden">
+          <!-- Speaker Notch -->
+          <div class="w-28 h-4 bg-zinc-800 rounded-full mx-auto mb-3"></div>
+
+          <!-- Phone Screen Inner Content -->
+          <div class="bg-[#090d16] rounded-[32px] p-3 text-xs border border-zinc-800 flex flex-col h-[580px] overflow-hidden justify-between">
+            <!-- Terminal Header -->
+            <div class="border-b border-zinc-800 pb-2.5 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold text-[11px] text-amber-400">Bella Vista İtalyan</span>
+                <span class="px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 font-bold text-[10px]">
+                  MASA: Teras 02 ●
+                </span>
+              </div>
+              <div class="bg-zinc-900 rounded-xl px-2.5 py-1.5 text-[10px] text-zinc-400 border border-zinc-800 flex items-center gap-1.5">
+                <svg class="w-3 h-3 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span>Yemek veya içecek ara...</span>
+              </div>
+            </div>
+
+            <!-- Categories Tabs -->
+            <div class="py-2 space-y-1.5">
+              <div class="flex gap-1.5 overflow-x-auto pb-1">
+                <span class="px-3 py-1 rounded-xl bg-amber-500 text-zinc-950 font-bold text-[10px]">Yiyecekler</span>
+                <span class="px-3 py-1 rounded-xl bg-zinc-800 text-zinc-400 font-medium text-[10px]">İçecekler</span>
+              </div>
+              <div class="flex gap-1 overflow-x-auto">
+                <span class="px-2.5 py-0.5 rounded-lg bg-zinc-200 text-zinc-950 font-bold text-[9px]">Başlangıçlar</span>
+                <span class="px-2.5 py-0.5 rounded-lg bg-zinc-800 text-zinc-400 text-[9px]">Ana Yemekler</span>
+                <span class="px-2.5 py-0.5 rounded-lg bg-zinc-800 text-zinc-400 text-[9px]">Tatlılar</span>
+              </div>
+            </div>
+
+            <!-- Menu Cards Mockup -->
+            <div class="flex-1 space-y-2 overflow-y-auto pr-0.5">
+              <!-- Item 1 (Selected) -->
+              <div class="p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/40">
+                <div class="flex items-start justify-between gap-1">
+                  <span class="font-bold text-white text-[11px]">Taze Burrata Peyniri</span>
+                  <span class="bg-amber-400 text-zinc-950 text-[9px] font-black px-1.5 rounded">Not: Pesto Bol</span>
+                </div>
+                <p class="text-zinc-400 text-[9px] mt-0.5 line-clamp-1">Organik salkım domates ve balzamik glaze ile</p>
+                <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-zinc-800/80">
+                  <span class="text-[9px] text-amber-400/90 font-medium">⚠️ Süt Ürünü</span>
+                  <div class="flex items-center gap-1.5 bg-zinc-950 px-1.5 py-0.5 rounded-lg border border-amber-500/40">
+                    <span class="text-zinc-400 text-[10px]">-</span>
+                    <span class="text-amber-400 font-black text-[10px]">2</span>
+                    <span class="text-amber-400 text-[10px]">+</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="p-2.5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+                <div class="flex items-start justify-between gap-1">
+                  <span class="font-bold text-white text-[11px]">Dry Aged Dana Antrikot</span>
+                  <span class="text-[9px] text-zinc-400">+ Not</span>
+                </div>
+                <p class="text-zinc-400 text-[9px] mt-0.5 line-clamp-1">28 gün dinlendirilmiş, trüflü patates püresi ile</p>
+                <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-zinc-800/80">
+                  <span class="text-[9px] text-zinc-500 font-medium">5★ Gurme Tabak</span>
+                  <button class="bg-amber-500 text-zinc-950 font-bold px-2 py-0.5 rounded-lg text-[9px]">+ Ekle</button>
+                </div>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="p-2.5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+                <div class="flex items-start justify-between gap-1">
+                  <span class="font-bold text-white text-[11px]">Geleneksel Tiramisu</span>
+                </div>
+                <p class="text-zinc-400 text-[9px] mt-0.5 line-clamp-1">Mascarpone kreması ve saf kakao ile</p>
+                <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-zinc-800/80">
+                  <span class="text-[9px] text-amber-400/80">⚠️ Gluten, Süt</span>
+                  <button class="bg-amber-500 text-zinc-950 font-bold px-2 py-0.5 rounded-lg text-[9px]">+ Ekle</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Cart Mockup -->
+            <div class="mt-2 p-2 rounded-2xl bg-zinc-950 border border-amber-500/40 flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <div class="w-6 h-6 rounded-lg bg-amber-500 text-zinc-950 font-black text-[10px] flex items-center justify-center">2</div>
+                <span class="text-[10px] font-bold text-white">Teras 02</span>
+              </div>
+              <button class="bg-gradient-to-r from-amber-400 to-amber-600 text-zinc-950 font-black text-[9px] px-3 py-1.5 rounded-xl shadow">
+                MUTFAĞA GÖNDER ➔
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 2: MUTFAK EKRANI (KDS) & 80mm TERMAL ADİSYON -->
+  <section id="mutfak" class="py-20 bg-dark-900/80 border-y border-dark-800 px-4 sm:px-8">
+    <div class="max-w-6xl mx-auto space-y-12">
+      <div class="text-center max-w-2xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold mb-3">
+          EKRAN 2 • TABLET & DESKTOP KDS
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white">
+          Mutfak Ekranı & Anlık Yazıcı Çıktısı
+        </h2>
+        <p class="text-zinc-400 text-xs sm:text-sm mt-2">
+          Garson siparişi gönderdiği anda mutfakta sesli zil çalar, sipariş kartı belirir ve eşzamanlı olarak 80mm termal fiş yazıcıdan çıkar.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Mutfak Ekranı Tablet Mockup (Left 8 Cols) -->
+        <div class="lg:col-span-8 bg-dark-950 border border-zinc-800 rounded-3xl p-5 shadow-2xl glow-emerald">
+          <!-- KDS Header Bar -->
+          <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="font-black text-white text-sm">CANLI MUTFAK EKRANI (KDS)</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span class="px-2.5 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold">🔔 Otel Zili: Açık</span>
+              <span class="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-300 font-bold">🖨️ Oto Yazdır: Açık</span>
+            </div>
+          </div>
+
+          <!-- KDS Orders Grid Preview -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+            <!-- Order Card 1: PENDING -->
+            <div class="rounded-2xl bg-[#111726] border border-amber-500/40 p-3.5 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div>
+                    <span class="text-[9px] font-bold text-amber-400 uppercase">İTALYAN A LA CARTE</span>
+                    <h4 class="text-lg font-black text-white">Masa 1 <span class="text-xs text-zinc-500 font-mono">#1</span></h4>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 font-mono font-bold text-xs">
+                    ⏱️ 3 dk
+                  </span>
+                </div>
+                <div class="text-[10px] text-zinc-400 mb-2">Garson: Ahmet Yılmaz</div>
+
+                <div class="space-y-1.5 pt-2 border-t border-zinc-800 text-xs">
+                  <div class="p-1.5 rounded-lg bg-zinc-900 border border-zinc-800">
+                    <div class="font-bold text-white flex items-center gap-1.5">
+                      <span class="text-amber-400 font-black">2x</span> Trüflü Çıtır Karides
+                    </div>
+                    <span class="text-[10px] font-bold text-amber-300 bg-amber-400/10 px-1.5 rounded mt-0.5 inline-block">
+                      👉 Not: Trüf yağı bol olsun
+                    </span>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-zinc-900 border border-zinc-800">
+                    <div class="font-bold text-white flex items-center gap-1.5">
+                      <span class="text-amber-400 font-black">1x</span> Demleme Rize Çayı
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between gap-1.5 mt-3 pt-2.5 border-t border-zinc-800">
+                <button class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-300 text-[10px] font-bold">🖨️ Yazdır ✓</button>
+                <div class="flex gap-1">
+                  <button class="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-[10px] font-bold">Hazırlanıyor</button>
+                  <button class="px-3 py-1 rounded-lg bg-emerald-500 text-zinc-950 text-[10px] font-black">Tamamlandı</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order Card 2: PREPARING (URGENT) -->
+            <div class="rounded-2xl bg-[#1f0f12] border border-rose-500/60 p-3.5 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div>
+                    <span class="text-[9px] font-bold text-rose-400 uppercase">STEAKHOUSE</span>
+                    <h4 class="text-lg font-black text-white">VIP Salon A <span class="text-xs text-zinc-500 font-mono">#2</span></h4>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-lg bg-rose-500 text-white font-mono font-black text-xs animate-pulse">
+                    🔥 14 dk
+                  </span>
+                </div>
+                <div class="text-[10px] text-zinc-400 mb-2">Garson: Mehmet Kaya</div>
+
+                <div class="space-y-1.5 pt-2 border-t border-zinc-800 text-xs">
+                  <div class="p-1.5 rounded-lg bg-zinc-900 border border-zinc-800">
+                    <div class="font-bold text-white flex items-center gap-1.5">
+                      <span class="text-amber-400 font-black">1x</span> Dry Aged T-Bone Steak
+                    </div>
+                    <span class="text-[10px] font-bold text-amber-300 bg-amber-400/10 px-1.5 rounded mt-0.5 inline-block">
+                      👉 Not: Orta-Az Pişmiş (Medium-Rare)
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between gap-1.5 mt-3 pt-2.5 border-t border-zinc-800">
+                <button class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-300 text-[10px] font-bold">🖨️ Yazdır</button>
+                <button class="px-4 py-1 rounded-lg bg-emerald-500 text-zinc-950 text-[10px] font-black">Tamamlandı</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 80mm Termal Adisyon Preview (Right 4 Cols) -->
+        <div class="lg:col-span-4 flex flex-col items-center">
+          <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span>🖨️ 80mm Termal Fiş Önizlemesi</span>
+          </span>
+
+          <!-- Receipt Paper -->
+          <div class="w-full max-w-[280px] bg-white text-zinc-950 p-4 font-mono shadow-2xl text-[11px] leading-tight receipt-tear">
+            <div class="text-center pb-2 border-b border-dashed border-zinc-400 mb-2">
+              <h4 class="font-black text-xs">MERİT HOTELS & RESORTS</h4>
+              <div class="text-[10px] font-bold">Bella Vista İtalyan A La Carte</div>
+              <div class="text-[9px] mt-0.5">*** MUTFAK SİPARİŞ FİŞİ ***</div>
+            </div>
+
+            <div class="pb-2 border-b border-dashed border-zinc-400 mb-2 space-y-0.5">
+              <div class="flex justify-between font-black text-sm">
+                <span>MASA: Masa 1</span>
+                <span>#1</span>
+              </div>
+              <div>Garson: Ahmet Yılmaz</div>
+              <div>Saat: 20:02:47</div>
+              <div class="font-bold border border-zinc-950 p-1 mt-1 text-[10px]">
+                MASA NOTU: VIP Misafir - Doğum günü
+              </div>
+            </div>
+
+            <div class="pb-3 border-b border-dashed border-zinc-400 mb-2">
+              <div class="flex justify-between font-bold text-[9px] mb-1">
+                <span>ADET / ÜRÜN</span>
+                <span>DURUM</span>
+              </div>
+              <div class="space-y-2 mt-1">
+                <div>
+                  <div class="font-black text-xs">2x Trüflü Çıtır Karides</div>
+                  <div class="font-bold text-[10px] pl-2">&gt;&gt; ÖZEL: Trüf yağı bol olsun</div>
+                  <div class="text-[9px] pl-2 text-zinc-700">[Alerjen: Kabuklular, Gluten]</div>
+                </div>
+                <div>
+                  <div class="font-black text-xs">1x Demleme Rize Çayı</div>
+                  <div class="font-bold text-[10px] pl-2">&gt;&gt; ÖZEL: Limon dilimi ile</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-center text-[8px] text-zinc-600 mb-4">
+              * Ultra All-Inclusive - Fiyat Yoktur *
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 3: HİYERARŞİK MENÜ & YÖNETİM MODÜLÜ -->
+  <section id="tanimlar" class="py-20 px-4 sm:px-8 max-w-6xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold mb-3">
+        EKRAN 3 • YÖNETİM & TANIMLAR
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-white">
+        Çok Düzeyli Menü Ağacı & Tanımlar
+      </h2>
+      <p class="text-zinc-400 text-xs sm:text-sm mt-2">
+        Alakart restoranlar, masalar, garsonlar ve sınırsız derinlikte hiyerarşik kategori & fiyatsız yemek yönetimi.
+      </p>
+    </div>
+
+    <!-- Tree Structure Interactive Visual -->
+    <div class="bg-dark-900 border border-dark-700 rounded-3xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b border-dark-700 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+          <span class="font-bold text-white text-sm">Hiyerarşik Kategori & Yemek Ağacı Örneği</span>
+        </div>
+        <span class="text-xs text-amber-400 font-mono">Fiyat Alanı Bulunmaz</span>
+      </div>
+
+      <div class="space-y-3 font-mono text-xs">
+        <!-- Root 1 -->
+        <div class="p-3 rounded-2xl bg-dark-850 border border-amber-500/40">
+          <div class="font-bold text-amber-300 flex items-center gap-2">
+            <span>📁 [Kök Kategori]</span>
+            <span class="text-white text-sm">Yiyecekler</span>
+          </div>
+
+          <div class="ml-6 mt-2 space-y-2 border-l border-zinc-700 pl-4">
+            <!-- Sub 1 -->
+            <div class="font-bold text-zinc-200 flex items-center gap-2">
+              <span>└─ 📁 [Alt Kategori]</span>
+              <span>Başlangıçlar</span>
+            </div>
+
+            <div class="ml-6 space-y-1.5 border-l border-zinc-800 pl-4 text-zinc-400">
+              <div class="text-cyan-300 font-semibold">└─ 📁 [Alt-Alt Kategori] Soğuk Başlangıçlar</div>
+              <div class="ml-6 text-zinc-300 font-sans text-xs">
+                🍽️ <strong>Taze Burrata Peyniri</strong> <span class="text-[10px] text-zinc-500">(Özellikler: Organik domates, fesleğen pesto sos)</span>
+              </div>
+              <div class="ml-6 text-zinc-300 font-sans text-xs">
+                🍽️ <strong>Dana Carpaccio</strong> <span class="text-[10px] text-zinc-500">(Özellikler: Trüf yağı, 24 aylık parmesan)</span>
+              </div>
+              
+              <div class="text-cyan-300 font-semibold mt-2">└─ 📁 [Alt-Alt Kategori] Sıcak Başlangıçlar</div>
+              <div class="ml-6 text-zinc-300 font-sans text-xs">
+                🍽️ <strong>Trüflü Çıtır Karides</strong> <span class="text-[10px] text-zinc-500">(Özellikler: Panko kaplama, tatlı-acı mayonez)</span>
+              </div>
+            </div>
+
+            <!-- Sub 2 -->
+            <div class="font-bold text-zinc-200 flex items-center gap-2 mt-3">
+              <span>└─ 📁 [Alt Kategori]</span>
+              <span>Ana Yemekler</span>
+            </div>
+            <div class="ml-6 space-y-1.5 border-l border-zinc-800 pl-4 text-zinc-400">
+              <div class="text-cyan-300 font-semibold">└─ 📁 [Alt-Alt Kategori] Et & Izgaralar</div>
+              <div class="ml-6 text-zinc-300 font-sans text-xs">
+                🍽️ <strong>Dry Aged Dana Antrikot (300g)</strong> <span class="text-[10px] text-zinc-500">(28 gün dinlendirilmiş)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Root 2 -->
+        <div class="p-3 rounded-2xl bg-dark-850 border border-amber-500/40">
+          <div class="font-bold text-amber-300 flex items-center gap-2">
+            <span>📁 [Kök Kategori]</span>
+            <span class="text-white text-sm">İçecekler</span>
+          </div>
+
+          <div class="ml-6 mt-2 space-y-2 border-l border-zinc-700 pl-4">
+            <div class="font-bold text-zinc-200">└─ 📁 [Alt Kategori] Sıcak İçecekler ➔ Çaylar / Kahveler</div>
+            <div class="font-bold text-zinc-200">└─ 📁 [Alt Kategori] Soğuk İçecekler ➔ Alkolsüz / Alkollü (Kokteyller, Şaraplar)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK & ARCHITECTURE -->
+  <section id="mimari" class="py-20 bg-dark-900/60 border-t border-dark-800 px-4 sm:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs uppercase tracking-widest text-purple-400 font-bold">GÜÇLÜ MİMARİ</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-white mt-1">Teknoloji Yığını & Altyapı</h2>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+        <div class="p-5 rounded-3xl bg-dark-850 border border-dark-700">
+          <div class="text-amber-400 font-mono text-2xl font-bold mb-1">PostgreSQL</div>
+          <span class="text-white font-bold text-xs block">İlişkisel Veritabanı</span>
+          <span class="text-zinc-500 text-[10px]">Alakart, Masa, Menü & Sipariş</span>
+        </div>
+
+        <div class="p-5 rounded-3xl bg-dark-850 border border-dark-700">
+          <div class="text-cyan-400 font-mono text-2xl font-bold mb-1">Prisma ORM</div>
+          <span class="text-white font-bold text-xs block">Tip Güvenli Veri Modeli</span>
+          <span class="text-zinc-500 text-[10px]">Self-referencing Tree & Migrations</span>
+        </div>
+
+        <div class="p-5 rounded-3xl bg-dark-850 border border-dark-700">
+          <div class="text-purple-400 font-mono text-2xl font-bold mb-1">Next.js 16</div>
+          <span class="text-white font-bold text-xs block">React 19 & App Router</span>
+          <span class="text-zinc-500 text-[10px]">Server Actions & Turbopack</span>
+        </div>
+
+        <div class="p-5 rounded-3xl bg-dark-850 border border-dark-700">
+          <div class="text-emerald-400 font-mono text-2xl font-bold mb-1">Tailwind CSS</div>
+          <span class="text-white font-bold text-xs block">Modern & Responsive UI</span>
+          <span class="text-zinc-500 text-[10px]">@media print 80mm Termal Çıktı</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Footer -->
+  <footer class="py-12 border-t border-dark-800 text-center px-4">
+    <div class="max-w-md mx-auto space-y-4">
+      <div class="w-12 h-12 rounded-2xl bg-amber-500 text-zinc-950 flex items-center justify-center font-black text-xl mx-auto shadow-lg shadow-amber-500/20">
+        M
+      </div>
+      <h3 class="text-lg font-black text-white">Merit A La Carte Restoran Sistemi</h3>
+      <p class="text-zinc-400 text-xs">
+        5 yıldızlı otel kalitesinde, fiyat takipsiz, anlık mutfak zilli ve adisyon yazdırmalı yönetim platformu.
+      </p>
+
+      <div class="pt-2 flex items-center justify-center gap-2">
+        <span class="px-4 py-2 rounded-2xl bg-dark-850 border border-dark-700 text-amber-400 font-bold text-xs">
+          ★ Merit Hotels & Resorts Operasyonel Standartı
+        </span>
+      </div>
+
+      <div class="text-[10px] text-zinc-600 pt-4">
+        © 2026 Merit Hotels & Resorts. Tüm Hakları Saklıdır.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

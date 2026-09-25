@@ -1,0 +1,104 @@
+version: "3.8"
+
+# ==============================================================================
+# Merit A La Carte - Coolify Docker Compose Konfigürasyonu
+# Domain: http://alacarte.erkanerdem.online (ve HTTPS Let's Encrypt)
+# Mimari: Ayrı Container'lar (Next.js 16 Web Uygulaması + PostgreSQL 16)
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. PostgreSQL Veritabanı Servisi
+  # ----------------------------------------------------------------------------
+  alacarte-db:
+    image: postgres:16-alpine
+    container_name: alacarte-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-alacarte_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-AlacarteSecret2026!}
+      POSTGRES_DB: ${DB_NAME:-alacarte_db}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
+      TZ: Europe/Istanbul
+    volumes:
+      - alacarte_pgdata:/var/lib/postgresql/data
+    networks:
+      - alacarte_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-alacarte_user} -d ${DB_NAME:-alacarte_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    command: >
+      postgres
+      -c max_connections=150
+      -c shared_buffers=256MB
+      -c effective_cache_size=768MB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=4MB
+
+  # ----------------------------------------------------------------------------
+  # 2. Next.js 16 A La Carte Uygulaması
+  # ----------------------------------------------------------------------------
+  alacarte-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: alacarte-web
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-alacarte_user}:${DB_PASSWORD:-AlacarteSecret2026!}@alacarte-db:5432/${DB_NAME:-alacarte_db}?schema=public
+      DB_HOST: alacarte-db
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_TELEMETRY_DISABLED: 1
+      TZ: Europe/Istanbul
+    depends_on:
+      alacarte-db:
+        condition: service_healthy
+    networks:
+      - alacarte_network
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+
+      # HTTP & HTTPS Yönlendirme Kuralları
+      - "traefik.http.routers.alacarte.rule=Host(`alacarte.erkanerdem.online`)"
+      - "traefik.http.routers.alacarte.entrypoints=http,https"
+      - "traefik.http.routers.alacarte.tls=true"
+      - "traefik.http.routers.alacarte.tls.certresolver=letsencrypt"
+
+      # Port Yönlendirmesi (Container Port 3000)
+      - "traefik.http.services.alacarte.loadbalancer.server.port=3000"
+      - "traefik.http.services.alacarte.loadbalancer.healthcheck.path=/api/health"
+      - "traefik.http.services.alacarte.loadbalancer.healthcheck.interval=15s"
+      - "traefik.http.services.alacarte.loadbalancer.healthcheck.timeout=5s"
+
+      # HTTP -> HTTPS Otomatik Yönlendirme
+      - "traefik.http.middlewares.alacarte-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.alacarte-http.rule=Host(`alacarte.erkanerdem.online`)"
+      - "traefik.http.routers.alacarte-http.entrypoints=http"
+      - "traefik.http.routers.alacarte-http.middlewares=alacarte-redirect"
+
+# ==============================================================================
+# Kalıcı Veri Alanları (Volumes)
+# ==============================================================================
+volumes:
+  alacarte_pgdata:
+    driver: local
+
+# ==============================================================================
+# Ağlar (Networks)
+# ==============================================================================
+networks:
+  alacarte_network:
+    driver: bridge
+  coolify:
+    external: true

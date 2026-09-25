@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  WAITER
+  KITCHEN
+}
+
+enum TableStatus {
+  EMPTY
+  OCCUPIED
+}
+
+enum OrderStatus {
+  PENDING      // Mutfakta bekliyor / Yeni sipariş
+  PREPARING    // Mutfakta hazırlanıyor
+  COMPLETED    // Mutfakta tamamlandı
+  CANCELLED    // İptal edildi
+}
+
+model User {
+  id           String             @id @default(uuid())
+  name         String
+  username     String             @unique
+  pin          String             // Hızlı garson/mutfak dokunmatik giriş PIN kodu (örn: 1234)
+  role         Role               @default(WAITER)
+  active       Boolean            @default(true)
+  orders       Order[]
+  assignedTo   RestaurantUser[]
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+model Restaurant {
+  id          String             @id @default(uuid())
+  name        String             // örn: "İtalyan A La Carte", "Ege & Balık A La Carte"
+  code        String             @unique // örn: "ITALIAN", "FISH"
+  description String?
+  active      Boolean            @default(true)
+  tables      RestaurantTable[]
+  categories  Category[]
+  orders      Order[]
+  users       RestaurantUser[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model RestaurantUser {
+  id           String      @id @default(uuid())
+  userId       String
+  restaurantId String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, restaurantId])
+}
+
+model RestaurantTable {
+  id           String       @id @default(uuid())
+  name         String       // örn: "Masa 1", "Teras 04", "VIP Loca 1"
+  capacity     Int          @default(4)
+  status       TableStatus  @default(EMPTY)
+  restaurantId String
+  restaurant   Restaurant   @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orders       Order[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Category {
+  id           String       @id @default(uuid())
+  name         String       // örn: "Yiyecekler", "İçecekler", "Sıcak İçecekler", "Soğuk İçecekler", "Alkollü İçecekler"
+  description  String?
+  displayOrder Int          @default(0)
+  active       Boolean      @default(true)
+  
+  // Hiyerarşik Kategori Ağacı (Self-relation: Kategori -> Alt Kategori -> Alt Kategori...)
+  parentId     String?
+  parent       Category?    @relation("SubCategories", fields: [parentId], references: [id], onDelete: Cascade)
+  children     Category[]   @relation("SubCategories")
+
+  // Belirli bir alakarta özel olabilir (örn sadece İtalyan Alakart'ta geçerli menü) veya null ise tüm alakartlarda görünür
+  restaurantId String?
+  restaurant   Restaurant?  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  
+  items        MenuItem[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model MenuItem {
+  id           String       @id @default(uuid())
+  name         String       // örn: "T-Bone Steak", "Espresso", "Zeytinyağlı Enginar"
+  description  String?      // Yemeğin özellikleri, pişirme detayları, içeriği
+  allergens    String?      // Alerjen uyarıları (Gluten, Laktoz vb.)
+  active       Boolean      @default(true)
+  displayOrder Int          @default(0)
+
+  categoryId   String
+  category     Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  orderItems   OrderItem[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Order {
+  id           String            @id @default(uuid())
+  orderNumber  Int               @default(autoincrement())
+  status       OrderStatus       @default(PENDING)
+  notes        String?           // Masaya özel genel not (örn: "Doğum günü kutlaması masası")
+  
+  restaurantId String
+  restaurant   Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  
+  tableId      String
+  table        RestaurantTable   @relation(fields: [tableId], references: [id], onDelete: Cascade)
+
+  waiterId     String
+  waiter       User              @relation(fields: [waiterId], references: [id], onDelete: Cascade)
+
+  items        OrderItem[]
+  printedAt    DateTime?         // Termal fişin mutfakta basıldığı zaman
+  completedAt  DateTime?         // Mutfakta "Tamamlandı" butonuna basıldığı an
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model OrderItem {
+  id          String      @id @default(uuid())
+  orderId     String
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  menuItemId  String
+  menuItem    MenuItem    @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+
+  quantity    Int         @default(1)
+  itemNotes   String?     // örn: "Az pişmiş", "Buzsuz", "Sos ayrı", "Sütlü"
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+}

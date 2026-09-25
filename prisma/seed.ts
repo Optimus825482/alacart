@@ -195,6 +195,46 @@ async function main() {
     },
   });
 
+  // Genel Mutfak Kullanıcısı (Kullanıcı Adı: mutfak, Şifre: 1234)
+  await prisma.user.create({
+    data: {
+      name: "Merit Mutfak Ekibi",
+      username: "mutfak",
+      password: "1234",
+      pin: "2000",
+      role: Role.KITCHEN,
+      assignedTo: {
+        create: [
+          { restaurantId: roofGarden.id },
+          { restaurantId: steakHouse.id },
+          { restaurantId: blueSea.id },
+          { restaurantId: mandarin.id },
+          { restaurantId: bellaMerit.id },
+        ],
+      },
+    },
+  });
+
+  // Genel Garson Kullanıcısı (Kullanıcı Adı: garson, Şifre: 1234)
+  await prisma.user.create({
+    data: {
+      name: "Merit Garson Ekibi",
+      username: "garson",
+      password: "1234",
+      pin: "1234",
+      role: Role.WAITER,
+      assignedTo: {
+        create: [
+          { restaurantId: roofGarden.id },
+          { restaurantId: steakHouse.id },
+          { restaurantId: blueSea.id },
+          { restaurantId: mandarin.id },
+          { restaurantId: bellaMerit.id },
+        ],
+      },
+    },
+  });
+
   console.log("Mutfak şefleri ve garson kullanıcıları başarıyla oluşturuldu.");
 
   // 5. MASALARIN OLUŞTURULMASI (Her Restoranın Gerçekçi Salon & Masa Düzeni)

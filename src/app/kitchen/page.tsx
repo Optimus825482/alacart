@@ -199,6 +199,30 @@ export default function KitchenKDSPage() {
   if (!session?.activeRestaurantId) {
     return (
       <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-4xl mx-auto w-full justify-center">
+        {/* Üst Bar: Kullanıcı Bilgisi ve Çıkış Butonu */}
+        <div className="flex items-center justify-between pb-4 mb-6 border-b border-zinc-800">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <ChefHat className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-[10px] uppercase font-bold text-zinc-500 block">MUTFAK TERMİNALİ</span>
+              <span className="text-xs text-zinc-300">
+                Giriş Yapan: <strong className="text-white">{session?.name}</strong>
+              </span>
+            </div>
+          </div>
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-900/60 transition-all shadow-sm"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Çıkış Yap</span>
+            </button>
+          </form>
+        </div>
+
         <div className="text-center mb-8">
           <span className="text-xs uppercase tracking-widest text-emerald-400 font-bold block mb-1">
             MUTFAK İSTASYONU SEÇİMİ
@@ -207,7 +231,7 @@ export default function KitchenKDSPage() {
             Sayın {session?.name}, Hangi Alakartın Mutfağını Açmak İstiyorsunuz?
           </h2>
           <p className="text-zinc-400 text-xs sm:text-sm mt-1">
-            Her alakart restoranın mutfak ekranı ve termal adisyon yazıcısı tamamen bağımsızdır.
+            Her alakart restoranın mutfak ekranı ve termal adisyon yazıcısı tamamen bağımsızdır. Lütfen görevli olduğunuz alakartı seçin.
           </p>
         </div>
 

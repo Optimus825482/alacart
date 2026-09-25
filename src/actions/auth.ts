@@ -46,14 +46,9 @@ export async function loginAction(formData: FormData) {
     }
 
     const assignedIds = user.assignedTo.map((a) => a.restaurantId);
-    let defaultRestaurantId: string | null = null;
-    let defaultRestaurantName: string | null = null;
-
-    // Eğer mutfak veya garson ise ve tek bir restorana atanmışsa doğrudan o restoranı seçili yap
-    if (assignedIds.length === 1) {
-      defaultRestaurantId = assignedIds[0];
-      defaultRestaurantName = user.assignedTo[0].restaurant.name;
-    }
+    // Garson ve Mutfak kullanıcıları sisteme giriş yaptığında her zaman önce alakart seçimi yapacak
+    const defaultRestaurantId: string | null = null;
+    const defaultRestaurantName: string | null = null;
 
     const session: SessionUser = {
       id: user.id,

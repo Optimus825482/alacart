@@ -22,21 +22,20 @@ echo ">> Veritabanı aktif ve hazır!"
 
 # 2. Prisma Şemasını Senkronize Et (db push)
 echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
-npx prisma db push --skip-generate
+npx prisma db push --skip-generate --accept-data-loss
 
 # 3. Başlangıç Tohum (Seed) Verileri
 echo ">> Başlangıç verileri kontrol ediliyor..."
-# Eğer veritabanı boşsa tohum verileri otomatik yüklensin
 node -e "
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 async function check() {
-  const count = await prisma.user.count();
-  if (count === 0) {
-    console.log('>> Veritabanı boş, varsayılan menü ve kullanıcılar yükleniyor (seed)...');
+  const restCount = await prisma.restaurant.count();
+  if (restCount < 5) {
+    console.log('>> 5 İmza Merit Restoranı ve kullanıcılar yükleniyor (seed)...');
     require('child_process').execSync('npx tsx prisma/seed.ts', { stdio: 'inherit' });
   } else {
-    console.log('>> Veritabanında mevcut veri bulundu, seed adımı atlandı.');
+    console.log('>> Veritabanında restoranlar mevcut (' + restCount + ' adet), seed adımı atlandı.');
   }
 }
 check().finally(() => prisma.\$disconnect());

@@ -30,7 +30,7 @@ model User {
   id           String             @id @default(uuid())
   name         String             // Ad Soyad
   username     String             @unique // Giriş Kullanıcı Adı
-  password     String             // Şifre (Giriş için)
+  password     String             @default("1234") // Şifre (Giriş için)
   pin          String?            // Hızlı PIN kodu (isteğe bağlı)
   role         Role               @default(WAITER)
   active       Boolean            @default(true)

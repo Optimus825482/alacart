@@ -36,6 +36,7 @@ export default function AdminMenuPage() {
   const [catName, setCatName] = useState("");
   const [catParentId, setCatParentId] = useState<string>("");
   const [catDescription, setCatDescription] = useState("");
+  const [modalRestId, setModalRestId] = useState<string>("");
 
   // Ürün Ekleme / Düzenleme Modalı
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
@@ -59,8 +60,10 @@ export default function AdminMenuPage() {
     if (treeRes.success) {
       setCategoriesTree(treeRes.data || []);
       setAllCategoriesFlat(treeRes.allCategories || []);
-      if (!itemCategoryId && treeRes.allCategories && treeRes.allCategories.length > 0) {
+      if (treeRes.allCategories && treeRes.allCategories.length > 0) {
         setItemCategoryId(treeRes.allCategories[0].id);
+      } else {
+        setItemCategoryId("");
       }
     }
 
@@ -84,13 +87,14 @@ export default function AdminMenuPage() {
       name: catName,
       description: catDescription,
       parentId: catParentId || null,
-      restaurantId: selectedRestId || null,
+      restaurantId: modalRestId || selectedRestId || null,
     });
     setSubmitting(false);
     setIsCatModalOpen(false);
     setCatName("");
     setCatDescription("");
     setCatParentId("");
+    setModalRestId("");
     loadData();
   };
 
@@ -193,6 +197,11 @@ export default function AdminMenuPage() {
             >
               {category.name}
             </span>
+            {category.restaurant && (
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                {category.restaurant.name}
+              </span>
+            )}
             <span className="text-[10px] text-zinc-500">
               ({category._count?.children || 0} Alt Kategori, {category._count?.items || 0} Ürün)
             </span>
@@ -296,7 +305,7 @@ export default function AdminMenuPage() {
           </span>
           <h2 className="text-2xl font-black text-white">Menü & Hiyerarşik Kategoriler</h2>
           <span className="text-xs text-zinc-400">
-            Kategori ➔ Alt Kategori ➔ Alt Kategori & Yemek/İçecek Tanımları (Fiyat Takibi Yoktur)
+            Alakarta Özel Kategori ➔ Alt Kategori & Yemek/İçecek Tanımları (Fiyat Takibi Yoktur)
           </span>
         </div>
 
@@ -307,6 +316,7 @@ export default function AdminMenuPage() {
               setCatParentId("");
               setCatName("");
               setCatDescription("");
+              setModalRestId(selectedRestId);
               setIsCatModalOpen(true);
             }}
             className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs shadow-sm"
@@ -326,12 +336,50 @@ export default function AdminMenuPage() {
         </div>
       </div>
 
+      {/* Alakart Restoran Seçim Sekmeleri */}
+      <div className="p-4 rounded-3xl bg-[#0f1422] border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Utensils className="w-4 h-4 text-amber-400" />
+          <span className="text-xs font-bold text-white">Menüsünü Düzenlemek İstediğiniz Alakart:</span>
+        </div>
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          <button
+            onClick={() => setSelectedRestId("")}
+            className={clsx(
+              "px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border",
+              !selectedRestId
+                ? "bg-amber-500 text-zinc-950 border-amber-500 shadow-md shadow-amber-500/20"
+                : "bg-zinc-900 text-zinc-400 hover:text-white border-zinc-800"
+            )}
+          >
+            🌐 Tüm Alakartlar
+          </button>
+          {restaurants.map((r) => {
+            const isSelected = selectedRestId === r.id;
+            return (
+              <button
+                key={r.id}
+                onClick={() => setSelectedRestId(r.id)}
+                className={clsx(
+                  "px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border",
+                  isSelected
+                    ? "bg-amber-500 text-zinc-950 border-amber-500 shadow-md shadow-amber-500/20"
+                    : "bg-zinc-900 text-zinc-400 hover:text-white border-zinc-800"
+                )}
+              >
+                {r.name}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Ağaç Görünümü (Tree View) */}
       {loading ? (
         <div className="p-12 text-center text-zinc-500">Yükleniyor...</div>
       ) : categoriesTree.length === 0 ? (
         <div className="p-12 text-center rounded-3xl bg-zinc-900/40 border border-zinc-800 text-zinc-500 text-sm">
-          Henüz menü kategorisi tanımlanmamış. &quot;Kök Kategori Ekle&quot; butonuna basarak başlayabilirsiniz.
+          Bu alakart restorana ait menü kategorisi tanımlanmamış. &quot;Kök Kategori Ekle&quot; butonuna basarak menü oluşturabilirsiniz.
         </div>
       ) : (
         <div className="p-4 rounded-3xl bg-[#0f1422] border border-zinc-800 shadow-xl">
@@ -360,6 +408,24 @@ export default function AdminMenuPage() {
             <form onSubmit={handleCreateCategory} className="space-y-4 text-xs">
               <div>
                 <label className="text-zinc-400 block mb-1 font-semibold">
+                  Alakart Restoran *
+                </label>
+                <select
+                  value={modalRestId}
+                  onChange={(e) => setModalRestId(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                >
+                  <option value="">-- Genel / Ortak (Tüm Alakartlar) --</option>
+                  {restaurants.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-zinc-400 block mb-1 font-semibold">
                   Üst Kategori (Hiyerarşi)
                 </label>
                 <select
@@ -370,7 +436,7 @@ export default function AdminMenuPage() {
                   <option value="">-- Ana Kategori (Kök: Örn: Yiyecekler / İçecekler) --</option>
                   {allCategoriesFlat.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.name}
+                      {c.name} {c.restaurant ? `(${c.restaurant.name})` : ""}
                     </option>
                   ))}
                 </select>
@@ -458,7 +524,7 @@ export default function AdminMenuPage() {
                 >
                   {allCategoriesFlat.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.name}
+                      {c.name} {c.restaurant ? `(${c.restaurant.name})` : ""}
                     </option>
                   ))}
                 </select>

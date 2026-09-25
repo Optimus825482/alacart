@@ -31,11 +31,12 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 async function check() {
   const restCount = await prisma.restaurant.count();
-  if (restCount < 5) {
-    console.log('>> 5 İmza Merit Restoranı ve kullanıcılar yükleniyor (seed)...');
+  const restCatCount = await prisma.category.count({ where: { restaurantId: { not: null } } });
+  if (restCount < 5 || restCatCount === 0) {
+    console.log('>> Alakart restoranlara özel menüler ve kullanıcılar yükleniyor (seed)...');
     require('child_process').execSync('npx tsx prisma/seed.ts', { stdio: 'inherit' });
   } else {
-    console.log('>> Veritabanında restoranlar mevcut (' + restCount + ' adet), seed adımı atlandı.');
+    console.log('>> Veritabanında restorana özel menüler mevcut (' + restCatCount + ' kategori), seed adımı atlandı.');
   }
 }
 check().finally(() => prisma.\$disconnect());

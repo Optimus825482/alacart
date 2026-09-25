@@ -176,17 +176,19 @@ export async function deleteTable(id: string) {
 
 export async function getCategoriesTree(restaurantId?: string) {
   try {
-    // Tüm kategorileri çekip ağaç yapısına dönüştüreceğiz
+    const whereClause: any = { active: true };
+    if (restaurantId && restaurantId !== "ALL") {
+      whereClause.restaurantId = restaurantId;
+    }
+
+    // Kategorileri çekip hiyerarşik ağaç yapısına dönüştüreceğiz
     const allCategories = await prisma.category.findMany({
-      where: {
-        active: true,
-        OR: [
-          { restaurantId: null },
-          ...(restaurantId ? [{ restaurantId }] : []),
-        ],
-      },
+      where: whereClause,
       orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
       include: {
+        restaurant: {
+          select: { id: true, name: true, code: true },
+        },
         items: {
           where: { active: true },
           orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
@@ -223,13 +225,27 @@ export async function createCategory(data: {
   restaurantId?: string | null;
 }) {
   try {
+    let targetRestId = data.restaurantId || null;
+    if (!targetRestId && data.parentId) {
+      const parent = await prisma.category.findUnique({
+        where: { id: data.parentId },
+        select: { restaurantId: true },
+      });
+      if (parent?.restaurantId) {
+        targetRestId = parent.restaurantId;
+      }
+    }
+
     const cat = await prisma.category.create({
       data: {
         name: data.name.trim(),
         description: data.description?.trim(),
         displayOrder: data.displayOrder ?? 0,
         parentId: data.parentId || null,
-        restaurantId: data.restaurantId || null,
+        restaurantId: targetRestId,
+      },
+      include: {
+        restaurant: true,
       },
     });
     revalidatePath("/admin");

@@ -275,29 +275,28 @@ async function main() {
 
   console.log("Tüm alakart masaları tanımlandı.");
 
-  // 6. HİYERARŞİK MENÜ KATEGORİLERİ VE GERÇEKÇİ LEZZETLER (FİYAT YOKTUR)
-  // Kök 1: Yiyecekler
-  const catFoods = await prisma.category.create({
-    data: { name: "Yiyecekler", description: "Tüm gurme yemek seçenekleri", displayOrder: 1 },
+  // 6. HİYERARŞİK MENÜ KATEGORİLERİ VE HER ALAKARTA ÖZEL LEZZETLER (FİYAT YOKTUR)
+  console.log("Her alakart restoran için özel menü ağacı ve lezzetler oluşturuluyor...");
+
+  // ==========================================
+  // 1. THE ROOF GARDEN MENÜSÜ
+  // ==========================================
+  const roofFoods = await prisma.category.create({
+    data: { name: "Yiyecekler", description: "The Roof Garden Uluslararası Gurme Menü", displayOrder: 1, restaurantId: roofGarden.id },
+  });
+  const roofDrinks = await prisma.category.create({
+    data: { name: "İçecekler", description: "Panoramik Kokteyller & Seçkin İçecekler", displayOrder: 2, restaurantId: roofGarden.id },
+  });
+  const roofStarters = await prisma.category.create({
+    data: { name: "Başlangıçlar", parentId: roofFoods.id, displayOrder: 1, restaurantId: roofGarden.id },
+  });
+  const roofMains = await prisma.category.create({
+    data: { name: "Uluslararası Gurme Ana Yemekler", parentId: roofFoods.id, displayOrder: 2, restaurantId: roofGarden.id },
+  });
+  const roofDesserts = await prisma.category.create({
+    data: { name: "Tatlılar", parentId: roofFoods.id, displayOrder: 3, restaurantId: roofGarden.id },
   });
 
-  // Kök 2: İçecekler
-  const catDrinks = await prisma.category.create({
-    data: { name: "İçecekler", description: "Sıcak, soğuk, şarap ve kokteyl seçenekleri", displayOrder: 2 },
-  });
-
-  // --- BAŞLANGIÇLAR ---
-  const catStarters = await prisma.category.create({
-    data: { name: "Başlangıçlar & Mezeler", parentId: catFoods.id, displayOrder: 1 },
-  });
-  const catColdStarters = await prisma.category.create({
-    data: { name: "Soğuk Başlangıçlar", parentId: catStarters.id, displayOrder: 1 },
-  });
-  const catHotStarters = await prisma.category.create({
-    data: { name: "Sıcak Başlangıçlar", parentId: catStarters.id, displayOrder: 2 },
-  });
-
-  // Soğuk Başlangıçlar
   await prisma.menuItem.createMany({
     data: [
       {
@@ -305,242 +304,463 @@ async function main() {
         description: "Organik salkım domates, fesleğen pesto sos ve 12 yıllık Modena balzamik glaze ile",
         allergens: "Süt ve Süt Ürünleri",
         imageUrl: "https://images.unsplash.com/photo-1592417817098-8f3d6ef23963?w=500&auto=format&fit=crop&q=80",
-        categoryId: catColdStarters.id,
+        categoryId: roofStarters.id,
       },
-      {
-        name: "Dana Carpaccio con Tartufo",
-        description: "Siyah trüf yağı, taze roka yaprakları, kapari ve 24 aylık parmesan tekeri dilimleri",
-        allergens: "Süt Ürünü",
-        imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
-        categoryId: catColdStarters.id,
-      },
-      {
-        name: "Akdeniz Taze Somon & Avokado Tartar",
-        description: "Limonlu ponzu sos, çıtır susam ve taze frenk soğanı ile",
-        allergens: "Balık, Susam",
-        imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&auto=format&fit=crop&q=80",
-        categoryId: catColdStarters.id,
-      },
-      {
-        name: "Ege Gurme Meze Üçlüsü",
-        description: "Köz patlıcan ezmesi, cevizli fava ve taze deniz börülcesi",
-        allergens: "Ceviz",
-        imageUrl: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=500&auto=format&fit=crop&q=80",
-        categoryId: catColdStarters.id,
-      },
-    ],
-  });
-
-  // Sıcak Başlangıçlar
-  await prisma.menuItem.createMany({
-    data: [
       {
         name: "Trüflü Çıtır Jumbo Karides",
         description: "Japon panko kaplama jumbo karides, tatlı-acı trüflü mayonez sos eşliğinde",
         allergens: "Kabuklular, Gluten",
         imageUrl: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=500&auto=format&fit=crop&q=80",
-        categoryId: catHotStarters.id,
+        categoryId: roofStarters.id,
       },
       {
-        name: "Izgara Ege Ahtapot Bacağı",
-        description: "Köz biberli fava yatağında, kapari meyveleri ve zeytinyağlı limon sos",
-        allergens: "Yumuşakçalar",
-        imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
-        categoryId: catHotStarters.id,
-      },
-      {
-        name: "Buharda Karidesli Dim Sum (Har Gow)",
-        description: "Şeffaf hamurda karides bohçası, zencefilli soya sos ile",
-        allergens: "Kabuklular, Gluten, Soya",
-        imageUrl: "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=500&auto=format&fit=crop&q=80",
-        categoryId: catHotStarters.id,
-      },
-    ],
-  });
-
-  // --- ANA YEMEKLER ---
-  const catMains = await prisma.category.create({
-    data: { name: "Ana Yemekler", parentId: catFoods.id, displayOrder: 2 },
-  });
-  const catSteaks = await prisma.category.create({
-    data: { name: "Dinlendirilmiş Etler & Izgaralar", parentId: catMains.id, displayOrder: 1 },
-  });
-  const catFish = await prisma.category.create({
-    data: { name: "Deniz Mahsulleri & Balıklar", parentId: catMains.id, displayOrder: 2 },
-  });
-  const catAsian = await prisma.category.create({
-    data: { name: "Asya & Teppanyaki Lezzetleri", parentId: catMains.id, displayOrder: 3 },
-  });
-  const catPasta = await prisma.category.create({
-    data: { name: "Taze İtalyan Makarnaları & Risotto", parentId: catMains.id, displayOrder: 4 },
-  });
-
-  // Etler
-  await prisma.menuItem.createMany({
-    data: [
-      {
-        name: "Dry Aged Dana Antrikot (320g)",
-        description: "28 gün özel himalaya tuzu odasında dinlendirilmiş, trüflü patates püresi ile",
-        allergens: "Süt Ürünü",
-        imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
-        categoryId: catSteaks.id,
-      },
-      {
-        name: "Prime Tomahawk Steak (Paylaşımlı 900g)",
-        description: "Meşe kömürü ızgarasında pişirilmiş, fırınlanmış kemik iliği ve taze kuşkonmaz",
-        allergens: "Süt Ürünü",
-        imageUrl: "https://images.unsplash.com/photo-1558030006-450675393462?w=500&auto=format&fit=crop&q=80",
-        categoryId: catSteaks.id,
+        name: "Akdeniz Somon & Avokado Tartar",
+        description: "Limonlu ponzu sos, çıtır susam ve taze frenk soğanı ile",
+        allergens: "Balık, Susam",
+        imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&auto=format&fit=crop&q=80",
+        categoryId: roofStarters.id,
       },
       {
         name: "Ağır Ateşte Kuzu İncik Konfi (12 Saat)",
         description: "Taş fırında ağır ateşte pişmiş, safranlı risotto yatağında demi-glace sos ile",
         allergens: "Süt Ürünü",
         imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
-        categoryId: catSteaks.id,
+        categoryId: roofMains.id,
       },
-    ],
-  });
-
-  // Balıklar
-  await prisma.menuItem.createMany({
-    data: [
       {
-        name: "Tuzda Fırınlanmış Kaya Levreği (Bütün)",
-        description: "Deniz tuzu kabuğunda fırınlanmış, masada alevli sunum ve körpe patates",
+        name: "Fırınlanmış Norveç Somonu & Kuşkonmaz",
+        description: "Taze narenciye sosu ve baby patatesler ile",
         allergens: "Balık",
         imageUrl: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format&fit=crop&q=80",
-        categoryId: catFish.id,
-      },
-      {
-        name: "Izgara Lagos Şiş & Kalamar Tava",
-        description: "Taze kekik ve defne yaprağı marineli lagos, tarator sos ile",
-        allergens: "Balık, Yumuşakçalar",
-        imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&auto=format&fit=crop&q=80",
-        categoryId: catFish.id,
-      },
-    ],
-  });
-
-  // Asya & Teppanyaki
-  await prisma.menuItem.createMany({
-    data: [
-      {
-        name: "Geleneksel Çıtır Pekin Ördeği",
-        description: "İnce buharda krepler, taze salatalık, taze soğan ve hoisin sosu ile",
-        allergens: "Gluten, Soya",
-        imageUrl: "https://images.unsplash.com/photo-1514944298352-f67a28e55e2e?w=500&auto=format&fit=crop&q=80",
-        categoryId: catAsian.id,
-      },
-      {
-        name: "Teppanyaki Wagyu Dana Eti & Wok Sebzeler",
-        description: "Japon teppanyaki ızgarasında teriyaki sosu ve sarımsaklı pirinç ile",
-        allergens: "Soya, Susam",
-        imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&auto=format&fit=crop&q=80",
-        categoryId: catAsian.id,
-      },
-      {
-        name: "Royal Dragon Roll (8 Parça Sushi)",
-        description: "Yılan balığı, avokado, çıtır karides, tobiko ve unagi sos",
-        allergens: "Balık, Kabuklular, Soya",
-        imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&auto=format&fit=crop&q=80",
-        categoryId: catAsian.id,
-      },
-    ],
-  });
-
-  // Makarnalar
-  await prisma.menuItem.createMany({
-    data: [
-      {
-        name: "Istakozlu Siyah Tagliolini",
-        description: "Mürekkep balıklı el yapımı makarna, tereyağlı ıstakoz kuyruğu ve kiraz domates",
-        allergens: "Gluten, Kabuklular, Süt",
-        imageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&auto=format&fit=crop&q=80",
-        categoryId: catPasta.id,
+        categoryId: roofMains.id,
       },
       {
         name: "Trüf Mantarlı & Porcinili Risotto",
         description: "Acquerello pirinci, porcini mantarı, parmesan tekerinde bağlama ve taze trüf dilimi",
         allergens: "Süt Ürünü",
         imageUrl: "https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?w=500&auto=format&fit=crop&q=80",
-        categoryId: catPasta.id,
+        categoryId: roofMains.id,
       },
-    ],
-  });
-
-  // --- TATLILAR ---
-  const catDesserts = await prisma.category.create({
-    data: { name: "Tatlılar", parentId: catFoods.id, displayOrder: 3 },
-  });
-
-  await prisma.menuItem.createMany({
-    data: [
       {
-        name: "Mascarpone Tiramisu al Caffe",
-        description: "Savoiardi bisküvisi, espresso ve saf Belçika kakaosu ile",
-        allergens: "Gluten, Süt, Yumurta",
-        imageUrl: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&auto=format&fit=crop&q=80",
-        categoryId: catDesserts.id,
+        name: "Çarkıfelek Panna Cotta",
+        description: "Taze passion fruit coulis ve nane filizleri",
+        allergens: "Süt Ürünü",
+        imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&auto=format&fit=crop&q=80",
+        categoryId: roofDesserts.id,
       },
       {
         name: "Sıcak Çikolatalı Valrhona Sufle",
-        description: "Erimiş bitter çikolata kalbi ve Madagascar vanilyalı dondurma eşliğinde",
+        description: "Madagascar vanilyalı dondurma eşliğinde",
         allergens: "Gluten, Süt, Yumurta",
         imageUrl: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&auto=format&fit=crop&q=80",
-        categoryId: catDesserts.id,
+        categoryId: roofDesserts.id,
+      },
+    ],
+  });
+
+  const roofCocktails = await prisma.category.create({
+    data: { name: "İmza Kokteyller & Şaraplar", parentId: roofDrinks.id, displayOrder: 1, restaurantId: roofGarden.id },
+  });
+  const roofHotDrinks = await prisma.category.create({
+    data: { name: "Sıcak & Soğuk İçecekler", parentId: roofDrinks.id, displayOrder: 2, restaurantId: roofGarden.id },
+  });
+
+  await prisma.menuItem.createMany({
+    data: [
+      { name: "Roof Sunset Spritz", description: "Aperol, prosecco, greyfurt köpüğü ve taze biberiye", categoryId: roofCocktails.id },
+      { name: "Merit Signature Smoked Bourbon", description: "Tütsülenmiş meşe dalı, Angostura bitter ve portakal kabuğu", categoryId: roofCocktails.id },
+      { name: "Chablis Premier Cru (Kadeh / Şişe)", description: "Fransız seçkin beyaz şarap", categoryId: roofCocktails.id },
+      { name: "Rize Demleme Çay / Espresso", description: "Taze demlenmiş", categoryId: roofHotDrinks.id },
+      { name: "San Pellegrino Doğal Maden Suyu (750ml)", description: "Limon dilimi ile", categoryId: roofHotDrinks.id },
+    ],
+  });
+
+  // ==========================================
+  // 2. THE STEAK HOUSE MENÜSÜ
+  // ==========================================
+  const steakFoods = await prisma.category.create({
+    data: { name: "Yiyecekler", description: "The Steak House Seçkin Et Menüsü", displayOrder: 1, restaurantId: steakHouse.id },
+  });
+  const steakDrinks = await prisma.category.create({
+    data: { name: "İçecekler", description: "Kırmızı Şarap Mahzeni & Kokteyller", displayOrder: 2, restaurantId: steakHouse.id },
+  });
+  const steakStarters = await prisma.category.create({
+    data: { name: "Başlangıçlar & Salatalar", parentId: steakFoods.id, displayOrder: 1, restaurantId: steakHouse.id },
+  });
+  const steakMains = await prisma.category.create({
+    data: { name: "Dry-Aged Seçkin Etler & Odun Ateşi", parentId: steakFoods.id, displayOrder: 2, restaurantId: steakHouse.id },
+  });
+  const steakDesserts = await prisma.category.create({
+    data: { name: "Tatlılar", parentId: steakFoods.id, displayOrder: 3, restaurantId: steakHouse.id },
+  });
+
+  await prisma.menuItem.createMany({
+    data: [
+      {
+        name: "Dana Carpaccio con Tartufo",
+        description: "Siyah trüf yağı, taze roka yaprakları, kapari ve 24 aylık parmesan tekeri dilimleri",
+        allergens: "Süt Ürünü",
+        imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
+        categoryId: steakStarters.id,
       },
       {
-        name: "Kızarmış Dondurmalı Muz & Bal (Uzakdoğu Usulü)",
-        description: "Çıtır hamurda muz, bal ve hindistan cevizi parçacıkları ile",
+        name: "Fırınlanmış İlikli Dana Kemiği & Sarımsaklı Ekmek",
+        description: "Kaya tuzu ve karamelize soğan ile fırınlanmış kemik iliği",
+        allergens: "Gluten",
+        imageUrl: "https://images.unsplash.com/photo-1558030006-450675393462?w=500&auto=format&fit=crop&q=80",
+        categoryId: steakStarters.id,
+      },
+      {
+        name: "Dry Aged T-Bone Steak (450g)",
+        description: "28 gün özel himalaya tuzu odasında dinlendirilmiş, trüflü patates püresi ile",
+        allergens: "Süt Ürünü",
+        imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
+        categoryId: steakMains.id,
+      },
+      {
+        name: "Wagyu Ribeye Steak (300g)",
+        description: "A5 kalite Japon Wagyu, kömür ateşinde pişmiş kuşkonmaz eşliğinde",
+        allergens: "Süt Ürünü",
+        imageUrl: "https://images.unsplash.com/photo-1558030006-450675393462?w=500&auto=format&fit=crop&q=80",
+        categoryId: steakMains.id,
+      },
+      {
+        name: "Prime Tomahawk Steak (Paylaşımlı 900g)",
+        description: "Meşe kömürü ızgarasında pişirilmiş, fırınlanmış kemik iliği ve taze kuşkonmaz",
+        allergens: "Süt Ürünü",
+        imageUrl: "https://images.unsplash.com/photo-1558030006-450675393462?w=500&auto=format&fit=crop&q=80",
+        categoryId: steakMains.id,
+      },
+      {
+        name: "Kömür Ateşinde Dallas Steak (400g)",
+        description: "Özel baharat marineli, ızgara mısır ve baby patatesler ile",
+        allergens: "Süt Ürünü",
+        imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
+        categoryId: steakMains.id,
+      },
+      {
+        name: "Geleneksel New York Cheesecake",
+        description: "Yaban mersini sosu ve taze frambuaz ile",
         allergens: "Gluten, Süt",
-        imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&auto=format&fit=crop&q=80",
-        categoryId: catDesserts.id,
+        imageUrl: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&auto=format&fit=crop&q=80",
+        categoryId: steakDesserts.id,
       },
     ],
   });
 
-  // --- İÇECEKLER ---
-  const catHot = await prisma.category.create({
-    data: { name: "Sıcak İçecekler", parentId: catDrinks.id, displayOrder: 1 },
+  const steakWines = await prisma.category.create({
+    data: { name: "Kırmızı Şaraplar & Single Malt", parentId: steakDrinks.id, displayOrder: 1, restaurantId: steakHouse.id },
   });
-  const catCold = await prisma.category.create({
-    data: { name: "Soğuk & Alkolsüz İçecekler", parentId: catDrinks.id, displayOrder: 2 },
-  });
-  const catAlcohol = await prisma.category.create({
-    data: { name: "Kokteyller & Seçkin Şaraplar", parentId: catDrinks.id, displayOrder: 3 },
-  });
-
-  // Sıcak İçecekler
   await prisma.menuItem.createMany({
     data: [
-      { name: "Rize Geleneksel Demleme Çay", description: "İnce belli kristal bardakta taze sunum", categoryId: catHot.id },
-      { name: "Geleneksel Türk Kahvesi (Orta / Sade / Şekerli)", description: "Merit çifte kavrulmuş lokum ve su ile", categoryId: catHot.id },
-      { name: "Double Espresso / Americano", description: "%100 Arabica çekirdeklerinden anlık taze çekilmiş", categoryId: catHot.id },
-      { name: "Japon Sencha Yeşil Çay", description: "Porselen seramik demlikte demleme", categoryId: catHot.id },
+      { name: "Chianti Classico Riserva DOCG", description: "Meşe fıçıda yıllandırılmış İtalyan kırmızısı", categoryId: steakWines.id },
+      { name: "Cabernet Sauvignon Reserve", description: "Yoğun gövdeli seçkin kırmızı şarap", categoryId: steakWines.id },
+      { name: "Macallan 12 Double Cask Single Malt Viski", description: "Buz ve kuru meyveler ile servis", categoryId: steakWines.id },
+      { name: "Geleneksel Türk Kahvesi", description: "Lokum ve su eşliğinde", categoryId: steakWines.id },
     ],
   });
 
-  // Soğuk İçecekler
+  // ==========================================
+  // 3. BLUE SEA MENÜSÜ
+  // ==========================================
+  const blueFoods = await prisma.category.create({
+    data: { name: "Yiyecekler", description: "Blue Sea Akdeniz Balık & Meze Menüsü", displayOrder: 1, restaurantId: blueSea.id },
+  });
+  const blueDrinks = await prisma.category.create({
+    data: { name: "İçecekler", description: "Seçkin Rakılar, Beyaz Şaraplar & Meşrubatlar", displayOrder: 2, restaurantId: blueSea.id },
+  });
+  const blueMezze = await prisma.category.create({
+    data: { name: "Ege Mezeleri & Soğuk Deniz Mahsulleri", parentId: blueFoods.id, displayOrder: 1, restaurantId: blueSea.id },
+  });
+  const blueWarm = await prisma.category.create({
+    data: { name: "Sıcak Ara Sıcaklar", parentId: blueFoods.id, displayOrder: 2, restaurantId: blueSea.id },
+  });
+  const blueFish = await prisma.category.create({
+    data: { name: "Günlük Taze Balıklar", parentId: blueFoods.id, displayOrder: 3, restaurantId: blueSea.id },
+  });
+  const blueDesserts = await prisma.category.create({
+    data: { name: "Tatlılar", parentId: blueFoods.id, displayOrder: 4, restaurantId: blueSea.id },
+  });
+
   await prisma.menuItem.createMany({
     data: [
-      { name: "Taze Zencefilli Ev Yapımı Limonata", description: "Nane yaprakları ve kırık buz ile", categoryId: catCold.id },
-      { name: "San Pellegrino Doğal Maden Suyu (750ml)", description: "Limon dilimi ile servis", categoryId: catCold.id },
-      { name: "Taze Sıkma Portakal & Greyfurt Suyu", description: "Anlık taze sıkılmış", categoryId: catCold.id },
+      {
+        name: "Ege Gurme Meze Üçlüsü",
+        description: "Köz patlıcan ezmesi, cevizli fava ve taze deniz börülcesi",
+        allergens: "Ceviz",
+        imageUrl: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=500&auto=format&fit=crop&q=80",
+        categoryId: blueMezze.id,
+      },
+      {
+        name: "Taze Levrek Marin & Hardal Sos",
+        description: "Tane karabiber ve taze dereotu yaprakları ile",
+        allergens: "Balık, Hardal",
+        imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&auto=format&fit=crop&q=80",
+        categoryId: blueMezze.id,
+      },
+      {
+        name: "Izgara Ege Ahtapot Bacağı",
+        description: "Köz biberli fava yatağında, kapari meyveleri ve zeytinyağlı limon sos",
+        allergens: "Yumuşakçalar",
+        imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
+        categoryId: blueWarm.id,
+      },
+      {
+        name: "Tereyağlı & Sarımsaklı Jumbo Karides Güveç",
+        description: "Kiraz domates, taze kekik ve pul biber ile köpüren tereyağında",
+        allergens: "Kabuklular, Süt",
+        imageUrl: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=500&auto=format&fit=crop&q=80",
+        categoryId: blueWarm.id,
+      },
+      {
+        name: "Çıtır Kalamar Tava & Tarator Sos",
+        description: "Taze halka kalamar, cevizli ev yapımı tarator sos ile",
+        allergens: "Yumuşakçalar, Gluten, Ceviz",
+        imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&auto=format&fit=crop&q=80",
+        categoryId: blueWarm.id,
+      },
+      {
+        name: "Tuzda Fırınlanmış Kaya Levreği (Bütün)",
+        description: "Deniz tuzu kabuğunda fırınlanmış, masada alevli sunum ve körpe patates",
+        allergens: "Balık",
+        imageUrl: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format&fit=crop&q=80",
+        categoryId: blueFish.id,
+      },
+      {
+        name: "Izgara Lagos Şiş",
+        description: "Defne yaprağı ve arpacık soğan marineli taze lagos fileto",
+        allergens: "Balık",
+        imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&auto=format&fit=crop&q=80",
+        categoryId: blueFish.id,
+      },
+      {
+        name: "Fırında Sıcak Tahin Helvası",
+        description: "Güveçte eritilmiş helva, limon kabuğu rendesi ile",
+        allergens: "Susam",
+        imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&auto=format&fit=crop&q=80",
+        categoryId: blueDesserts.id,
+      },
     ],
   });
 
-  // Kokteyller & Şaraplar
+  const blueRaki = await prisma.category.create({
+    data: { name: "Rakılar & Beyaz Şaraplar", parentId: blueDrinks.id, displayOrder: 1, restaurantId: blueSea.id },
+  });
   await prisma.menuItem.createMany({
     data: [
-      { name: "Signature Merit Royal Passion Kokteyl", description: "Havana Club Rom, taze çarkıfelek meyvesi, lime ve fesleğen", categoryId: catAlcohol.id },
-      { name: "Klasik Negroni Reserve", description: "Tanqueray Gin, Campari, Antica Formula Vermut ve portakal kabuğu", categoryId: catAlcohol.id },
-      { name: "Chianti Classico DOCG (Kadeh / Şişe)", description: "Geleneksel İtalyan meşe fıçı kırmızı şarap", categoryId: catAlcohol.id },
-      { name: "Moët & Chandon Brut Impérial Şampanya", description: "Buz kovasında kadeh sunumu", categoryId: catAlcohol.id },
+      { name: "Yeni Rakı Giz / Ala (Kadeh / Şişe)", description: "Meşe fıçıda dinlendirilmiş özel seri", categoryId: blueRaki.id },
+      { name: "Beylerbeyi Göbek Rakısı", description: "Yaş üzüm üç distile", categoryId: blueRaki.id },
+      { name: "Sauvignon Blanc Ege Bölgesi", description: "Ferah ve meyvemsi taze beyaz şarap", categoryId: blueRaki.id },
+      { name: "Rize Demleme Çay", description: "İnce belli bardakta", categoryId: blueRaki.id },
     ],
   });
 
-  console.log("Hiyerarşik kategoriler ve gurme yiyecek/içecekler oluşturuldu.");
+  // ==========================================
+  // 4. MANDARIN MENÜSÜ (PAN-ASYA & TEPPANYAKI)
+  // ==========================================
+  const mandarinFoods = await prisma.category.create({
+    data: { name: "Yiyecekler", description: "Mandarin Uzakdoğu & Pan-Asya Gurme Menü", displayOrder: 1, restaurantId: mandarin.id },
+  });
+  const mandarinDrinks = await prisma.category.create({
+    data: { name: "İçecekler", description: "Asya Kokteylleri, Sake & Yeşil Çay", displayOrder: 2, restaurantId: mandarin.id },
+  });
+  const mandarinStarters = await prisma.category.create({
+    data: { name: "Dim Sum & Başlangıçlar", parentId: mandarinFoods.id, displayOrder: 1, restaurantId: mandarin.id },
+  });
+  const mandarinSushi = await prisma.category.create({
+    data: { name: "Sushi & Sashimi Bar", parentId: mandarinFoods.id, displayOrder: 2, restaurantId: mandarin.id },
+  });
+  const mandarinTeppanyaki = await prisma.category.create({
+    data: { name: "Teppanyaki & Wok Lezzetleri", parentId: mandarinFoods.id, displayOrder: 3, restaurantId: mandarin.id },
+  });
+  const mandarinDesserts = await prisma.category.create({
+    data: { name: "Tatlılar", parentId: mandarinFoods.id, displayOrder: 4, restaurantId: mandarin.id },
+  });
+
+  await prisma.menuItem.createMany({
+    data: [
+      {
+        name: "Buharda Karidesli Dim Sum (Har Gow)",
+        description: "Şeffaf hamurda karides bohçası, zencefilli soya sos ile",
+        allergens: "Kabuklular, Gluten, Soya",
+        imageUrl: "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=500&auto=format&fit=crop&q=80",
+        categoryId: mandarinStarters.id,
+      },
+      {
+        name: "Çıtır Sebzeli Wonton",
+        description: "Tatlı-ekşi erik sosu ile çıtır kızarmış wonton börekleri",
+        allergens: "Gluten, Soya",
+        imageUrl: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=500&auto=format&fit=crop&q=80",
+        categoryId: mandarinStarters.id,
+      },
+      {
+        name: "Tom Yum Goong Çorbası",
+        description: "Tayland usulü acılı ekşili jumbo karides çorbası, limon otu ve taze kişniş",
+        allergens: "Kabuklular, Balık Sosu",
+        imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
+        categoryId: mandarinStarters.id,
+      },
+      {
+        name: "Royal Dragon Roll (8 Parça Sushi)",
+        description: "Yılan balığı, avokado, çıtır karides, tobiko ve unagi sos",
+        allergens: "Balık, Kabuklular, Soya",
+        imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&auto=format&fit=crop&q=80",
+        categoryId: mandarinSushi.id,
+      },
+      {
+        name: "Somon & Avokado Uramaki (8 Parça)",
+        description: "Taze Norveç somonu, avokado, susam ve Japon mayonezi",
+        allergens: "Balık, Susam",
+        imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&auto=format&fit=crop&q=80",
+        categoryId: mandarinSushi.id,
+      },
+      {
+        name: "Geleneksel Çıtır Pekin Ördeği",
+        description: "İnce buharda krepler, taze salatalık, taze soğan ve hoisin sosu ile masada servis",
+        allergens: "Gluten, Soya",
+        imageUrl: "https://images.unsplash.com/photo-1514944298352-f67a28e55e2e?w=500&auto=format&fit=crop&q=80",
+        categoryId: mandarinTeppanyaki.id,
+      },
+      {
+        name: "Teppanyaki Wagyu Dana Eti & Wok Sebzeler",
+        description: "Japon teppanyaki ızgarasında teriyaki sosu ve sarımsaklı pirinç ile",
+        allergens: "Soya, Susam",
+        imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&auto=format&fit=crop&q=80",
+        categoryId: mandarinTeppanyaki.id,
+      },
+      {
+        name: "Tatlı Ekşi Soslu Çıtır Tavuk",
+        description: "Ananas, renkli biberler ve susam eşliğinde wok tava sunumu",
+        allergens: "Gluten, Soya, Susam",
+        imageUrl: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=500&auto=format&fit=crop&q=80",
+        categoryId: mandarinTeppanyaki.id,
+      },
+      {
+        name: "Kızarmış Dondurmalı Muz & Bal",
+        description: "Çıtır Uzakdoğu usulü hamurda muz, bal ve hindistan cevizi",
+        allergens: "Gluten, Süt",
+        imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&auto=format&fit=crop&q=80",
+        categoryId: mandarinDesserts.id,
+      },
+    ],
+  });
+
+  const mandarinCocktails = await prisma.category.create({
+    data: { name: "Sake, Asya Kokteylleri & Çaylar", parentId: mandarinDrinks.id, displayOrder: 1, restaurantId: mandarin.id },
+  });
+  await prisma.menuItem.createMany({
+    data: [
+      { name: "Geleneksel Japon Sıcak Sake (Tokkuri)", description: "Seramik kasede sunulan pirinç şarabı", categoryId: mandarinCocktails.id },
+      { name: "Mandarin Dragon Passion Kokteyl", description: "Cin, lychee likörü, zencefil şurubu ve taze lime", categoryId: mandarinCocktails.id },
+      { name: "Japon Sencha Yeşil Çay", description: "Porselen seramik demlikte demleme", categoryId: mandarinCocktails.id },
+      { name: "Yaseminli Çin Çayı", description: "Doğal yasemin çiçekli demleme", categoryId: mandarinCocktails.id },
+    ],
+  });
+
+  // ==========================================
+  // 5. BELLA MERIT MENÜSÜ (OTANTİK İTALYAN)
+  // ==========================================
+  const bellaFoods = await prisma.category.create({
+    data: { name: "Yiyecekler", description: "Bella Merit Otantik İtalyan Mutfağı", displayOrder: 1, restaurantId: bellaMerit.id },
+  });
+  const bellaDrinks = await prisma.category.create({
+    data: { name: "İçecekler", description: "İtalyan Şarapları, Aperitivo & Espresso", displayOrder: 2, restaurantId: bellaMerit.id },
+  });
+  const bellaAntipasti = await prisma.category.create({
+    data: { name: "Antipasti & Başlangıçlar", parentId: bellaFoods.id, displayOrder: 1, restaurantId: bellaMerit.id },
+  });
+  const bellaPasta = await prisma.category.create({
+    data: { name: "Taze El Yapımı Makarnalar & Risotto", parentId: bellaFoods.id, displayOrder: 2, restaurantId: bellaMerit.id },
+  });
+  const bellaSecundi = await prisma.category.create({
+    data: { name: "Taş Fırın & İtalyan Ana Yemekleri", parentId: bellaFoods.id, displayOrder: 3, restaurantId: bellaMerit.id },
+  });
+  const bellaDesserts = await prisma.category.create({
+    data: { name: "Dolci (Tatlılar)", parentId: bellaFoods.id, displayOrder: 4, restaurantId: bellaMerit.id },
+  });
+
+  await prisma.menuItem.createMany({
+    data: [
+      {
+        name: "Taze İtalyan Burrata Peyniri",
+        description: "Organik salkım domates, fesleğen pesto sos ve 12 yıllık Modena balzamik glaze ile",
+        allergens: "Süt ve Süt Ürünleri",
+        imageUrl: "https://images.unsplash.com/photo-1592417817098-8f3d6ef23963?w=500&auto=format&fit=crop&q=80",
+        categoryId: bellaAntipasti.id,
+      },
+      {
+        name: "Bruschetta al Pomodoro & Basilico",
+        description: "Kızarmış focaccia ekmeği üzerinde sarımsak, sızma zeytinyağı ve taze fesleğen",
+        allergens: "Gluten",
+        imageUrl: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=500&auto=format&fit=crop&q=80",
+        categoryId: bellaAntipasti.id,
+      },
+      {
+        name: "Istakozlu Siyah Tagliolini",
+        description: "Mürekkep balıklı el yapımı taze makarna, tereyağlı ıstakoz kuyruğu ve kiraz domates",
+        allergens: "Gluten, Kabuklular, Süt",
+        imageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&auto=format&fit=crop&q=80",
+        categoryId: bellaPasta.id,
+      },
+      {
+        name: "Trüf Mantarlı & Porcinili Risotto",
+        description: "Acquerello pirinci, porcini mantarı, parmesan tekerinde bağlama ve taze trüf dilimi",
+        allergens: "Süt Ürünü",
+        imageUrl: "https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?w=500&auto=format&fit=crop&q=80",
+        categoryId: bellaPasta.id,
+      },
+      {
+        name: "El Yapımı Fettuccine Alfredo & Tavuk",
+        description: "Tereyağlı krema sosu, taze parmesan ve ızgara tavuk dilimleri",
+        allergens: "Gluten, Süt",
+        imageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&auto=format&fit=crop&q=80",
+        categoryId: bellaPasta.id,
+      },
+      {
+        name: "Dana Osso Buco alla Milanese",
+        description: "Ağır ateşte sebzelerle fırınlanmış dana incik, safranlı risotto eşliğinde",
+        allergens: "Süt Ürünü",
+        imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80",
+        categoryId: bellaSecundi.id,
+      },
+      {
+        name: "Pollo alla Parmigiana",
+        description: "Mozzarella ve parmesan ile fırınlanmış domates soslu çıtır tavuk göğsü",
+        allergens: "Gluten, Süt",
+        imageUrl: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=500&auto=format&fit=crop&q=80",
+        categoryId: bellaSecundi.id,
+      },
+      {
+        name: "Geleneksel Mascarpone Tiramisu",
+        description: "Savoiardi bisküvisi, espresso ve saf Belçika kakaosu ile",
+        allergens: "Gluten, Süt, Yumurta",
+        imageUrl: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&auto=format&fit=crop&q=80",
+        categoryId: bellaDesserts.id,
+      },
+      {
+        name: "Çıtır Cannoli Siciliani",
+        description: "Tatlı ricotta kreması, antep fıstığı ve çikolata damlacıkları",
+        allergens: "Gluten, Süt, Fıstık",
+        imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&auto=format&fit=crop&q=80",
+        categoryId: bellaDesserts.id,
+      },
+    ],
+  });
+
+  const bellaWines = await prisma.category.create({
+    data: { name: "İtalyan Şarapları, Aperitivo & Kahve", parentId: bellaDrinks.id, displayOrder: 1, restaurantId: bellaMerit.id },
+  });
+  await prisma.menuItem.createMany({
+    data: [
+      { name: "Aperol Spritz Veneziano", description: "Aperol, Prosecco DOC, soda ve taze portakal dilimi", categoryId: bellaWines.id },
+      { name: "Chianti Classico DOCG (Kırmızı)", description: "Toscana bölgesinin seçkin kırmızı şarabı", categoryId: bellaWines.id },
+      { name: "Pinot Grigio delle Venezie (Beyaz)", description: "Canlı ve meyvemsi İtalyan beyaz şarabı", categoryId: bellaWines.id },
+      { name: "Double Espresso Illy", description: "%100 Arabica çekirdeklerinden", categoryId: bellaWines.id },
+      { name: "Limoncello di Sorrento (Digestivo)", description: "Soğuk kristal kadehte servis", categoryId: bellaWines.id },
+    ],
+  });
+
+  console.log("5 Alakart Restorana özel menü ağaçları ve yemekler başarıyla oluşturuldu.");
   console.log("=== KURULUM TAMAMLANDI! ===");
 }
 

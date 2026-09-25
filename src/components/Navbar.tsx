@@ -71,22 +71,29 @@ export function Navbar() {
     });
   }
 
+  const logoHref = !session
+    ? "/login"
+    : session.role === "WAITER"
+    ? "/waiter"
+    : session.role === "KITCHEN"
+    ? "/kitchen"
+    : session.role === "CHEF"
+    ? "/chef"
+    : session.role === "ADMIN"
+    ? "/admin"
+    : "/login";
+
   return (
     <header className="sticky top-0 z-50 bg-[#070a12]/95 backdrop-blur-md border-b border-amber-500/20 px-3 sm:px-6 py-2.5">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
+        <Link href={logoHref} title="Ana Ekran / Modül Girişi" className="flex items-center gap-2.5 group">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
             <UtensilsCrossed className="w-4 h-4 text-zinc-950 font-bold" />
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-amber-400 font-bold">
-                MERİT HOTELS
-              </span>
-            </div>
-            <h1 className="text-xs sm:text-sm font-black tracking-tight text-white flex items-center gap-1">
-              A LA CARTE <span className="text-amber-400 font-normal text-[9px] px-1 py-0.2 rounded bg-amber-400/10 border border-amber-400/30">LÜKS OPERASYON</span>
+            <h1 className="text-sm sm:text-base font-black tracking-widest text-white group-hover:text-amber-400 transition-colors">
+              ALACARTE
             </h1>
           </div>
         </Link>

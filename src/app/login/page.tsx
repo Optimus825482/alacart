@@ -48,14 +48,11 @@ export default function LoginPage() {
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 flex items-center justify-center mx-auto mb-4 shadow-xl shadow-amber-500/20">
             <UtensilsCrossed className="w-7 h-7 text-zinc-950 font-bold" />
           </div>
-          <span className="text-[10px] uppercase tracking-[0.25em] text-amber-400 font-extrabold block">
-            MERİT HOTELS & RESORTS
-          </span>
-          <h1 className="text-xl sm:text-2xl font-black text-white mt-1">
-            A La Carte Giriş Portalı
+          <h1 className="text-2xl sm:text-3xl font-black tracking-widest text-white">
+            ALACARTE
           </h1>
           <p className="text-zinc-400 text-xs mt-1.5">
-            Rolünüze uygun terminal ekranına erişmek için giriş yapın
+            Sisteme erişmek için lütfen giriş yapın
           </p>
         </div>
 

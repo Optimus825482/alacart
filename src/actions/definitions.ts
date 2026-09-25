@@ -105,7 +105,8 @@ export async function getTables(restaurantId?: string) {
       include: {
         restaurant: { select: { id: true, name: true, code: true } },
         orders: {
-          where: { status: { in: ["PENDING", "PREPARING"] } },
+          where: { status: { in: ["PENDING", "PREPARING", "COMPLETED"] } },
+          orderBy: { createdAt: "desc" },
           select: { id: true, orderNumber: true, status: true, createdAt: true },
         },
       },

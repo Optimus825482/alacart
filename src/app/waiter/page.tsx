@@ -69,8 +69,6 @@ export default function WaiterTerminalPage() {
   // Özel Not Modal State (Geriye uyumluluk için)
   const [editingItemNote, setEditingItemNote] = useState<{ id: string; name: string; note: string } | null>(null);
 
-  // Restoran Değiştirme Onay Modalı State
-  const [isSwitchConfirmOpen, setIsSwitchConfirmOpen] = useState(false);
 
   // Oturum ve Restoran Doğrulaması
   useEffect(() => {
@@ -163,29 +161,7 @@ export default function WaiterTerminalPage() {
     }
   };
 
-  // Restoran Değiştirme Talebi (Onay Modalını Açar)
-  const handleSwitchRestaurant = () => {
-    setIsSwitchConfirmOpen(true);
-  };
 
-  // Restoran Değiştirme Onaylandığında Çıkış Yap
-  const handleConfirmSwitchRestaurant = async () => {
-    setIsSwitchConfirmOpen(false);
-    setLoading(true);
-    try {
-      await clearActiveRestaurantAction();
-      setSession((prev) => prev ? { ...prev, activeRestaurantId: null, activeRestaurantName: null } : null);
-      setCurrentRestaurant(null);
-      setCart([]);
-      setSelectedTable(null);
-      setTables([]);
-      setCategoriesTree([]);
-    } catch (err) {
-      console.error("handleConfirmSwitchRestaurant error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Masanın açık siparişleri
   useEffect(() => {
@@ -257,24 +233,16 @@ export default function WaiterTerminalPage() {
     );
   }
 
-  // Seçili Ürüne veya Kategoriye Göre Dinamik Hızlı Not Seçenekleri
-  const getActiveQuickNotes = (item: any) => {
+  // Seçili Ürüne Göre Özel Servis Notları (Yalnızca Yönetici Tanımlamışsa Çıkar)
+  const getActiveQuickNotes = (item: any): string[] => {
     if (item?.defaultNotes && item.defaultNotes.trim().length > 0) {
       return item.defaultNotes
         .split(",")
         .map((s: string) => s.trim())
         .filter(Boolean);
     }
-    // Fallback: Kategoriye göre akıllı varsayılanlar
-    const isBeverage =
-      currentRoot?.name?.toLowerCase().includes("içki") ||
-      currentRoot?.name?.toLowerCase().includes("içecek") ||
-      currentRoot?.name?.toLowerCase().includes("bar") ||
-      currentRoot?.name?.toLowerCase().includes("kokteyl");
-
-    return isBeverage
-      ? ["Buzlu", "Buzsuz", "Bol Buzlu", "Limonlu", "Şekersiz", "Pipetli"]
-      : ["Az Pişmiş", "Orta Pişmiş", "İyi Pişmiş", "Sosu Ayrı", "Glutensiz", "Acısız", "Sıcak Servis"];
+    // Yönetici tanımlamadıysa asla buton basılmaz (fallback yok)
+    return [];
   };
 
   // Menü Öğesine Tıklandığında Adet & Not Modalını Aç
@@ -512,36 +480,23 @@ export default function WaiterTerminalPage() {
           </div>
         )}
 
-        {/* Başlık, Sayaçlar ve Restoran Değiştir */}
+        {/* Başlık ve Sayaçlar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
-            <span className="text-xs uppercase tracking-widest text-amber-400 font-bold block mb-1">
-              ADIM 2: MASA SEÇİMİ
-            </span>
             <h1 className="text-2xl sm:text-3xl font-black text-white">
-              Sipariş Alınacak Masayı Seçin
+              Sipariş alınacak masayı seçin
             </h1>
-            <p className="text-zinc-400 text-xs sm:text-sm mt-1">
-              Sipariş girişi yapmak için lütfen aşağıdaki masalardan birine dokunun. Seçilen masanın alakart menüsü açılacaktır.
-            </p>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={handleSwitchRestaurant}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700/80 hover:border-amber-500 hover:text-white text-zinc-300 text-xs font-bold transition-all shadow-sm active:scale-95"
-            >
-              <Utensils className="w-3.5 h-3.5 text-amber-400" />
-              <span>Restoran Değiştir</span>
-            </button>
             <span className="px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 font-medium">
               Toplam: <strong className="text-white font-bold">{tables.length}</strong> Masa
             </span>
             <span className="px-3 py-1.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-xs text-emerald-300 font-medium">
               Boş: <strong className="text-emerald-200 font-bold">{emptyCount}</strong>
             </span>
-            <span className="px-3 py-1.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-300 font-medium">
-              Dolu: <strong className="text-rose-200 font-bold">{occupiedCount}</strong>
+            <span className="px-3 py-1.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 font-medium">
+              Siparişli: <strong className="text-amber-200 font-bold">{occupiedCount}</strong>
             </span>
           </div>
         </div>
@@ -551,7 +506,7 @@ export default function WaiterTerminalPage() {
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="Masa numarası veya adı ile ara (örn: Masa 1, Teras, VIP)..."
+              placeholder="Masa numarası veya adı ile ara..."
               value={tableSearchQuery}
               onChange={(e) => setTableSearchQuery(e.target.value)}
               className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -589,10 +544,10 @@ export default function WaiterTerminalPage() {
               onClick={() => setTableStatusFilter("OCCUPIED")}
               className={clsx(
                 "px-3 py-1.5 rounded-xl text-xs font-bold transition-all",
-                tableStatusFilter === "OCCUPIED" ? "bg-rose-500 text-white shadow" : "text-rose-400 hover:text-rose-300"
+                tableStatusFilter === "OCCUPIED" ? "bg-amber-500 text-zinc-950 shadow" : "text-amber-400 hover:text-amber-300"
               )}
             >
-              Dolu ({occupiedCount})
+              Siparişli ({occupiedCount})
             </button>
           </div>
         </div>
@@ -608,8 +563,49 @@ export default function WaiterTerminalPage() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 sm:gap-4">
             {filteredTables.map((t) => {
-              const isOccupied = t.status === "OCCUPIED" || (t.orders && t.orders.length > 0);
-              const orderCount = t.orders?.length || 0;
+              const activeOrders = t.orders || [];
+              const hasOrders = activeOrders.length > 0 || t.status === "OCCUPIED";
+
+              const isReady = activeOrders.some((o: any) => o.status === "COMPLETED");
+              const isPreparing = activeOrders.some((o: any) => o.status === "PREPARING");
+              const isPending = activeOrders.some((o: any) => o.status === "PENDING");
+
+              let statusBadgeText = "BOŞ";
+              let statusSubText = "Sipariş Alınmadı";
+              let cardClasses = "bg-zinc-900/60 border-zinc-800/80 hover:border-emerald-500/60 hover:bg-emerald-950/10";
+              let iconClasses = "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30";
+              let badgeClasses = "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
+              let footerStatus = "text-emerald-400/90 font-semibold";
+
+              if (isReady) {
+                statusBadgeText = "TAMAMLANDI";
+                statusSubText = "Mutfak Tamamladı • Servise Hazır";
+                cardClasses = "bg-emerald-950/30 border-emerald-400/80 hover:border-emerald-300 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/40";
+                iconClasses = "bg-emerald-500 text-zinc-950 font-black";
+                badgeClasses = "bg-emerald-500 text-zinc-950 font-black border-emerald-400 animate-pulse";
+                footerStatus = "text-emerald-300 font-black";
+              } else if (isPreparing) {
+                statusBadgeText = "HAZIRLANIYOR";
+                statusSubText = "Mutfakta Hazırlanıyor";
+                cardClasses = "bg-blue-950/25 border-blue-500/60 hover:border-blue-400 shadow-lg shadow-blue-500/10";
+                iconClasses = "bg-blue-500/20 text-blue-300 border border-blue-500/40";
+                badgeClasses = "bg-blue-500/20 text-blue-200 border-blue-500/40 animate-pulse";
+                footerStatus = "text-blue-300 font-bold";
+              } else if (isPending) {
+                statusBadgeText = "SİPARİŞ ALINDI";
+                statusSubText = "Mutfak Sırasında Bekliyor";
+                cardClasses = "bg-amber-950/25 border-amber-500/60 hover:border-amber-400 shadow-lg shadow-amber-500/10";
+                iconClasses = "bg-amber-500/20 text-amber-300 border border-amber-500/40";
+                badgeClasses = "bg-amber-500/20 text-amber-200 border-amber-500/40";
+                footerStatus = "text-amber-300 font-bold";
+              } else if (hasOrders) {
+                statusBadgeText = "SİPARİŞ ALINDI";
+                statusSubText = "Dolu Masa";
+                cardClasses = "bg-amber-950/20 border-amber-500/50 hover:border-amber-400";
+                iconClasses = "bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                badgeClasses = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+                footerStatus = "text-amber-300 font-bold";
+              }
 
               return (
                 <button
@@ -620,51 +616,34 @@ export default function WaiterTerminalPage() {
                     setGeneralOrderNotes("");
                   }}
                   className={clsx(
-                    "p-4 sm:p-5 rounded-3xl border text-left transition-all active:scale-[0.97] flex flex-col justify-between group relative overflow-hidden shadow-lg",
-                    isOccupied
-                      ? "bg-rose-950/20 border-rose-500/40 hover:border-rose-400 hover:bg-rose-950/30"
-                      : "bg-zinc-900/70 border-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-950/20",
-                    "hover:shadow-xl"
+                    "p-4 sm:p-5 rounded-3xl border text-left transition-all active:scale-[0.97] flex flex-col justify-between group relative overflow-hidden shadow-md hover:shadow-xl",
+                    cardClasses
                   )}
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <div className={clsx(
-                        "w-10 h-10 rounded-2xl flex items-center justify-center font-bold",
-                        isOccupied ? "bg-rose-500/20 text-rose-400" : "bg-emerald-500/20 text-emerald-400"
-                      )}>
+                      <div className={clsx("w-10 h-10 rounded-2xl flex items-center justify-center font-bold", iconClasses)}>
                         <Armchair className="w-5 h-5" />
                       </div>
-                      <span className={clsx(
-                        "text-[10px] font-black uppercase px-2 py-0.5 rounded-full border",
-                        isOccupied
-                          ? "bg-rose-500/20 text-rose-300 border-rose-500/30 animate-pulse"
-                          : "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
-                      )}>
-                        {isOccupied ? "DOLU" : "BOŞ"}
+                      <span className={clsx("text-[10px] font-black uppercase px-2 py-0.5 rounded-full border tracking-wide", badgeClasses)}>
+                        {statusBadgeText}
                       </span>
                     </div>
 
                     <h3 className="text-base sm:text-lg font-black text-white group-hover:text-amber-300 transition-colors">
                       {t.name}
                     </h3>
-                    <p className="text-zinc-400 text-xs mt-1 flex items-center gap-1.5">
-                      <span>👥 {t.capacity || 4} Kişilik</span>
+                    <p className="text-xs mt-1 text-zinc-400">
+                      {statusSubText}
                     </p>
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs">
-                    {isOccupied ? (
-                      <span className="text-rose-400 font-bold text-[11px]">
-                        {orderCount > 0 ? `${orderCount} Açık Sipariş` : "Dolu Masa"}
-                      </span>
-                    ) : (
-                      <span className="text-emerald-400 font-bold text-[11px]">
-                        Müsait
-                      </span>
-                    )}
+                    <span className={clsx("text-[11px]", footerStatus)}>
+                      {hasOrders ? (activeOrders.length > 0 ? `${activeOrders.length} Sipariş` : "Siparişli") : "Sipariş Alınmadı"}
+                    </span>
                     <span className="text-amber-400 font-black group-hover:translate-x-1 transition-transform">
-                      Menüyü Aç ➔
+                      Siparişe Git ➔
                     </span>
                   </div>
                 </button>
@@ -709,20 +688,9 @@ export default function WaiterTerminalPage() {
           </div>
 
           {/* Sağ: Ürün Sayısı & Restoran Değiştir */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-zinc-400 font-medium hidden sm:inline">
+            <span className="text-xs text-zinc-400 font-medium">
               Menü: <strong className="text-amber-400 font-bold">{displayedItems.length}</strong> Çeşit
             </span>
-            <button
-              type="button"
-              onClick={handleSwitchRestaurant}
-              title="Farklı Bir Alakarta Geçiş Yap"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-700 text-zinc-300 hover:text-white text-xs font-bold transition-all shadow-sm active:scale-95"
-            >
-              <Utensils className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-[11px]">Restoran Değiştir</span>
-            </button>
-          </div>
         </div>
 
         {/* Arama Barı */}
@@ -1303,67 +1271,75 @@ export default function WaiterTerminalPage() {
             </div>
 
             {/* Özel Pişirme & Servis Notu */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5">
-                  <label className="text-xs font-semibold text-zinc-300">
-                    {selectedItemForModal?.defaultNotes ? "Özel Pişirme & Servis Tercihleri" : "Özel Pişirme & Servis Notu"}
-                  </label>
-                  {selectedItemForModal?.defaultNotes && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold flex items-center gap-1">
-                      <span>✨</span> Ürüne Özel
-                    </span>
-                  )}
-                </div>
-                <span className="text-[10px] text-zinc-400">Tek tıkla ekleyin</span>
-              </div>
+            {(() => {
+              const quickNotes = getActiveQuickNotes(selectedItemForModal);
+              return (
+                <div className="space-y-3">
+                  {quickNotes.length > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-1.5">
+                          <label className="text-xs font-semibold text-zinc-300">
+                            Özel Pişirme & Servis Tercihleri
+                          </label>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold flex items-center gap-1">
+                            <span>✨</span> Ürüne Özel
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-zinc-400">Tek tıkla ekleyin</span>
+                      </div>
 
-              {/* Hızlı Notlar */}
-              <div className="flex flex-wrap gap-1.5 mb-2.5">
-                {getActiveQuickNotes(selectedItemForModal).map((quick: string) => {
-                  const isSelected = modalItemNote.includes(quick);
-                  return (
-                    <button
-                      key={quick}
-                      type="button"
-                      onClick={() => {
-                        if (isSelected) {
-                          setModalItemNote((prev) =>
-                            prev
-                              .replace(quick, "")
-                              .replace(/,\s*,/g, ",")
-                              .replace(/^,\s*|,\s*$/g, "")
-                              .trim()
+                      {/* Hızlı Notlar */}
+                      <div className="flex flex-wrap gap-1.5 mb-1">
+                        {quickNotes.map((quick: string) => {
+                          const isSelected = modalItemNote.includes(quick);
+                          return (
+                            <button
+                              key={quick}
+                              type="button"
+                              onClick={() => {
+                                if (isSelected) {
+                                  setModalItemNote((prev) =>
+                                    prev
+                                      .replace(quick, "")
+                                      .replace(/,\s*,/g, ",")
+                                      .replace(/^,\s*|,\s*$/g, "")
+                                      .trim()
+                                  );
+                                } else {
+                                  setModalItemNote((prev) => (prev ? `${prev}, ${quick}` : quick));
+                                }
+                              }}
+                              className={`text-[11px] px-3 py-1.5 rounded-xl transition font-medium flex items-center gap-1.5 active:scale-95 ${
+                                isSelected
+                                  ? "bg-amber-500 text-zinc-950 font-bold shadow-md shadow-amber-500/20 border border-amber-400"
+                                  : "bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-700/60 text-zinc-300"
+                              }`}
+                            >
+                              {isSelected ? <span>✓</span> : <span className="text-amber-400/80">•</span>}
+                              <span>{quick}</span>
+                            </button>
                           );
-                        } else {
-                          setModalItemNote((prev) => (prev ? `${prev}, ${quick}` : quick));
-                        }
-                      }}
-                      className={`text-[11px] px-3 py-1.5 rounded-xl transition font-medium flex items-center gap-1.5 active:scale-95 ${
-                        isSelected
-                          ? "bg-amber-500 text-zinc-950 font-bold shadow-md shadow-amber-500/20 border border-amber-400"
-                          : "bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-700/60 text-zinc-300"
-                      }`}
-                    >
-                      {isSelected ? <span>✓</span> : <span className="text-amber-400/80">•</span>}
-                      <span>{quick}</span>
-                    </button>
-                  );
-                })}
-              </div>
+                        })}
+                      </div>
+                    </div>
+                  )}
 
-              <input
-                type="text"
-                placeholder={
-                  selectedItemForModal?.defaultNotes
-                    ? "Yukarıdaki butonlardan seçebilir veya ekstra özel istek yazabilirsiniz..."
-                    : "Örn: Az pişmiş olsun, buzsuz servis edilsin..."
-                }
-                value={modalItemNote}
-                onChange={(e) => setModalItemNote(e.target.value)}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
-              />
-            </div>
+                  <div>
+                    <label className="text-xs font-semibold text-zinc-300 block mb-1.5">
+                      {quickNotes.length > 0 ? "Ekstra Not / İstek" : "Özel İstek / Servis Notu (İsteğe bağlı)"}
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Varsa ilave özel istek veya servis notu yazabilirsiniz..."
+                      value={modalItemNote}
+                      onChange={(e) => setModalItemNote(e.target.value)}
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                    />
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Alt Butonlar */}
             <div className="pt-2 border-t border-zinc-800 flex items-center justify-between gap-2">
@@ -1402,51 +1378,7 @@ export default function WaiterTerminalPage() {
         </div>
       )}
 
-      {/* Restoran Değiştirme Onay Modalı */}
-      {isSwitchConfirmOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-[#0f1422] border border-amber-500/40 rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/10">
-              <Utensils className="w-6 h-6" />
-            </div>
 
-            <div className="text-center">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500/80 block">
-                Restoran Değişikliği
-              </span>
-              <h3 className="text-base font-extrabold text-white mt-1">
-                Bu restorandan çıkış yapıyorsunuz, emin misiniz?
-              </h3>
-              <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
-                <strong className="text-amber-300">{session?.activeRestaurantName || currentRestaurant?.name}</strong> alakartındaki oturumunuz sonlandırılacak ve farklı bir a la carte restoran seçebileceksiniz.
-              </p>
-              {cart.length > 0 && (
-                <div className="mt-3 p-2.5 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-[11px] font-medium text-left flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
-                  <span>Dikkat: Henüz mutfağa gönderilmemiş {cart.length} çeşit sepet ürününüz temizlenecektir.</span>
-                </div>
-              )}
-            </div>
-
-            <div className="pt-2 border-t border-zinc-800 flex items-center justify-end gap-2.5">
-              <button
-                type="button"
-                onClick={() => setIsSwitchConfirmOpen(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold transition"
-              >
-                Vazgeç
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmSwitchRestaurant}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 text-xs font-black shadow-lg shadow-amber-500/20 transition active:scale-95"
-              >
-                Evet, Çıkış Yap
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

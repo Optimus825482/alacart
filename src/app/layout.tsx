@@ -3,13 +3,13 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "Merit A La Carte - Lüks Restoran Yönetim Sistemi",
-  description: "5 Yıldızlı Otel A La Carte Restoran, Garson ve Mutfak Yönetim Platformu",
+  title: "ALACARTE",
+  description: "Alacarte Restoran Yönetim Sistemi",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Merit Alacarte",
+    title: "ALACARTE",
   },
 };
 

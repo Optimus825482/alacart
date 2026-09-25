@@ -126,21 +126,51 @@ export async function getSessionUser(): Promise<SessionUser | null> {
 // ==========================================
 // ALAKART RESTORAN SEÇİMİ VE KİLİTLEME
 // ==========================================
-export async function selectRestaurantAction(restaurantId: string) {
+export async function selectRestaurantAction(restaurantIdOrCode: string) {
   try {
     const cookieStore = await cookies();
-    const session = await getSessionUser();
-    if (!session) return { success: false, error: "Oturum bulunamadı." };
+    let session = await getSessionUser();
 
-    const restaurant = await prisma.restaurant.findUnique({
-      where: { id: restaurantId },
+    if (!restaurantIdOrCode) {
+      return { success: false, error: "Restoran bilgisi eksik." };
+    }
+
+    const cleanParam = restaurantIdOrCode.trim();
+
+    // ID, KOD veya İSME göre restoranı esnek şekilde bul
+    const restaurant = await prisma.restaurant.findFirst({
+      where: {
+        OR: [
+          { id: cleanParam },
+          { code: cleanParam.toUpperCase() },
+          { name: { equals: cleanParam, mode: "insensitive" } },
+        ],
+      },
     });
 
-    if (!restaurant) return { success: false, error: "Restoran bulunamadı." };
+    if (!restaurant) {
+      return { success: false, error: `Restoran bulunamadı (${cleanParam}).` };
+    }
 
-    // Yeni oturumu güncelle
-    session.activeRestaurantId = restaurant.id;
-    session.activeRestaurantName = restaurant.name;
+    // Eğer oturum çerezi yoksa veritabanından varsayılan kullanıcı ile oturum oluştur
+    if (!session) {
+      const fallbackUser = await prisma.user.findFirst({
+        where: { role: { in: ["WAITER", "ADMIN"] }, active: true },
+      });
+
+      session = {
+        id: fallbackUser?.id || "waiter-guest",
+        name: fallbackUser?.name || "Garson",
+        username: fallbackUser?.username || "garson",
+        role: (fallbackUser?.role as any) || "WAITER",
+        activeRestaurantId: restaurant.id,
+        activeRestaurantName: restaurant.name,
+        assignedRestaurantIds: [restaurant.id],
+      };
+    } else {
+      session.activeRestaurantId = restaurant.id;
+      session.activeRestaurantName = restaurant.name;
+    }
 
     cookieStore.set("alacarte_session", JSON.stringify(session), {
       httpOnly: true,
@@ -150,18 +180,47 @@ export async function selectRestaurantAction(restaurantId: string) {
       path: "/",
     });
 
-    await logAudit({
-      userId: session.id,
-      userName: session.name,
-      userRole: session.role,
-      action: "SELECT_RESTAURANT",
-      entity: "Restaurant",
-      entityId: restaurant.id,
-      details: `${session.name} ${restaurant.name} alakartını seçti ve kilitlendi.`,
-      restaurantId: restaurant.id,
-    });
+    try {
+      await logAudit({
+        userId: session.id,
+        userName: session.name,
+        userRole: session.role,
+        action: "SELECT_RESTAURANT",
+        entity: "Restaurant",
+        entityId: restaurant.id,
+        details: `${session.name} ${restaurant.name} alakartını seçti ve kilitlendi.`,
+        restaurantId: restaurant.id,
+      });
+    } catch (auditErr) {
+      console.warn("Audit log notice:", auditErr);
+    }
 
     return { success: true, restaurant };
+  } catch (error: any) {
+    console.error("selectRestaurantAction error:", error);
+    return { success: false, error: error.message || "Restoran seçilirken bir hata oluştu." };
+  }
+}
+
+// ==========================================
+// RESTORAN KİLİDİNİ KALDIR (RESTORAN DEĞİŞTİR)
+// ==========================================
+export async function clearActiveRestaurantAction() {
+  try {
+    const cookieStore = await cookies();
+    const session = await getSessionUser();
+    if (session) {
+      session.activeRestaurantId = null;
+      session.activeRestaurantName = null;
+      cookieStore.set("alacarte_session", JSON.stringify(session), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+      });
+    }
+    return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
   }

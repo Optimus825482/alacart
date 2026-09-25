@@ -17,9 +17,9 @@ import {
   LogOut,
   Image as ImageIcon,
 } from "lucide-react";
-import { getTables, getCategoriesTree } from "@/actions/definitions";
+import { getTables, getCategoriesTree, getRestaurants } from "@/actions/definitions";
 import { createOrder, getTableActiveOrders } from "@/actions/orders";
-import { getSessionUser, selectRestaurantAction, logoutAction, SessionUser } from "@/actions/auth";
+import { getSessionUser, selectRestaurantAction, logoutAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
 import { getRestaurantTheme, RESTAURANT_THEMES } from "@/lib/themes";
 import clsx from "clsx";
 
@@ -37,6 +37,7 @@ export default function WaiterTerminalPage() {
   const [session, setSession] = useState<SessionUser | null>(null);
 
   // Restoran & Masa Bilgileri
+  const [availableRestaurants, setAvailableRestaurants] = useState<any[]>([]);
   const [currentRestaurant, setCurrentRestaurant] = useState<any | null>(null);
   const [tables, setTables] = useState<any[]>([]);
   const [selectedTable, setSelectedTable] = useState<any | null>(null);
@@ -64,59 +65,111 @@ export default function WaiterTerminalPage() {
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const user = await getSessionUser();
-      if (!user) {
-        router.push("/login");
-        return;
-      }
-      setSession(user);
+      try {
+        const [user, restsRes] = await Promise.all([
+          getSessionUser(),
+          getRestaurants(),
+        ]);
 
-      if (user.activeRestaurantId) {
-        await loadRestaurant(user.activeRestaurantId);
+        if (restsRes?.success && restsRes.data) {
+          setAvailableRestaurants(restsRes.data);
+        }
+
+        if (!user) {
+          router.push("/login");
+          return;
+        }
+        setSession(user);
+
+        if (user.activeRestaurantId) {
+          await loadRestaurant(user.activeRestaurantId);
+        }
+      } catch (err) {
+        console.error("Waiter init error:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     init();
   }, []);
 
   const loadRestaurant = async (restId: string) => {
-    // Masaları ve Kategorileri yükle
-    const [tablesRes, catsRes] = await Promise.all([
-      getTables(restId),
-      getCategoriesTree(restId),
-    ]);
+    try {
+      // Masaları ve Kategorileri yükle
+      const [tablesRes, catsRes] = await Promise.all([
+        getTables(restId),
+        getCategoriesTree(restId),
+      ]);
 
-    if (tablesRes.success && tablesRes.data) {
-      setTables(tablesRes.data);
-      if (tablesRes.data.length > 0) {
-        setSelectedTable(tablesRes.data[0]);
+      if (tablesRes.success && tablesRes.data) {
+        setTables(tablesRes.data);
+        if (tablesRes.data.length > 0) {
+          setSelectedTable(tablesRes.data[0]);
+        }
       }
-    }
 
-    if (catsRes.success && catsRes.data) {
-      setCategoriesTree(catsRes.data);
-      if (catsRes.data.length > 0) {
-        setSelectedRootCatId(catsRes.data[0].id);
-        if (catsRes.data[0].children?.length > 0) {
-          setSelectedSubCatId(catsRes.data[0].children[0].id);
-          if (catsRes.data[0].children[0].children?.length > 0) {
-            setSelectedSubSubCatId(catsRes.data[0].children[0].children[0].id);
+      if (catsRes.success && catsRes.data) {
+        setCategoriesTree(catsRes.data);
+        if (catsRes.data.length > 0) {
+          setSelectedRootCatId(catsRes.data[0].id);
+          if (catsRes.data[0].children?.length > 0) {
+            setSelectedSubCatId(catsRes.data[0].children[0].id);
+            if (catsRes.data[0].children[0].children?.length > 0) {
+              setSelectedSubSubCatId(catsRes.data[0].children[0].children[0].id);
+            }
           }
         }
       }
+    } catch (err) {
+      console.error("loadRestaurant error:", err);
     }
   };
 
   // Restoran Seçimi Yapıldığında (Kilitleme)
-  const handleSelectRestaurant = async (restaurantId: string) => {
+  const handleSelectRestaurant = async (restaurantIdOrCode: string) => {
     setLoading(true);
-    const res = await selectRestaurantAction(restaurantId);
-    if (res.success && res.restaurant) {
-      setCurrentRestaurant(res.restaurant);
-      setSession((prev) => prev ? { ...prev, activeRestaurantId: res.restaurant.id, activeRestaurantName: res.restaurant.name } : null);
-      await loadRestaurant(res.restaurant.id);
+    try {
+      const res = await selectRestaurantAction(restaurantIdOrCode);
+      if (res.success && res.restaurant) {
+        setCurrentRestaurant(res.restaurant);
+        setSession((prev) => ({
+          ...(prev || {
+            id: "waiter",
+            name: "Garson",
+            username: "garson",
+            role: "WAITER",
+          }),
+          activeRestaurantId: res.restaurant.id,
+          activeRestaurantName: res.restaurant.name,
+        }));
+        await loadRestaurant(res.restaurant.id);
+      } else {
+        alert("Restoran seçilemedi: " + (res.error || "Bilinmeyen hata"));
+      }
+    } catch (err: any) {
+      console.error("handleSelectRestaurant error:", err);
+      alert("Hata oluştu: " + err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  // Restoran Değiştirme
+  const handleSwitchRestaurant = async () => {
+    setLoading(true);
+    try {
+      await clearActiveRestaurantAction();
+      setSession((prev) => prev ? { ...prev, activeRestaurantId: null, activeRestaurantName: null } : null);
+      setCurrentRestaurant(null);
+      setCart([]);
+      setSelectedTable(null);
+      setTables([]);
+      setCategoriesTree([]);
+    } catch (err) {
+      console.error("handleSwitchRestaurant error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Masanın açık siparişleri
@@ -303,30 +356,45 @@ export default function WaiterTerminalPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {Object.values(RESTAURANT_THEMES).map((theme) => (
+          {(availableRestaurants.length > 0
+            ? availableRestaurants.map((r) => ({
+                id: r.id,
+                code: r.code,
+                name: r.name,
+                description: r.description,
+                theme: getRestaurantTheme(r.code || r.name),
+              }))
+            : Object.values(RESTAURANT_THEMES).map((t) => ({
+                id: t.code,
+                code: t.code,
+                name: t.name,
+                description: t.subtitle,
+                theme: t,
+              }))
+          ).map((item) => (
             <button
-              key={theme.code}
-              onClick={() => handleSelectRestaurant(theme.code)}
+              key={item.id}
+              onClick={() => handleSelectRestaurant(item.id)}
               className={clsx(
                 "p-5 rounded-3xl border text-left transition-all active:scale-[0.98] group flex flex-col justify-between",
-                theme.bgDark,
-                theme.border,
-                theme.glow,
+                item.theme.bgDark,
+                item.theme.border,
+                item.theme.glow,
                 "hover:ring-2 hover:ring-amber-400/50"
               )}
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl">{theme.iconEmoji}</span>
-                  <span className={clsx("text-[10px] font-bold px-2 py-0.5 rounded-full border", theme.badge)}>
-                    {theme.code}
+                  <span className="text-3xl">{item.theme.iconEmoji}</span>
+                  <span className={clsx("text-[10px] font-bold px-2 py-0.5 rounded-full border", item.theme.badge)}>
+                    {item.code}
                   </span>
                 </div>
                 <h3 className="text-lg font-black text-white group-hover:text-amber-300 transition-colors">
-                  {theme.name}
+                  {item.name}
                 </h3>
                 <p className="text-zinc-400 text-xs mt-1 leading-relaxed">
-                  {theme.subtitle}
+                  {item.description || item.theme.subtitle}
                 </p>
               </div>
 
@@ -384,10 +452,19 @@ export default function WaiterTerminalPage() {
             <span className="text-xs text-zinc-300 hidden sm:inline">
               Garson: <strong>{session?.name}</strong>
             </span>
+            <button
+              type="button"
+              onClick={handleSwitchRestaurant}
+              title="Farklı Bir Alakarta Geçiş Yap"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs font-bold hover:bg-amber-900/60 transition-all"
+            >
+              <Utensils className="w-3.5 h-3.5" />
+              <span className="text-[11px]">Değiştir</span>
+            </button>
             <form action={logoutAction}>
               <button
                 type="submit"
-                title="Restoran Değiştir / Çıkış Yap"
+                title="Çıkış Yap"
                 className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-900/60 transition-all"
               >
                 <LogOut className="w-3.5 h-3.5" />

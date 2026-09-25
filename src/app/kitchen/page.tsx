@@ -14,8 +14,10 @@ import {
   Filter,
   LogOut,
   RefreshCw,
+  Utensils,
 } from "lucide-react";
-import { getSessionUser, logoutAction, selectRestaurantAction, SessionUser } from "@/actions/auth";
+import { getSessionUser, logoutAction, selectRestaurantAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
+import { getRestaurants } from "@/actions/definitions";
 import { playKitchenChime } from "@/lib/sound";
 import { getRestaurantTheme, RESTAURANT_THEMES } from "@/lib/themes";
 import clsx from "clsx";
@@ -24,6 +26,7 @@ export default function KitchenKDSPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<SessionUser | null>(null);
+  const [availableRestaurants, setAvailableRestaurants] = useState<any[]>([]);
 
   const [orders, setOrders] = useState<any[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("ACTIVE");
@@ -38,25 +41,69 @@ export default function KitchenKDSPage() {
   useEffect(() => {
     async function init() {
       setLoading(true);
-      const user = await getSessionUser();
-      if (!user) {
-        router.push("/login");
-        return;
+      try {
+        const [user, restsRes] = await Promise.all([
+          getSessionUser(),
+          getRestaurants(),
+        ]);
+
+        if (restsRes?.success && restsRes.data) {
+          setAvailableRestaurants(restsRes.data);
+        }
+
+        if (!user) {
+          router.push("/login");
+          return;
+        }
+        setSession(user);
+      } catch (err) {
+        console.error("Kitchen init error:", err);
+      } finally {
+        setLoading(false);
       }
-      setSession(user);
-      setLoading(false);
     }
     init();
   }, []);
 
   // Restoran Seçilmemişse (Birden fazla yetkisi olan mutfak kullanıcısı veya admin/şef)
-  const handleSelectKitchenRestaurant = async (restaurantId: string) => {
+  const handleSelectKitchenRestaurant = async (restaurantIdOrCode: string) => {
     setLoading(true);
-    const res = await selectRestaurantAction(restaurantId);
-    if (res.success && res.restaurant) {
-      setSession((prev) => prev ? { ...prev, activeRestaurantId: res.restaurant.id, activeRestaurantName: res.restaurant.name } : null);
+    try {
+      const res = await selectRestaurantAction(restaurantIdOrCode);
+      if (res.success && res.restaurant) {
+        setSession((prev) => ({
+          ...(prev || {
+            id: "kitchen",
+            name: "Mutfak",
+            username: "mutfak",
+            role: "KITCHEN",
+          }),
+          activeRestaurantId: res.restaurant.id,
+          activeRestaurantName: res.restaurant.name,
+        }));
+      } else {
+        alert("Restoran seçilemedi: " + (res.error || "Bilinmeyen hata"));
+      }
+    } catch (err: any) {
+      console.error("handleSelectKitchenRestaurant error:", err);
+      alert("Hata oluştu: " + err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  // Restoran Değiştir
+  const handleSwitchRestaurant = async () => {
+    setLoading(true);
+    try {
+      await clearActiveRestaurantAction();
+      setSession((prev) => prev ? { ...prev, activeRestaurantId: null, activeRestaurantName: null } : null);
+      setOrders([]);
+    } catch (err) {
+      console.error("handleSwitchRestaurant error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Siparişleri Çek
@@ -165,30 +212,45 @@ export default function KitchenKDSPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {Object.values(RESTAURANT_THEMES).map((theme) => (
+          {(availableRestaurants.length > 0
+            ? availableRestaurants.map((r) => ({
+                id: r.id,
+                code: r.code,
+                name: r.name,
+                description: r.description,
+                theme: getRestaurantTheme(r.code || r.name),
+              }))
+            : Object.values(RESTAURANT_THEMES).map((t) => ({
+                id: t.code,
+                code: t.code,
+                name: t.name,
+                description: t.subtitle,
+                theme: t,
+              }))
+          ).map((item) => (
             <button
-              key={theme.code}
-              onClick={() => handleSelectKitchenRestaurant(theme.code)}
+              key={item.id}
+              onClick={() => handleSelectKitchenRestaurant(item.id)}
               className={clsx(
                 "p-5 rounded-3xl border text-left transition-all active:scale-[0.98] group flex flex-col justify-between",
-                theme.bgDark,
-                theme.border,
-                theme.glow,
+                item.theme.bgDark,
+                item.theme.border,
+                item.theme.glow,
                 "hover:ring-2 hover:ring-emerald-400/50"
               )}
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl">{theme.iconEmoji}</span>
-                  <span className={clsx("text-[10px] font-bold px-2 py-0.5 rounded-full border", theme.badge)}>
-                    {theme.code}
+                  <span className="text-3xl">{item.theme.iconEmoji}</span>
+                  <span className={clsx("text-[10px] font-bold px-2 py-0.5 rounded-full border", item.theme.badge)}>
+                    {item.code}
                   </span>
                 </div>
                 <h3 className="text-lg font-black text-white group-hover:text-emerald-300 transition-colors">
-                  {theme.name} Mutfağı (KDS)
+                  {item.name} Mutfağı (KDS)
                 </h3>
                 <p className="text-zinc-400 text-xs mt-1 leading-relaxed">
-                  {theme.subtitle}
+                  {item.description || item.theme.subtitle}
                 </p>
               </div>
 
@@ -271,6 +333,17 @@ export default function KitchenKDSPage() {
               className="p-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white"
             >
               <RefreshCw className="w-4 h-4" />
+            </button>
+
+            {/* Restoran Değiştir */}
+            <button
+              type="button"
+              onClick={handleSwitchRestaurant}
+              title="Farklı Bir Alakart Mutfağına Geçiş Yap"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs font-bold hover:bg-amber-900/60 transition-all"
+            >
+              <Utensils className="w-3.5 h-3.5" />
+              <span>Değiştir</span>
             </button>
 
             {/* Restorandan Güvenli Çıkış */}

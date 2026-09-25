@@ -115,6 +115,14 @@ export function Navbar() {
           })}
         </nav>
 
+        {/* Seçilen Alakart Göstergesi */}
+        {session?.activeRestaurantName && (
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-amber-500/10 border border-amber-500/30 shadow-sm">
+            <span className="text-[10px] uppercase font-bold text-amber-400/90 hidden lg:inline">Seçilen Alakart:</span>
+            <span className="font-extrabold text-amber-300 text-xs sm:text-sm">{session.activeRestaurantName}</span>
+          </div>
+        )}
+
         {/* Right User & Logout Section */}
         <div className="flex items-center gap-2">
           {session ? (

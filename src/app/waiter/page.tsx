@@ -429,19 +429,22 @@ export default function WaiterTerminalPage() {
 
     return (
       <div className={clsx("flex-1 flex flex-col max-w-5xl mx-auto w-full p-4 sm:p-6 pb-20", currentTheme.bgDark)}>
-        {/* Üst Bar: Restoran Kimliği ve Garson Kontrolleri */}
-        <div className={clsx("flex flex-wrap items-center justify-between gap-3 p-4 rounded-3xl border mb-6 backdrop-blur-md shadow-lg", currentTheme.cardBg, currentTheme.border)}>
+        {/* Üst Bar: Seçilen Alakart Sabit Bilgisi ve Garson Kontrolleri */}
+        <div className={clsx("sticky top-14 z-40 flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-3xl border mb-6 backdrop-blur-md shadow-xl", currentTheme.cardBg, currentTheme.border)}>
           <div className="flex items-center gap-3">
-            <span className="text-3xl">{currentTheme.iconEmoji}</span>
+            <span className="text-3xl sm:text-4xl">{currentTheme.iconEmoji}</span>
             <div>
               <div className="flex items-center gap-2">
                 <span className={clsx("text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border", currentTheme.badge)}>
-                  {session?.activeRestaurantName || currentTheme.name}
+                  SEÇİLEN ALAKART
                 </span>
                 <span className="text-[11px] text-zinc-400">Garson: <strong className="text-white">{session?.name}</strong></span>
               </div>
-              <h2 className="text-lg sm:text-xl font-black text-white mt-0.5">
-                Masa Seçim Ekranı
+              <h2 className="text-base sm:text-xl font-black text-white mt-0.5 flex flex-wrap items-center gap-1.5">
+                <span className="text-zinc-400 text-xs sm:text-sm font-bold">Seçilen Alakart:</span>
+                <span className={clsx("text-base sm:text-xl font-extrabold", currentTheme.textAccent)}>
+                  {session?.activeRestaurantName || currentTheme.name}
+                </span>
               </h2>
             </div>
           </div>
@@ -649,15 +652,18 @@ export default function WaiterTerminalPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Sabit Restoran Rozeti */}
           <div className="flex items-center gap-2.5">
-            <span className="text-2xl">{currentTheme.iconEmoji}</span>
+            <span className="text-2xl sm:text-3xl">{currentTheme.iconEmoji}</span>
             <div>
               <div className="flex items-center gap-2">
                 <span className={clsx("text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border", currentTheme.badge)}>
-                  SABİTLENMİŞ ALAKART
+                  SEÇİLEN ALAKART
                 </span>
               </div>
-              <h2 className="text-base sm:text-lg font-black text-white leading-tight">
-                {session?.activeRestaurantName || currentTheme.name}
+              <h2 className="text-sm sm:text-lg font-black text-white leading-tight flex flex-wrap items-center gap-1.5">
+                <span className="text-zinc-400 text-xs sm:text-sm font-bold">Seçilen Alakart:</span>
+                <span className={clsx("font-extrabold", currentTheme.textAccent)}>
+                  {session?.activeRestaurantName || currentTheme.name}
+                </span>
               </h2>
             </div>
           </div>

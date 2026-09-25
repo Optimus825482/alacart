@@ -302,19 +302,23 @@ export default function KitchenKDSPage() {
   return (
     <div className={clsx("flex-1 flex flex-col p-4 sm:p-6 max-w-7xl mx-auto w-full", currentTheme.bgDark)}>
       {/* Sabit Mutfak Header (Karışıklığı Önleyen Özel Renkli KDS Barı) */}
-      <div className={clsx("border rounded-3xl p-4 sm:p-5 mb-6 shadow-xl backdrop-blur-md", currentTheme.border, currentTheme.cardBg)}>
+      <div className={clsx("sticky top-14 z-40 border rounded-3xl p-4 sm:p-5 mb-6 shadow-2xl backdrop-blur-md", currentTheme.border, currentTheme.cardBg)}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="text-3xl">{currentTheme.iconEmoji}</span>
+            <span className="text-3xl sm:text-4xl">{currentTheme.iconEmoji}</span>
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span className={clsx("text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded border", currentTheme.badge)}>
-                  {session.activeRestaurantName} ÖZEL MUTFAĞI
+                  SEÇİLEN ALAKART
                 </span>
+                <span className="text-[11px] text-zinc-400 hidden sm:inline">Mutfak KDS Terminali</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white mt-0.5">
-                Mutfak Sipariş & Yazıcı Terminali
+              <h2 className="text-lg sm:text-2xl font-black text-white mt-0.5 flex flex-wrap items-center gap-1.5">
+                <span className="text-zinc-400 text-xs sm:text-sm font-bold">Seçilen Alakart:</span>
+                <span className={clsx("font-extrabold", currentTheme.textAccent)}>
+                  {session.activeRestaurantName || currentTheme.name}
+                </span>
               </h2>
             </div>
           </div>

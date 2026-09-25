@@ -41,6 +41,8 @@ export default function WaiterTerminalPage() {
   const [currentRestaurant, setCurrentRestaurant] = useState<any | null>(null);
   const [tables, setTables] = useState<any[]>([]);
   const [selectedTable, setSelectedTable] = useState<any | null>(null);
+  const [tableSearchQuery, setTableSearchQuery] = useState("");
+  const [tableStatusFilter, setTableStatusFilter] = useState<"ALL" | "EMPTY" | "OCCUPIED">("ALL");
 
   // Hiyerarşik Kategori Navigasyonu
   const [categoriesTree, setCategoriesTree] = useState<any[]>([]);
@@ -103,9 +105,7 @@ export default function WaiterTerminalPage() {
 
       if (tablesRes.success && tablesRes.data) {
         setTables(tablesRes.data);
-        if (tablesRes.data.length > 0) {
-          setSelectedTable(tablesRes.data[0]);
-        }
+        // Otomatik masa seçimi kaldırıldı; kullanıcı önce masa listesi ekranını görür.
       }
 
       if (catsRes.success && catsRes.data) {
@@ -309,14 +309,17 @@ export default function WaiterTerminalPage() {
       setGeneralOrderNotes("");
       setIsConfirmModalOpen(false);
 
-      const [ordersRes, tablesRes] = await Promise.all([
-        getTableActiveOrders(selectedTable.id),
-        getTables(session.activeRestaurantId),
-      ]);
-      if (ordersRes.success && ordersRes.data) setActiveTableOrders(ordersRes.data);
-      if (tablesRes.success && tablesRes.data) setTables(tablesRes.data);
+      if (session.activeRestaurantId) {
+        const tablesRes = await getTables(session.activeRestaurantId);
+        if (tablesRes.success && tablesRes.data) setTables(tablesRes.data);
+      }
 
-      setTimeout(() => setSuccessMessage(null), 4000);
+      // Sipariş gönderildikten sonra garson yeni masa seçimi için doğrudan masa listesine döner
+      setTimeout(() => {
+        setSelectedTable(null);
+      }, 1500);
+
+      setTimeout(() => setSuccessMessage(null), 5000);
     } else {
       alert("Hata: " + res.error);
     }
@@ -410,7 +413,234 @@ export default function WaiterTerminalPage() {
   }
 
   // ===========================================================================
-  // DURUM 2: RESTORAN KİLİTLİ VE GARSON SİPARİŞ EKRANI
+  // DURUM 2: RESTORAN SEÇİLDİ, ŞİMDİ MASA SEÇİMİ (MASA LİSTESİ EKRANI)
+  // ===========================================================================
+  if (!selectedTable) {
+    const emptyCount = tables.filter((t) => t.status === "EMPTY" && (!t.orders || t.orders.length === 0)).length;
+    const occupiedCount = tables.length - emptyCount;
+
+    const filteredTables = tables.filter((t) => {
+      const matchesSearch = t.name.toLowerCase().includes(tableSearchQuery.toLowerCase());
+      const isOccupied = t.status === "OCCUPIED" || (t.orders && t.orders.length > 0);
+      if (tableStatusFilter === "EMPTY") return matchesSearch && !isOccupied;
+      if (tableStatusFilter === "OCCUPIED") return matchesSearch && isOccupied;
+      return matchesSearch;
+    });
+
+    return (
+      <div className={clsx("flex-1 flex flex-col max-w-5xl mx-auto w-full p-4 sm:p-6 pb-20", currentTheme.bgDark)}>
+        {/* Üst Bar: Restoran Kimliği ve Garson Kontrolleri */}
+        <div className={clsx("flex flex-wrap items-center justify-between gap-3 p-4 rounded-3xl border mb-6 backdrop-blur-md shadow-lg", currentTheme.cardBg, currentTheme.border)}>
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">{currentTheme.iconEmoji}</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={clsx("text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border", currentTheme.badge)}>
+                  {session?.activeRestaurantName || currentTheme.name}
+                </span>
+                <span className="text-[11px] text-zinc-400">Garson: <strong className="text-white">{session?.name}</strong></span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-black text-white mt-0.5">
+                Masa Seçim Ekranı
+              </h2>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSwitchRestaurant}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700/80 hover:border-zinc-500 text-zinc-300 hover:text-white text-xs font-bold transition-all shadow-sm"
+            >
+              <Utensils className="w-3.5 h-3.5 text-amber-400" />
+              <span>Restoran Değiştir</span>
+            </button>
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-900/60 transition-all shadow-sm"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Çıkış</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Başarı Bildirimi (Örn: Sipariş mutfağa iletildikten sonra masa listesine dönüldüğünde) */}
+        {successMessage && (
+          <div className="mb-6 p-4 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs sm:text-sm flex items-center justify-between animate-in fade-in shadow-lg">
+            <div className="flex items-center gap-2.5">
+              <Check className="w-5 h-5 text-emerald-400" />
+              <div>
+                <span className="font-bold text-white">{successMessage}</span>
+                <p className="text-[11px] text-emerald-300/80">Yeni bir masa seçerek sonraki siparişe geçebilirsiniz.</p>
+              </div>
+            </div>
+            <button onClick={() => setSuccessMessage(null)}>
+              <X className="w-4 h-4 text-emerald-400" />
+            </button>
+          </div>
+        )}
+
+        {/* Başlık ve Sayaçlar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <span className="text-xs uppercase tracking-widest text-amber-400 font-bold block mb-1">
+              ADIM 2: MASA SEÇİMİ
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-black text-white">
+              Sipariş Alınacak Masayı Seçin
+            </h1>
+            <p className="text-zinc-400 text-xs sm:text-sm mt-1">
+              Sipariş girişi yapmak için lütfen aşağıdaki masalardan birine dokunun. Seçilen masanın alakart menüsü açılacaktır.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 font-medium">
+              Toplam: <strong className="text-white font-bold">{tables.length}</strong> Masa
+            </span>
+            <span className="px-3 py-1.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-xs text-emerald-300 font-medium">
+              Boş: <strong className="text-emerald-200 font-bold">{emptyCount}</strong>
+            </span>
+            <span className="px-3 py-1.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-300 font-medium">
+              Dolu: <strong className="text-rose-200 font-bold">{occupiedCount}</strong>
+            </span>
+          </div>
+        </div>
+
+        {/* Arama ve Filtre Butonları */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Masa numarası veya adı ile ara (örn: Masa 1, Teras, VIP)..."
+              value={tableSearchQuery}
+              onChange={(e) => setTableSearchQuery(e.target.value)}
+              className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
+            />
+            {tableSearchQuery && (
+              <button
+                onClick={() => setTableSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1.5 bg-zinc-950/80 p-1 rounded-2xl border border-zinc-800">
+            <button
+              onClick={() => setTableStatusFilter("ALL")}
+              className={clsx(
+                "px-3 py-1.5 rounded-xl text-xs font-bold transition-all",
+                tableStatusFilter === "ALL" ? "bg-amber-500 text-zinc-950 shadow" : "text-zinc-400 hover:text-white"
+              )}
+            >
+              Tümü ({tables.length})
+            </button>
+            <button
+              onClick={() => setTableStatusFilter("EMPTY")}
+              className={clsx(
+                "px-3 py-1.5 rounded-xl text-xs font-bold transition-all",
+                tableStatusFilter === "EMPTY" ? "bg-emerald-500 text-zinc-950 shadow" : "text-emerald-400 hover:text-emerald-300"
+              )}
+            >
+              Boş ({emptyCount})
+            </button>
+            <button
+              onClick={() => setTableStatusFilter("OCCUPIED")}
+              className={clsx(
+                "px-3 py-1.5 rounded-xl text-xs font-bold transition-all",
+                tableStatusFilter === "OCCUPIED" ? "bg-rose-500 text-white shadow" : "text-rose-400 hover:text-rose-300"
+              )}
+            >
+              Dolu ({occupiedCount})
+            </button>
+          </div>
+        </div>
+
+        {/* Masalar Grid'i */}
+        {filteredTables.length === 0 ? (
+          <div className="p-12 text-center rounded-3xl bg-zinc-900/30 border border-zinc-800">
+            <Armchair className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
+            <p className="text-zinc-400 text-sm font-medium">
+              Arama kriterlerine uygun masa bulunamadı.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 sm:gap-4">
+            {filteredTables.map((t) => {
+              const isOccupied = t.status === "OCCUPIED" || (t.orders && t.orders.length > 0);
+              const orderCount = t.orders?.length || 0;
+
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => {
+                    setSelectedTable(t);
+                    setCart([]);
+                    setGeneralOrderNotes("");
+                  }}
+                  className={clsx(
+                    "p-4 sm:p-5 rounded-3xl border text-left transition-all active:scale-[0.97] flex flex-col justify-between group relative overflow-hidden shadow-lg",
+                    isOccupied
+                      ? "bg-rose-950/20 border-rose-500/40 hover:border-rose-400 hover:bg-rose-950/30"
+                      : "bg-zinc-900/70 border-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-950/20",
+                    "hover:shadow-xl"
+                  )}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className={clsx(
+                        "w-10 h-10 rounded-2xl flex items-center justify-center font-bold",
+                        isOccupied ? "bg-rose-500/20 text-rose-400" : "bg-emerald-500/20 text-emerald-400"
+                      )}>
+                        <Armchair className="w-5 h-5" />
+                      </div>
+                      <span className={clsx(
+                        "text-[10px] font-black uppercase px-2 py-0.5 rounded-full border",
+                        isOccupied
+                          ? "bg-rose-500/20 text-rose-300 border-rose-500/30 animate-pulse"
+                          : "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                      )}>
+                        {isOccupied ? "DOLU" : "BOŞ"}
+                      </span>
+                    </div>
+
+                    <h3 className="text-base sm:text-lg font-black text-white group-hover:text-amber-300 transition-colors">
+                      {t.name}
+                    </h3>
+                    <p className="text-zinc-400 text-xs mt-1 flex items-center gap-1.5">
+                      <span>👥 {t.capacity || 4} Kişilik</span>
+                    </p>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs">
+                    {isOccupied ? (
+                      <span className="text-rose-400 font-bold text-[11px]">
+                        {orderCount > 0 ? `${orderCount} Açık Sipariş` : "Dolu Masa"}
+                      </span>
+                    ) : (
+                      <span className="text-emerald-400 font-bold text-[11px]">
+                        Müsait
+                      </span>
+                    )}
+                    <span className="text-amber-400 font-black group-hover:translate-x-1 transition-transform">
+                      Menüyü Aç ➔
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ===========================================================================
+  // DURUM 3: MASA SEÇİLDİ VE GARSON SİPARİŞ EKRANI
   // ===========================================================================
   return (
     <div className={clsx("flex-1 flex flex-col max-w-5xl mx-auto w-full pb-28", currentTheme.bgDark)}>
@@ -432,20 +662,29 @@ export default function WaiterTerminalPage() {
             </div>
           </div>
 
-          {/* Masa Seçici Butonu */}
-          <button
-            onClick={() => setIsTableModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-zinc-950/80 border border-amber-500/40 text-amber-300 hover:border-amber-400 text-xs sm:text-sm font-bold shadow-md active:scale-95 transition-all"
-          >
-            <Armchair className="w-4 h-4 text-amber-400" />
-            <span>MASA:</span>
-            <span className="text-white text-sm sm:text-base font-extrabold underline decoration-amber-400">
-              {selectedTable ? selectedTable.name : "Masa Seçin"}
-            </span>
-            {selectedTable?.status === "OCCUPIED" && (
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-            )}
-          </button>
+          {/* Seçili Masa ve Masalara Dön Butonu */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setSelectedTable(null);
+                setCart([]);
+              }}
+              title="Masa Listesine Geri Dön"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs sm:text-sm font-bold shadow-md active:scale-95 transition-all"
+            >
+              <span>← Masalar</span>
+            </button>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-zinc-950/80 border border-zinc-700 text-xs sm:text-sm font-bold shadow-md">
+              <Armchair className="w-4 h-4 text-amber-400" />
+              <span className="text-zinc-400">MASA:</span>
+              <span className="text-white text-sm sm:text-base font-extrabold underline decoration-amber-400">
+                {selectedTable.name}
+              </span>
+              {selectedTable?.status === "OCCUPIED" && (
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+              )}
+            </div>
+          </div>
 
           {/* Garson Kimliği & Güvenli Çıkış */}
           <div className="flex items-center gap-2">

@@ -60,7 +60,12 @@ export default function WaiterTerminalPage() {
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Özel Not Modal State
+  // Ürün Adet & Not Seçim Modalı
+  const [selectedItemForModal, setSelectedItemForModal] = useState<any | null>(null);
+  const [modalQuantity, setModalQuantity] = useState<number>(1);
+  const [modalItemNote, setModalItemNote] = useState<string>("");
+
+  // Özel Not Modal State (Geriye uyumluluk için)
   const [editingItemNote, setEditingItemNote] = useState<{ id: string; name: string; note: string } | null>(null);
 
   // Oturum ve Restoran Doğrulaması
@@ -242,39 +247,87 @@ export default function WaiterTerminalPage() {
     );
   }
 
-  // Sepet İşlemleri
-  const addToCart = (item: any) => {
+  // Hızlı Not Seçenekleri
+  const quickNoteOptions = [
+    "Az Pişmiş",
+    "Orta Pişmiş",
+    "İyi Pişmiş",
+    "Buzlu",
+    "Buzsuz",
+    "Limonlu",
+    "Şekersiz",
+    "Glutensiz",
+    "Sossuz",
+    "Sosu Ayrı",
+    "Acısız",
+    "Sıcak Servis",
+  ];
+
+  // Menü Öğesine Tıklandığında Adet & Not Modalını Aç
+  const handleOpenItemModal = (item: any) => {
+    const inCart = cart.find((ci) => ci.menuItemId === item.id);
+    setSelectedItemForModal(item);
+    setModalQuantity(inCart ? inCart.quantity : 1);
+    setModalItemNote(inCart ? inCart.itemNotes || "" : "");
+  };
+
+  // Modaldan Adet ve Not ile Sepete Ekle / Güncelle
+  const handleSaveModalItem = () => {
+    if (!selectedItemForModal) return;
+    if (modalQuantity <= 0) {
+      setCart((prev) => prev.filter((ci) => ci.menuItemId !== selectedItemForModal.id));
+    } else {
+      setCart((prev) => {
+        const existingIndex = prev.findIndex((ci) => ci.menuItemId === selectedItemForModal.id);
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            quantity: modalQuantity,
+            itemNotes: modalItemNote.trim(),
+          };
+          return updated;
+        }
+        return [
+          ...prev,
+          {
+            menuItemId: selectedItemForModal.id,
+            name: selectedItemForModal.name,
+            quantity: modalQuantity,
+            itemNotes: modalItemNote.trim(),
+            imageUrl: selectedItemForModal.imageUrl,
+          },
+        ];
+      });
+    }
+    setSelectedItemForModal(null);
+  };
+
+  // Modaldan Ürünü Sepetten Kaldır
+  const handleRemoveModalItem = () => {
+    if (!selectedItemForModal) return;
+    setCart((prev) => prev.filter((ci) => ci.menuItemId !== selectedItemForModal.id));
+    setSelectedItemForModal(null);
+  };
+
+  // Mutfağa Göndermeden Önce Sepette Adet Güncelleme (+ / -)
+  const updateCartItemQuantity = (itemId: string, delta: number) => {
     setCart((prev) => {
-      const existing = prev.find((ci) => ci.menuItemId === item.id);
-      if (existing) {
-        return prev.map((ci) =>
-          ci.menuItemId === item.id ? { ...ci, quantity: ci.quantity + 1 } : ci
-        );
-      }
-      return [
-        ...prev,
-        {
-          menuItemId: item.id,
-          name: item.name,
-          quantity: 1,
-          itemNotes: "",
-          imageUrl: item.imageUrl,
-        },
-      ];
+      return prev
+        .map((ci) => {
+          if (ci.menuItemId === itemId) {
+            const newQty = ci.quantity + delta;
+            return newQty > 0 ? { ...ci, quantity: newQty } : null;
+          }
+          return ci;
+        })
+        .filter(Boolean) as CartItem[];
     });
   };
 
-  const removeFromCart = (itemId: string) => {
-    setCart((prev) => {
-      const existing = prev.find((ci) => ci.menuItemId === itemId);
-      if (!existing) return prev;
-      if (existing.quantity > 1) {
-        return prev.map((ci) =>
-          ci.menuItemId === itemId ? { ...ci, quantity: ci.quantity - 1 } : ci
-        );
-      }
-      return prev.filter((ci) => ci.menuItemId !== itemId);
-    });
+  // Sepetten Kalemi Tamamen Sil
+  const removeCartItem = (itemId: string) => {
+    setCart((prev) => prev.filter((ci) => ci.menuItemId !== itemId));
   };
 
   const updateItemNote = (itemId: string, note: string) => {
@@ -848,11 +901,12 @@ export default function WaiterTerminalPage() {
               return (
                 <div
                   key={item.id}
+                  onClick={() => handleOpenItemModal(item)}
                   className={clsx(
-                    "p-3.5 rounded-3xl border transition-all flex gap-3",
+                    "p-3.5 rounded-3xl border transition-all flex gap-3 cursor-pointer group",
                     currentTheme.cardBg,
                     qty > 0
-                      ? "border-amber-500 shadow-md shadow-amber-500/10"
+                      ? "border-amber-500/80 shadow-md shadow-amber-500/10 bg-amber-500/5 ring-1 ring-amber-500/30"
                       : "border-zinc-800/80 hover:border-zinc-700"
                   )}
                 >
@@ -870,30 +924,22 @@ export default function WaiterTerminalPage() {
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
                       <div className="flex items-start justify-between gap-1.5 mb-1">
-                        <h4 className="text-xs sm:text-sm font-bold text-white leading-snug">
+                        <h4 className="text-xs sm:text-sm font-bold text-white leading-snug group-hover:text-amber-300 transition-colors">
                           {item.name}
                         </h4>
-                        {/* Not Butonu */}
+                        {/* Sepetteki Adet Rozeti */}
                         {qty > 0 && (
-                          <button
-                            onClick={() =>
-                              setEditingItemNote({
-                                id: item.id,
-                                name: item.name,
-                                note: inCart?.itemNotes || "",
-                              })
-                            }
-                            className={clsx(
-                              "text-[10px] px-2 py-0.5 rounded-lg font-bold border shrink-0",
-                              inCart?.itemNotes
-                                ? "bg-amber-400 text-zinc-950 border-amber-300"
-                                : "bg-zinc-800 text-zinc-300 border-zinc-700"
-                            )}
-                          >
-                            {inCart?.itemNotes ? `Not: ${inCart.itemNotes}` : "+ Not"}
-                          </button>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full font-black bg-amber-500 text-zinc-950 shadow-sm shrink-0">
+                            {qty} Adet
+                          </span>
                         )}
                       </div>
+
+                      {inCart?.itemNotes && (
+                        <div className="text-[10px] text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded mb-1.5 inline-block border border-amber-400/20">
+                          Not: {inCart.itemNotes}
+                        </div>
+                      )}
 
                       {item.description && (
                         <p className="text-zinc-400 text-[11px] leading-relaxed line-clamp-2 mb-1.5">
@@ -908,7 +954,7 @@ export default function WaiterTerminalPage() {
                       )}
                     </div>
 
-                    {/* Alt Kontrol: Ekle / Stepper */}
+                    {/* Alt Kontrol: Ekle / Düzenle Butonu */}
                     <div className="flex items-center justify-between pt-2 border-t border-zinc-800/60 mt-2">
                       <span className="text-[10px] text-zinc-500 font-medium">
                         Ultra All-Inclusive
@@ -916,30 +962,28 @@ export default function WaiterTerminalPage() {
 
                       {qty === 0 ? (
                         <button
-                          onClick={() => addToCart(item)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-bold transition-all active:scale-95 shadow-sm"
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenItemModal(item);
+                          }}
+                          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-black transition-all active:scale-95 shadow-sm"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Ekle</span>
                         </button>
                       ) : (
-                        <div className="flex items-center gap-2 bg-zinc-950/80 border border-amber-500/40 rounded-xl p-1">
-                          <button
-                            onClick={() => removeFromCart(item.id)}
-                            className="w-6 h-6 rounded-lg bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-white"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="text-amber-400 font-black text-xs w-4 text-center">
-                            {qty}
-                          </span>
-                          <button
-                            onClick={() => addToCart(item)}
-                            className="w-6 h-6 rounded-lg bg-amber-500 hover:bg-amber-400 flex items-center justify-center text-zinc-950 font-bold"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenItemModal(item);
+                          }}
+                          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500 text-amber-300 text-xs font-black transition-all active:scale-95 shadow-sm"
+                        >
+                          <Check className="w-3.5 h-3.5 text-amber-400" />
+                          <span>{qty} Adet (Düzenle)</span>
+                        </button>
                       )}
                     </div>
                   </div>
@@ -1004,29 +1048,62 @@ export default function WaiterTerminalPage() {
                 </button>
               </div>
 
-              <div className="py-4 space-y-2.5 max-h-[40vh] overflow-y-auto pr-1">
-                {cart.map((ci) => (
-                  <div
-                    key={ci.menuItemId}
-                    className="p-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-between text-xs"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2 font-bold text-white">
-                        <span className="text-amber-400 font-black">{ci.quantity}x</span>
-                        <span>{ci.name}</span>
-                      </div>
-                      {ci.itemNotes && (
-                        <div className="text-[10px] text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded mt-1 inline-block">
-                          Özel: {ci.itemNotes}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => removeFromCart(ci.menuItemId)} className="w-6 h-6 rounded bg-zinc-800 flex items-center justify-center text-zinc-300">-</button>
-                      <button onClick={() => addToCart({ id: ci.menuItemId, name: ci.name })} className="w-6 h-6 rounded bg-amber-500 text-zinc-950 font-bold flex items-center justify-center">+</button>
-                    </div>
+              <div className="py-4 space-y-2.5 max-h-[45vh] overflow-y-auto pr-1">
+                {cart.length === 0 ? (
+                  <div className="p-6 text-center text-zinc-500 text-xs bg-zinc-900/50 rounded-2xl border border-zinc-800">
+                    Sepetinizde ürün kalmadı. Lütfen menüden ürün ekleyin.
                   </div>
-                ))}
+                ) : (
+                  cart.map((ci) => (
+                    <div
+                      key={ci.menuItemId}
+                      className="p-3 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 font-bold text-white text-xs sm:text-sm">
+                          <span className="text-amber-400 font-black">{ci.quantity}x</span>
+                          <span>{ci.name}</span>
+                        </div>
+                        {ci.itemNotes && (
+                          <div className="text-[11px] text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-md mt-1 inline-block">
+                            Özel İstek: {ci.itemNotes}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Adet Güncelleme Butonları ([-] [Adet] [+]) & Sil */}
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => updateCartItemQuantity(ci.menuItemId, -1)}
+                          className="w-7 h-7 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold flex items-center justify-center text-sm active:scale-95 transition-all border border-zinc-700 shadow-sm"
+                          title="1 Azalt"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="w-6 text-center font-black text-amber-400 text-sm">
+                          {ci.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => updateCartItemQuantity(ci.menuItemId, 1)}
+                          className="w-7 h-7 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold flex items-center justify-center text-sm active:scale-95 transition-all shadow-sm"
+                          title="1 Artır"
+                        >
+                          <Plus className="w-3.5 h-3.5 font-black" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeCartItem(ci.menuItemId)}
+                          className="w-7 h-7 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/30 text-rose-300 flex items-center justify-center ml-1 text-xs active:scale-95 transition-all shadow-sm"
+                          title="Siparişten Kaldır"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
 
               <div>
@@ -1120,38 +1197,151 @@ export default function WaiterTerminalPage() {
         </div>
       )}
 
-      {/* Özel Not Popover */}
-      {editingItemNote && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0f1422] border border-amber-500/40 rounded-3xl max-w-sm w-full p-5 shadow-2xl">
-            <h4 className="text-sm font-bold text-white mb-1">Özel Pişirme & Servis Notu</h4>
-            <span className="text-xs text-amber-400 block mb-3">{editingItemNote.name}</span>
-
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {["Az Pişmiş", "Orta Pişmiş", "İyi Pişmiş", "Buzsuz", "Glutensiz", "Sossuz", "Sosu Ayrı", "Limonlu"].map(
-                (quick) => (
-                  <button
-                    key={quick}
-                    onClick={() => setEditingItemNote({ ...editingItemNote, note: quick })}
-                    className="text-[10px] px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium"
-                  >
-                    {quick}
-                  </button>
-                )
-              )}
+      {/* Ürün Adet & Not Belirleme Modalı */}
+      {selectedItemForModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-[#0f1422] border border-amber-500/30 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
+            {/* Header */}
+            <div className="flex items-start justify-between border-b border-zinc-800 pb-3">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500/80">Sipariş Kalemi Ekleme / Düzenleme</span>
+                <h3 className="text-lg font-bold text-white mt-0.5">{selectedItemForModal.name}</h3>
+                {selectedItemForModal.description && (
+                  <p className="text-xs text-zinc-400 mt-1 line-clamp-2">{selectedItemForModal.description}</p>
+                )}
+              </div>
+              <button
+                onClick={() => setSelectedItemForModal(null)}
+                className="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition"
+              >
+                ✕
+              </button>
             </div>
 
-            <input
-              type="text"
-              placeholder="Özel istek girin..."
-              value={editingItemNote.note}
-              onChange={(e) => setEditingItemNote({ ...editingItemNote, note: e.target.value })}
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 mb-4"
-            />
+            {/* Adet Seçimi */}
+            <div>
+              <label className="text-xs font-semibold text-zinc-300 block mb-2">Adet Belirleyin</label>
+              <div className="flex items-center justify-center gap-4 bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3">
+                <button
+                  type="button"
+                  onClick={() => setModalQuantity((prev) => Math.max(1, prev - 1))}
+                  className="w-12 h-12 rounded-xl bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-white font-bold text-2xl flex items-center justify-center transition shadow"
+                >
+                  −
+                </button>
+                <div className="w-24 text-center">
+                  <span className="text-3xl font-extrabold text-amber-400 tracking-tight">{modalQuantity}</span>
+                  <span className="block text-[10px] uppercase font-bold text-zinc-400 mt-0.5">Porsiyon / Adet</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setModalQuantity((prev) => prev + 1)}
+                  className="w-12 h-12 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-zinc-950 font-bold text-2xl flex items-center justify-center transition shadow"
+                >
+                  +
+                </button>
+              </div>
 
-            <div className="flex items-center justify-end gap-2 text-xs">
-              <button onClick={() => setEditingItemNote(null)} className="px-3 py-1.5 rounded-lg border border-zinc-700 text-zinc-400">İptal</button>
-              <button onClick={() => updateItemNote(editingItemNote.id, editingItemNote.note)} className="px-4 py-1.5 rounded-lg bg-amber-500 text-zinc-950 font-bold">Kaydet</button>
+              {/* Hızlı Adet Butonları */}
+              <div className="grid grid-cols-6 gap-1.5 mt-2.5">
+                {[1, 2, 3, 4, 5, 6].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setModalQuantity(num)}
+                    className={`py-1.5 rounded-lg text-xs font-bold transition ${
+                      modalQuantity === num
+                        ? "bg-amber-500 text-zinc-950 shadow-md ring-2 ring-amber-400"
+                        : "bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300"
+                    }`}
+                  >
+                    {num} Adet
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Özel Pişirme & Servis Notu */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-semibold text-zinc-300">Özel Pişirme & Servis Notu</label>
+                <span className="text-[10px] text-zinc-500">İsteğe bağlı</span>
+              </div>
+
+              {/* Hızlı Notlar */}
+              <div className="flex flex-wrap gap-1.5 mb-2.5">
+                {quickNoteOptions.map((quick) => {
+                  const isSelected = modalItemNote.includes(quick);
+                  return (
+                    <button
+                      key={quick}
+                      type="button"
+                      onClick={() => {
+                        if (isSelected) {
+                          setModalItemNote((prev) =>
+                            prev
+                              .replace(quick, "")
+                              .replace(/,\s*,/g, ",")
+                              .replace(/^,\s*|,\s*$/g, "")
+                              .trim()
+                          );
+                        } else {
+                          setModalItemNote((prev) => (prev ? `${prev}, ${quick}` : quick));
+                        }
+                      }}
+                      className={`text-[11px] px-2.5 py-1 rounded-lg transition font-medium ${
+                        isSelected
+                          ? "bg-amber-500/20 border border-amber-500/60 text-amber-300 font-semibold"
+                          : "bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/50 text-zinc-300"
+                      }`}
+                    >
+                      {quick}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <input
+                type="text"
+                placeholder="Örn: Az pişmiş olsun, buzsuz servis edilsin..."
+                value={modalItemNote}
+                onChange={(e) => setModalItemNote(e.target.value)}
+                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+              />
+            </div>
+
+            {/* Alt Butonlar */}
+            <div className="pt-2 border-t border-zinc-800 flex items-center justify-between gap-2">
+              {cart.some((ci) => ci.menuItemId === selectedItemForModal.id) ? (
+                <button
+                  type="button"
+                  onClick={handleRemoveModalItem}
+                  className="px-3 py-2 rounded-xl border border-rose-500/40 hover:bg-rose-500/10 text-rose-400 text-xs font-bold transition"
+                >
+                  Sepetten Sil
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setSelectedItemForModal(null)}
+                  className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-semibold transition"
+                >
+                  Vazgeç
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={handleSaveModalItem}
+                className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:scale-[0.98] text-zinc-950 font-black text-sm tracking-wide shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2"
+              >
+                <span>
+                  {cart.some((ci) => ci.menuItemId === selectedItemForModal.id)
+                    ? `Güncelle (${modalQuantity} Adet)`
+                    : `Sepete Ekle (${modalQuantity} Adet)`}
+                </span>
+                <span className="text-base font-bold">→</span>
+              </button>
             </div>
           </div>
         </div>

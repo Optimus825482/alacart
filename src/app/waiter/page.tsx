@@ -482,46 +482,6 @@ export default function WaiterTerminalPage() {
 
     return (
       <div className={clsx("flex-1 flex flex-col max-w-5xl mx-auto w-full p-4 sm:p-6 pb-20", currentTheme.bgDark)}>
-        {/* Üst Bar: Seçilen Alakart Sabit Bilgisi ve Garson Kontrolleri */}
-        <div className={clsx("sticky top-14 z-40 flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-3xl border mb-6 backdrop-blur-md shadow-xl", currentTheme.cardBg, currentTheme.border)}>
-          <div className="flex items-center gap-3">
-            <span className="text-3xl sm:text-4xl">{currentTheme.iconEmoji}</span>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className={clsx("text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border", currentTheme.badge)}>
-                  SEÇİLEN ALAKART
-                </span>
-                <span className="text-[11px] text-zinc-400">Garson: <strong className="text-white">{session?.name}</strong></span>
-              </div>
-              <h2 className="text-base sm:text-xl font-black text-white mt-0.5 flex flex-wrap items-center gap-1.5">
-                <span className="text-zinc-400 text-xs sm:text-sm font-bold">Seçilen Alakart:</span>
-                <span className={clsx("text-base sm:text-xl font-extrabold", currentTheme.textAccent)}>
-                  {session?.activeRestaurantName || currentTheme.name}
-                </span>
-              </h2>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleSwitchRestaurant}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700/80 hover:border-zinc-500 text-zinc-300 hover:text-white text-xs font-bold transition-all shadow-sm"
-            >
-              <Utensils className="w-3.5 h-3.5 text-amber-400" />
-              <span>Restoran Değiştir</span>
-            </button>
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-900/60 transition-all shadow-sm"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Çıkış</span>
-              </button>
-            </form>
-          </div>
-        </div>
-
         {/* Başarı Bildirimi (Örn: Sipariş mutfağa iletildikten sonra masa listesine dönüldüğünde) */}
         {successMessage && (
           <div className="mb-6 p-4 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs sm:text-sm flex items-center justify-between animate-in fade-in shadow-lg">
@@ -538,7 +498,7 @@ export default function WaiterTerminalPage() {
           </div>
         )}
 
-        {/* Başlık ve Sayaçlar */}
+        {/* Başlık, Sayaçlar ve Restoran Değiştir */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
             <span className="text-xs uppercase tracking-widest text-amber-400 font-bold block mb-1">
@@ -553,6 +513,13 @@ export default function WaiterTerminalPage() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={handleSwitchRestaurant}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700/80 hover:border-amber-500 hover:text-white text-zinc-300 text-xs font-bold transition-all shadow-sm active:scale-95"
+            >
+              <Utensils className="w-3.5 h-3.5 text-amber-400" />
+              <span>Restoran Değiştir</span>
+            </button>
             <span className="px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 font-medium">
               Toplam: <strong className="text-white font-bold">{tables.length}</strong> Masa
             </span>
@@ -700,29 +667,11 @@ export default function WaiterTerminalPage() {
   // ===========================================================================
   return (
     <div className={clsx("flex-1 flex flex-col max-w-5xl mx-auto w-full pb-28", currentTheme.bgDark)}>
-      {/* Sabit Alakart Başlığı (Karışıklığı Önleyen Özel Renkli Header) */}
-      <div className={clsx("sticky top-14 z-40 border-b p-3 sm:p-4 backdrop-blur-md", currentTheme.border, currentTheme.bgDark)}>
+      {/* Masa ve Menü Navigasyon Başlığı */}
+      <div className={clsx("sticky top-14 z-40 border-b p-3 sm:p-3.5 backdrop-blur-md shadow-sm", currentTheme.border, currentTheme.bgDark)}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Sabit Restoran Rozeti */}
-          <div className="flex items-center gap-2.5">
-            <span className="text-2xl sm:text-3xl">{currentTheme.iconEmoji}</span>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className={clsx("text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border", currentTheme.badge)}>
-                  SEÇİLEN ALAKART
-                </span>
-              </div>
-              <h2 className="text-sm sm:text-lg font-black text-white leading-tight flex flex-wrap items-center gap-1.5">
-                <span className="text-zinc-400 text-xs sm:text-sm font-bold">Seçilen Alakart:</span>
-                <span className={clsx("font-extrabold", currentTheme.textAccent)}>
-                  {session?.activeRestaurantName || currentTheme.name}
-                </span>
-              </h2>
-            </div>
-          </div>
-
           {/* Seçili Masa ve Masalara Dön Butonu */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => {
                 setSelectedTable(null);
@@ -731,9 +680,9 @@ export default function WaiterTerminalPage() {
               title="Masa Listesine Geri Dön"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs sm:text-sm font-bold shadow-md active:scale-95 transition-all"
             >
-              <span>← Masalar</span>
+              <span>← Masa Listesine Dön</span>
             </button>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-zinc-950/80 border border-zinc-700 text-xs sm:text-sm font-bold shadow-md">
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-zinc-950/80 border border-zinc-700 text-xs sm:text-sm font-bold shadow-md">
               <Armchair className="w-4 h-4 text-amber-400" />
               <span className="text-zinc-400">MASA:</span>
               <span className="text-white text-sm sm:text-base font-extrabold underline decoration-amber-400">
@@ -745,30 +694,20 @@ export default function WaiterTerminalPage() {
             </div>
           </div>
 
-          {/* Garson Kimliği & Güvenli Çıkış */}
+          {/* Sağ: Ürün Sayısı & Restoran Değiştir */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-zinc-300 hidden sm:inline">
-              Garson: <strong>{session?.name}</strong>
+            <span className="text-xs text-zinc-400 font-medium hidden sm:inline">
+              Menü: <strong className="text-amber-400 font-bold">{displayedItems.length}</strong> Çeşit
             </span>
             <button
               type="button"
               onClick={handleSwitchRestaurant}
               title="Farklı Bir Alakarta Geçiş Yap"
-              className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs font-bold hover:bg-amber-900/60 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-700 text-zinc-300 hover:text-white text-xs font-bold transition-all shadow-sm active:scale-95"
             >
-              <Utensils className="w-3.5 h-3.5" />
-              <span className="text-[11px]">Değiştir</span>
+              <Utensils className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-[11px]">Restoran Değiştir</span>
             </button>
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                title="Çıkış Yap"
-                className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-900/60 transition-all"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span className="text-[11px]">Çıkış</span>
-              </button>
-            </form>
           </div>
         </div>
 

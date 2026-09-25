@@ -37,7 +37,7 @@ export function Navbar() {
 
   if (session?.role === "ADMIN" || session?.role === "WAITER") {
     navItems.push({
-      label: "Garson Terminali",
+      label: "WAITER",
       href: "/waiter",
       icon: Smartphone,
       badge: "Mobil",
@@ -46,7 +46,7 @@ export function Navbar() {
 
   if (session?.role === "ADMIN" || session?.role === "KITCHEN" || session?.role === "CHEF") {
     navItems.push({
-      label: "Mutfak (KDS)",
+      label: "KITCHEN",
       href: "/kitchen",
       icon: ChefHat,
       badge: "Mutfak",
@@ -55,7 +55,7 @@ export function Navbar() {
 
   if (session?.role === "ADMIN" || session?.role === "CHEF") {
     navItems.push({
-      label: "Şef Modülü",
+      label: "CHIEF",
       href: "/chef",
       icon: Award,
       badge: "Master KDS & Rapor",
@@ -64,7 +64,7 @@ export function Navbar() {
 
   if (session?.role === "ADMIN") {
     navItems.push({
-      label: "Tanımlar & Yönetim",
+      label: "ADMIN",
       href: "/admin",
       icon: Settings,
       badge: "Admin",

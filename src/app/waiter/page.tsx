@@ -1085,61 +1085,138 @@ export default function WaiterTerminalPage() {
         </div>
       )}
 
-      {/* Masa Seçici Modalı */}
-      {isTableModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0f1422] border border-zinc-800 rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl max-h-[85vh] flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between pb-3 border-b border-zinc-800 mb-4">
-                <div>
-                  <h3 className="text-base font-bold text-white">Masa Seçimi</h3>
-                  <span className="text-xs text-amber-400 font-bold">
-                    {session?.activeRestaurantName}
-                  </span>
+      {/* Masanın Aktif Siparişlerini İnceleme Modalı */}
+      {isTableModalOpen && selectedTable && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-[#0f1422] border border-amber-500/40 rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl max-h-[85vh] flex flex-col justify-between space-y-4">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center font-bold">
+                  <Armchair className="w-5 h-5" />
                 </div>
-                <button onClick={() => setIsTableModalOpen(false)} className="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400">
-                  <X className="w-4 h-4" />
-                </button>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
+                      Mutfaktaki Aktif Siparişler
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      {activeTableOrders.length} Sipariş Açık
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-black text-white mt-0.5">
+                    {selectedTable.name} • {session?.activeRestaurantName}
+                  </h3>
+                </div>
               </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[50vh] overflow-y-auto pr-1">
-                {tables.map((t) => {
-                  const isSelected = selectedTable?.id === t.id;
-                  const isOccupied = t.status === "OCCUPIED" || t.orders?.length > 0;
-
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => {
-                        setSelectedTable(t);
-                        setIsTableModalOpen(false);
-                      }}
-                      className={clsx(
-                        "p-3 rounded-2xl border text-left transition-all",
-                        isSelected
-                          ? "ring-2 ring-amber-400 bg-amber-500/20 border-amber-500"
-                          : isOccupied
-                          ? "bg-amber-950/20 border-amber-500/30"
-                          : "bg-zinc-900 border-zinc-800"
-                      )}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs sm:text-sm font-bold text-white">{t.name}</span>
-                        <span className={clsx("w-2.5 h-2.5 rounded-full", isOccupied ? "bg-amber-400 animate-pulse" : "bg-emerald-400")} />
-                      </div>
-                      <span className="text-[11px] text-zinc-400 block">{t.capacity} Kişilik</span>
-                      <span className={clsx("text-[10px] font-bold mt-1 inline-block px-1.5 py-0.2 rounded", isOccupied ? "bg-amber-400/10 text-amber-300" : "bg-emerald-400/10 text-emerald-300")}>
-                        {isOccupied ? "Sipariş Açık" : "Masa Boş"}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+              <button
+                onClick={() => setIsTableModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="pt-4 border-t border-zinc-800 mt-4 text-right">
-              <button onClick={() => setIsTableModalOpen(false)} className="px-4 py-2 rounded-xl bg-zinc-800 text-white font-semibold text-xs">
-                Kapat
+            {/* Sipariş Listesi */}
+            <div className="overflow-y-auto max-h-[55vh] space-y-3 pr-1">
+              {activeTableOrders.length === 0 ? (
+                <div className="p-8 text-center text-zinc-500">
+                  Bu masanın şu anda mutfakta bekleyen veya hazırlanan bir siparişi bulunmuyor.
+                </div>
+              ) : (
+                activeTableOrders.map((order) => {
+                  const isPreparing = order.status === "PREPARING";
+                  return (
+                    <div
+                      key={order.id}
+                      className={clsx(
+                        "p-4 rounded-2xl border transition-all space-y-3",
+                        isPreparing
+                          ? "bg-amber-950/20 border-amber-500/40"
+                          : "bg-zinc-900/80 border-zinc-800"
+                      )}
+                    >
+                      {/* Sipariş Üst Bilgisi */}
+                      <div className="flex items-center justify-between text-xs pb-2 border-b border-zinc-800/80">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-amber-400">
+                            Sipariş #{order.orderNumber}
+                          </span>
+                          <span className="text-zinc-500">•</span>
+                          <span className="text-zinc-400 font-mono">
+                            {new Date(order.createdAt).toLocaleTimeString("tr-TR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                        <span
+                          className={clsx(
+                            "text-[10px] font-bold px-2 py-0.5 rounded-full border",
+                            isPreparing
+                              ? "bg-amber-500/20 text-amber-300 border-amber-500/40 animate-pulse"
+                              : "bg-zinc-800 text-zinc-300 border-zinc-700"
+                          )}
+                        >
+                          {isPreparing ? "● Mutfakta Hazırlanıyor" : "○ Mutfakta Bekliyor"}
+                        </span>
+                      </div>
+
+                      {order.waiter?.name && (
+                        <div className="text-[11px] text-zinc-400">
+                          Siparişi Alan Garson: <strong className="text-zinc-200">{order.waiter.name}</strong>
+                        </div>
+                      )}
+
+                      {order.notes && (
+                        <div className="p-2 rounded-xl bg-zinc-950/60 border border-zinc-800 text-[11px] text-zinc-300">
+                          <strong className="text-amber-400/90">Masaya Not:</strong> {order.notes}
+                        </div>
+                      )}
+
+                      {/* Ürünler */}
+                      <div className="space-y-1.5 pt-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block">
+                          Sipariş Edilen Ürünler
+                        </span>
+                        {order.items?.map((item: any) => (
+                          <div
+                            key={item.id}
+                            className="flex items-start justify-between text-xs py-1 px-2 rounded-lg bg-zinc-950/40 border border-zinc-800/50"
+                          >
+                            <div>
+                              <span className="font-semibold text-white">
+                                {item.menuItem?.name || item.name}
+                              </span>
+                              {item.itemNotes && (
+                                <span className="block text-[11px] text-amber-400/90 italic">
+                                  Not: {item.itemNotes}
+                                </span>
+                              )}
+                            </div>
+                            <span className="font-black text-amber-400 px-2 py-0.5 rounded bg-zinc-800 ml-2">
+                              {item.quantity}x
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Alt Butonlar */}
+            <div className="pt-3 border-t border-zinc-800 flex items-center justify-between gap-3">
+              <span className="text-xs text-zinc-400">
+                Bu masaya ek ürün eklemek için menüyü kullanabilirsiniz.
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsTableModalOpen(false)}
+                className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-md transition active:scale-95"
+              >
+                Anladım, Kapat
               </button>
             </div>
           </div>

@@ -1269,11 +1269,7 @@ export default function WaiterTerminalPage() {
                     </div>
 
                     {/* Alt Kontrol: Ekle / Düzenle Butonu */}
-                    <div className="flex items-center justify-between pt-2 border-t border-zinc-800/60 mt-2">
-                      <span className="text-[10px] text-zinc-500 font-medium">
-                        Ultra All-Inclusive
-                      </span>
-
+                    <div className="flex items-center justify-end pt-2 border-t border-zinc-800/60 mt-2">
                       {qty === 0 ? (
                         <button
                           type="button"

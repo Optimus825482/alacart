@@ -538,7 +538,7 @@ export default function AdminMenuPage() {
         </div>
       )}
 
-      {/* Yemek / İçecek Ekleme ve Düzenleme Modalı (KESİNLİKLE FİYAT YOKTUR) */}
+      {/* Yemek / İçecek Ekleme ve Düzenleme Modalı */}
       {isItemModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#0f1422] border border-zinc-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl">

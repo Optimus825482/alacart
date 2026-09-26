@@ -110,6 +110,36 @@ export default function KitchenKDSPage() {
     }
   };
 
+  // Otomatik yazdırılan sipariş ID'lerini takip et (aynı sipariş 2 kez basılmasın)
+  const autoPrintedIdsRef = useRef<Set<string>>(new Set());
+  // Yazdırma kuyruğu (birden fazla sipariş aynı anda gelirse sırayla bas)
+  const printQueueRef = useRef<any[]>([]);
+  const isPrintingRef = useRef(false);
+
+  const processNextPrint = () => {
+    if (isPrintingRef.current || printQueueRef.current.length === 0) return;
+    const nextOrder = printQueueRef.current.shift();
+    if (!nextOrder) return;
+    isPrintingRef.current = true;
+    setPrintingOrder(nextOrder);
+    fetch("/api/kitchen/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId: nextOrder.id, action: "print" }),
+    }).catch(console.error);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => {
+        setPrintingOrder(null);
+        isPrintingRef.current = false;
+        // Kuyrukta başka sipariş varsa 600ms sonra bir sonrakini bas
+        if (printQueueRef.current.length > 0) {
+          setTimeout(processNextPrint, 600);
+        }
+      }, 500);
+    }, 400);
+  };
+
   // Siparişleri Çek (Yeni veya Güncellenen Siparişleri Anında Algılar)
   const fetchOrders = async () => {
     if (!session?.activeRestaurantId) return;
@@ -152,9 +182,17 @@ export default function KitchenKDSPage() {
           if (soundEnabled) playKitchenChime();
 
           if (autoPrintEnabled) {
-            // Öncelik güncellenen siparişin yeni revizyon fişini basmakta
-            const orderToPrint = updatedOrdersList[0] || brandNewOrders[0];
-            if (orderToPrint) handleDirectPrintTicket(orderToPrint);
+            // Daha önce yazdırılmamış siparişleri kuyruğa ekle
+            const allToPrint = [...updatedOrdersList, ...brandNewOrders];
+            let added = false;
+            for (const order of allToPrint) {
+              if (!autoPrintedIdsRef.current.has(order.id + "_" + (order.revision || 1))) {
+                autoPrintedIdsRef.current.add(order.id + "_" + (order.revision || 1));
+                printQueueRef.current.push(order);
+                added = true;
+              }
+            }
+            if (added) processNextPrint();
           }
         }
 
@@ -202,18 +240,10 @@ export default function KitchenKDSPage() {
     }
   };
 
-  // Doğrudan Arka Planda Yazdırma (Oto Yazdır modu için)
-  const handleDirectPrintTicket = async (order: any) => {
-    setPrintingOrder(order);
-    fetch("/api/kitchen/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId: order.id, action: "print" }),
-    }).catch(console.error);
-
-    setTimeout(() => {
-      window.print();
-    }, 150);
+  // Doğrudan Arka Planda Yazdırma (Manuel Yazdır butonu için)
+  const handleDirectPrintTicket = (order: any) => {
+    printQueueRef.current.push(order);
+    processNextPrint();
   };
 
   // Manuel Yazdırma Önizleme Modalını Aç
@@ -226,7 +256,6 @@ export default function KitchenKDSPage() {
   const handleExecutePrintFromPreview = async () => {
     if (!previewOrder) return;
     const targetOrder = previewOrder;
-    setPrintingOrder(targetOrder);
 
     fetch("/api/kitchen/orders", {
       method: "POST",
@@ -241,9 +270,15 @@ export default function KitchenKDSPage() {
       )
     );
 
+    // Önizleme modalını kapat, yazdırma verisini set et, DOM render bekle
+    setPreviewOrder(null);
+    setPrintingOrder(targetOrder);
+
     setTimeout(() => {
       window.print();
-    }, 150);
+      // Yazdırmadan sonra temizle
+      setTimeout(() => setPrintingOrder(null), 500);
+    }, 400);
   };
 
   const getElapsedMinutes = (dateStr: string) => {
@@ -842,16 +877,11 @@ export default function KitchenKDSPage() {
 
                 {/* Alt Bilgi */}
                 <div className="text-center text-[10px] text-zinc-600 pt-1">
-                  {(previewOrder.isUpdated || (previewOrder.revision && previewOrder.revision > 1)) ? (
+                  {(previewOrder.isUpdated || (previewOrder.revision && previewOrder.revision > 1)) && (
                     <div className="font-bold border border-dashed border-black p-1 text-black">
                       * REVİZYON #{previewOrder.revision || 2} - LÜTFEN ÖNCEKİ FİŞİ İPTAL EDİNİZ *
                     </div>
-                  ) : (
-                    <div>* Ultra All-Inclusive Otel Konsepti - Fiyat Yoktur *</div>
                   )}
-                  <div className="mt-1 text-[9px] text-zinc-400 font-mono">
-                    Önizleme Zamanı: {new Date().toLocaleTimeString("tr-TR")}
-                  </div>
                 </div>
 
                 {/* Alt Tırtıklı Kenar Görünümü */}
@@ -972,15 +1002,13 @@ export default function KitchenKDSPage() {
             ))}
           </div>
 
-          <div style={{ textAlign: "center", fontSize: "10px", marginTop: "6px" }}>
-            {(printingOrder.isUpdated || (printingOrder.revision && printingOrder.revision > 1)) ? (
-              <div style={{ fontWeight: "bold", border: "1px dashed #000", padding: "3px" }}>
-                * REVİZYON #{printingOrder.revision || 2} - LÜTFEN ÖNCEKİ FİŞİ İPTAL EDİNİZ *
+          {(printingOrder.isUpdated || (printingOrder.revision && printingOrder.revision > 1)) && (
+              <div style={{ textAlign: "center", fontSize: "10px", marginTop: "6px" }}>
+                <div style={{ fontWeight: "bold", border: "1px dashed #000", padding: "3px" }}>
+                  * REVİZYON #{printingOrder.revision || 2} - LÜTFEN ÖNCEKİ FİŞİ İPTAL EDİNİZ *
+                </div>
               </div>
-            ) : (
-              <div>* Ultra All-Inclusive Otel Konsepti - Fiyat Yoktur *</div>
             )}
-          </div>
         </div>
       )}
     </div>

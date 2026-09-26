@@ -300,7 +300,6 @@ export async function deleteCategory(id: string) {
 
 // ==========================================
 // YEMEK & İÇECEK (MENÜ ÖĞESİ) TANIMLARI
-// (FİYAT ALANI KESİNLİKLE YOKTUR)
 // ==========================================
 
 export async function getMenuItems(categoryId?: string) {

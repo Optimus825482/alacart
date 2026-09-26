@@ -48,7 +48,7 @@ export default function AdminUsersPage() {
     setEditingUser(u);
     setName(u.name);
     setUsername(u.username);
-    setPassword(u.password || "");
+    setPassword("");
     setPin(u.pin);
     setRole(u.role);
     setSelectedRestaurantIds(u.assignedTo?.map((a: any) => a.restaurantId) || []);
@@ -92,7 +92,10 @@ export default function AdminUsersPage() {
 
   const handleDelete = async (id: string, uName: string) => {
     if (confirm(`"${uName}" kullanıcısını silmek istediğinize emin misiniz?`)) {
-      await deleteUser(id);
+      const res = await deleteUser(id);
+      if (!res.success) {
+        alert('Silme hatası: ' + (res.error || 'Bilinmeyen hata'));
+      }
       loadData();
     }
   };
@@ -274,7 +277,7 @@ export default function AdminUsersPage() {
                     Şifre (Web Girişi)
                   </label>
                   <input
-                    type="text"
+                    type="password"
                     placeholder="Örn: 1234 (opsiyonel)"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

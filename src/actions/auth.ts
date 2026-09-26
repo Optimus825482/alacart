@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { logAudit } from "@/lib/audit";
 import { redirect } from "next/navigation";
+import bcrypt from 'bcryptjs';
 
 export interface SessionUser {
   id: string;
@@ -37,12 +38,13 @@ export async function loginAction(formData: FormData) {
     });
 
     if (!user || !user.active) {
-      return { success: false, error: "Geçersiz kullanıcı adı veya kullanıcı pasif durumda." };
+      return { success: false, error: "Kullanıcı adı veya şifre hatalı." };
     }
 
     // Şifre kontrolü
-    if (user.password !== password.trim()) {
-      return { success: false, error: "Hatalı şifre girdiniz." };
+    const isValidPassword = await bcrypt.compare(password.trim(), user.password);
+    if (!isValidPassword) {
+      return { success: false, error: "Kullanıcı adı veya şifre hatalı." };
     }
 
     const assignedIds = user.assignedTo.map((a) => a.restaurantId);
@@ -147,21 +149,9 @@ export async function selectRestaurantAction(restaurantIdOrCode: string) {
       return { success: false, error: `Restoran bulunamadı (${cleanParam}).` };
     }
 
-    // Eğer oturum çerezi yoksa veritabanından varsayılan kullanıcı ile oturum oluştur
+    // Eğer oturum çerezi yoksa
     if (!session) {
-      const fallbackUser = await prisma.user.findFirst({
-        where: { role: { in: ["WAITER", "ADMIN"] }, active: true },
-      });
-
-      session = {
-        id: fallbackUser?.id || "waiter-guest",
-        name: fallbackUser?.name || "Garson",
-        username: fallbackUser?.username || "garson",
-        role: (fallbackUser?.role as any) || "WAITER",
-        activeRestaurantId: restaurant.id,
-        activeRestaurantName: restaurant.name,
-        assignedRestaurantIds: [restaurant.id],
-      };
+      return { success: false, error: "Oturum bulunamadı. Lütfen giriş yapın." };
     } else {
       session.activeRestaurantId = restaurant.id;
       session.activeRestaurantName = restaurant.name;

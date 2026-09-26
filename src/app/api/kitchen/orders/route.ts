@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getActiveKitchenOrders, updateOrderStatus, markOrderPrinted } from "@/actions/orders";
+import { cookies } from 'next/headers';
 
 export async function GET(req: NextRequest) {
   try {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get('alacarte_session');
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ success: false, error: 'Yetkisiz erişim.' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const restaurantId = searchParams.get("restaurantId") || undefined;
     const res = await getActiveKitchenOrders(restaurantId);
@@ -14,6 +21,12 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get('alacarte_session');
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ success: false, error: 'Yetkisiz erişim.' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { orderId, status } = body;
     if (!orderId || !status) {
@@ -28,6 +41,12 @@ export async function PATCH(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get('alacarte_session');
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ success: false, error: 'Yetkisiz erişim.' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { orderId, action } = body;
     if (action === "print" && orderId) {

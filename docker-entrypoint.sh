@@ -20,11 +20,15 @@ done
 
 echo ">> Veritabanı aktif ve hazır!"
 
-# 2. Prisma Şemasını Senkronize Et (db push)
-echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
-npx prisma db push --skip-generate --accept-data-loss
+# 2. Prisma İstemcisini Yeniden Oluştur (schema değişikliklerini yansıt)
+echo ">> Prisma istemcisi oluşturuluyor (prisma generate)..."
+npx prisma generate || { echo "HATA: Prisma generate başarısız oldu!"; exit 1; }
 
-# 3. Başlangıç Tohum (Seed) Verileri
+# 3. Prisma Şemasını Veritabanına Senkronize Et (db push - indeksler dahil)
+echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
+npx prisma db push --skip-generate || { echo "HATA: Prisma db push başarısız oldu!"; exit 1; }
+
+# 4. Başlangıç Tohum (Seed) Verileri
 echo ">> Başlangıç verileri kontrol ediliyor..."
 node -e "
 const { PrismaClient } = require('@prisma/client');

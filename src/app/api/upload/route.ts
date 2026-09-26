@@ -1,14 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest) {
   try {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get('alacarte_session');
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ success: false, error: 'Yetkisiz erişim.' }, { status: 401 });
+    }
+
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 
     if (!file) {
       return NextResponse.json({ success: false, error: "Dosya bulunamadı." }, { status: 400 });
+    }
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json({ success: false, error: 'Dosya boyutu 5MB limitini aşıyor.' }, { status: 400 });
+    }
+
+    const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+    const fileExt = path.extname(file.name).toLowerCase();
+    if (!ALLOWED_EXTENSIONS.includes(fileExt)) {
+      return NextResponse.json({ success: false, error: 'Geçersiz dosya formatı.' }, { status: 400 });
     }
 
     // Basit MIME kontrolü

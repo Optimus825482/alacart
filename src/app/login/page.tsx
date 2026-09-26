@@ -122,52 +122,54 @@ export default function LoginPage() {
         </form>
 
         {/* Demo Fast Login Selector */}
-        <div className="mt-8 pt-6 border-t border-zinc-800/80">
-          <div className="flex items-center gap-2 mb-3">
-            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-              Hızlı Rol Seçimi (Test Hesapları)
-            </span>
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-8 pt-6 border-t border-zinc-800/80">
+            <div className="flex items-center gap-2 mb-3">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                Hızlı Rol Seçimi (Test Hesapları)
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-[10px]">
+              <button
+                type="button"
+                onClick={() => fillQuick("ahmet", "1234")}
+                className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-amber-500/30 text-left transition-all group"
+              >
+                <span className="text-amber-400 font-bold block">📱 Garson (Ahmet)</span>
+                <span className="text-zinc-500">ahmet / 1234</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => fillQuick("mutfak.roof", "1234")}
+                className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-emerald-500/30 text-left transition-all group"
+              >
+                <span className="text-emerald-400 font-bold block">🍳 Mutfak (Roof)</span>
+                <span className="text-zinc-500">mutfak.roof / 1234</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => fillQuick("sef", "sef123")}
+                className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-purple-500/30 text-left transition-all group"
+              >
+                <span className="text-purple-400 font-bold block">👨‍🍳 Şef Modülü</span>
+                <span className="text-zinc-500">sef / sef123</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => fillQuick("admin", "admin123")}
+                className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-cyan-500/30 text-left transition-all group"
+              >
+                <span className="text-cyan-400 font-bold block">⚙️ Yönetici (Admin)</span>
+                <span className="text-zinc-500">admin / admin123</span>
+              </button>
+            </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-2 text-[10px]">
-            <button
-              type="button"
-              onClick={() => fillQuick("ahmet", "1234")}
-              className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-amber-500/30 text-left transition-all group"
-            >
-              <span className="text-amber-400 font-bold block">📱 Garson (Ahmet)</span>
-              <span className="text-zinc-500">ahmet / 1234</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => fillQuick("mutfak.roof", "1234")}
-              className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-emerald-500/30 text-left transition-all group"
-            >
-              <span className="text-emerald-400 font-bold block">🍳 Mutfak (Roof)</span>
-              <span className="text-zinc-500">mutfak.roof / 1234</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => fillQuick("sef", "sef123")}
-              className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-purple-500/30 text-left transition-all group"
-            >
-              <span className="text-purple-400 font-bold block">👨‍🍳 Şef Modülü</span>
-              <span className="text-zinc-500">sef / sef123</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => fillQuick("admin", "admin123")}
-              className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-cyan-500/30 text-left transition-all group"
-            >
-              <span className="text-cyan-400 font-bold block">⚙️ Yönetici (Admin)</span>
-              <span className="text-zinc-500">admin / admin123</span>
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

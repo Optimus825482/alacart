@@ -147,6 +147,19 @@ export async function updateOrderStatus(
         include: { restaurant: true, table: true },
       });
 
+      // Valid transitions
+      const VALID_TRANSITIONS: Record<string, string[]> = {
+        PENDING: ['PREPARING', 'CANCELLED'],
+        PREPARING: ['COMPLETED', 'CANCELLED'],
+        COMPLETED: [], // Terminal state - no further transitions
+        CANCELLED: [], // Terminal state - no further transitions
+      };
+
+      const existingStatus = existing?.status;
+      if (existingStatus && !VALID_TRANSITIONS[existingStatus]?.includes(newStatus)) {
+        throw new Error(`Sipariş durumu '${existingStatus}' -> '${newStatus}' geçişi geçersizdir.`);
+      }
+
       const order = await tx.order.update({
         where: { id: orderId },
         data: {
@@ -165,17 +178,15 @@ export async function updateOrderStatus(
         data: { status: newStatus as any },
       });
 
-      // Eğer sipariş tamamlandıysa veya iptal edildiyse, bu masada başka aktif sipariş kalıp kalmadığını kontrol et
-      if (newStatus === "COMPLETED" || newStatus === "CANCELLED") {
+      // Only clear table when ALL orders are cancelled (not completed)
+      if (newStatus === "CANCELLED") {
         const remainingActiveOrders = await tx.order.count({
           where: {
             tableId: order.tableId,
-            status: { in: ["PENDING", "PREPARING"] },
+            status: { in: ["PENDING", "PREPARING", "COMPLETED"] },
             id: { not: orderId },
           },
         });
-
-        // Eğer masada başka bekleyen/hazırlanan sipariş kalmadıysa masa boşaltılabilir
         if (remainingActiveOrders === 0) {
           await tx.restaurantTable.update({
             where: { id: order.tableId },

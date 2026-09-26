@@ -67,7 +67,10 @@ export default function AdminRestaurantsPage() {
 
   const handleDelete = async (id: string, rName: string) => {
     if (confirm(`"${rName}" restoranını ve buna bağlı tüm masa ve siparişleri silmek istediğinize emin misiniz?`)) {
-      await deleteRestaurant(id);
+      const res = await deleteRestaurant(id);
+      if (!res.success) {
+        alert('Silme hatası: ' + (res.error || 'Bilinmeyen hata'));
+      }
       loadData();
     }
   };

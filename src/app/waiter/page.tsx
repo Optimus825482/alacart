@@ -56,6 +56,36 @@ export default function WaiterTerminalPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [editingOrderId, setEditingOrderId] = useState<string | null>(null);
   const [generalOrderNotes, setGeneralOrderNotes] = useState("");
+
+  // Sepet kalıcılığı - localStorage'dan yükle
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem('alacarte_cart');
+      const savedTableId = localStorage.getItem('alacarte_cart_tableId');
+      const savedNotes = localStorage.getItem('alacarte_cart_notes');
+      if (savedCart) {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCart(parsed);
+        }
+      }
+      if (savedNotes) setGeneralOrderNotes(savedNotes);
+    } catch {}
+  }, []);
+
+  // Sepet değiştiğinde localStorage'a kaydet
+  useEffect(() => {
+    try {
+      if (cart.length > 0) {
+        localStorage.setItem('alacarte_cart', JSON.stringify(cart));
+        localStorage.setItem('alacarte_cart_notes', generalOrderNotes);
+      } else {
+        localStorage.removeItem('alacarte_cart');
+        localStorage.removeItem('alacarte_cart_notes');
+      }
+    } catch {}
+  }, [cart, generalOrderNotes]);
+
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [inspectingTable, setInspectingTable] = useState<any | null>(null);
@@ -154,11 +184,11 @@ export default function WaiterTerminalPage() {
         }));
         await loadRestaurant(res.restaurant.id);
       } else {
-        alert("Restoran seçilemedi: " + (res.error || "Bilinmeyen hata"));
+        alert("Restoran seçilemedi: " + (res.error || "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin."));
       }
     } catch (err: any) {
       console.error("handleSelectRestaurant error:", err);
-      alert("Hata oluştu: " + err.message);
+      alert("Sistem hatası: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -419,6 +449,8 @@ export default function WaiterTerminalPage() {
       setEditingOrderId(null);
       setGeneralOrderNotes("");
       setIsConfirmModalOpen(false);
+      localStorage.removeItem('alacarte_cart');
+      localStorage.removeItem('alacarte_cart_notes');
 
       if (session.activeRestaurantId) {
         const tablesRes = await getTables(session.activeRestaurantId);
@@ -432,7 +464,7 @@ export default function WaiterTerminalPage() {
 
       setTimeout(() => setSuccessMessage(null), 5000);
     } else {
-      alert("Hata: " + res.error);
+      alert("Sipariş gönderilemedi: " + (res.error || "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin."));
     }
   };
 
@@ -1338,7 +1370,7 @@ export default function WaiterTerminalPage() {
               <div className="py-4 space-y-2.5 max-h-[45vh] overflow-y-auto pr-1">
                 {cart.length === 0 ? (
                   <div className="p-6 text-center text-zinc-500 text-xs bg-zinc-900/50 rounded-2xl border border-zinc-800">
-                    Sepetinizde ürün kalmadı. Lütfen menüden ürün ekleyin.
+                    Sipariş listenizde ürün kalmadı. Lütfen menüden ürün ekleyin.
                   </div>
                 ) : (
                   cart.map((ci) => (
@@ -1573,7 +1605,7 @@ export default function WaiterTerminalPage() {
                   onClick={handleRemoveModalItem}
                   className="px-3 py-2 rounded-xl border border-rose-500/40 hover:bg-rose-500/10 text-rose-400 text-xs font-bold transition"
                 >
-                  Sepetten Sil
+                  Siparişten Sil
                 </button>
               ) : (
                 <button
@@ -1593,7 +1625,7 @@ export default function WaiterTerminalPage() {
                 <span>
                   {cart.some((ci) => ci.menuItemId === selectedItemForModal.id)
                     ? `Güncelle (${modalQuantity} Adet)`
-                    : `Sepete Ekle (${modalQuantity} Adet)`}
+                    : `Siparişe Ekle (${modalQuantity} Adet)`}
                 </span>
                 <span className="text-base font-bold">→</span>
               </button>

@@ -70,6 +70,7 @@ model RestaurantUser {
   restaurant   Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
   @@unique([userId, restaurantId])
+  @@index([restaurantId])
 }
 
 model RestaurantTable {
@@ -82,6 +83,9 @@ model RestaurantTable {
   orders       Order[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
+  @@index([restaurantId])
+  @@index([status])
 }
 
 model Category {
@@ -103,6 +107,9 @@ model Category {
   items        MenuItem[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
+  @@index([restaurantId])
+  @@index([parentId])
 }
 
 model MenuItem {
@@ -121,6 +128,8 @@ model MenuItem {
   orderItems   OrderItem[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
+  @@index([categoryId])
 }
 
 model Order {
@@ -151,6 +160,11 @@ model Order {
   completedAt        DateTime?         // Mutfakta "Tamamlandı" dendiği an
   createdAt          DateTime          @default(now()) // Garsonun siparişi mutfağa fırlattığı an
   updatedAt          DateTime          @updatedAt
+
+  @@index([restaurantId, status])
+  @@index([tableId])
+  @@index([waiterId])
+  @@index([status, createdAt])
 }
 
 model OrderItem {
@@ -165,6 +179,9 @@ model OrderItem {
   itemNotes   String?     // örn: "Az pişmiş", "Buzsuz", "Glutensiz"
   status      OrderStatus @default(PENDING)
   createdAt   DateTime    @default(now())
+
+  @@index([orderId])
+  @@index([menuItemId])
 }
 
 // ==========================================
@@ -186,4 +203,8 @@ model AuditLog {
   restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
 
   createdAt    DateTime    @default(now())
+
+  @@index([restaurantId])
+  @@index([userId])
+  @@index([action])
 }

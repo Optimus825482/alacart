@@ -105,7 +105,10 @@ export default function AdminMenuPage() {
 
   const handleDeleteCategory = async (id: string, name: string) => {
     if (confirm(`"${name}" kategorisini ve altındaki tüm alt kategori ve ürünleri silmek istediğinize emin misiniz?`)) {
-      await deleteCategory(id);
+      const res = await deleteCategory(id);
+      if (!res.success) {
+        alert('Silme hatası: ' + (res.error || 'Bilinmeyen hata'));
+      }
       loadData();
     }
   };
@@ -199,7 +202,10 @@ export default function AdminMenuPage() {
 
   const handleDeleteItem = async (id: string, name: string) => {
     if (confirm(`"${name}" ürününü menüden kaldırmak istediğinize emin misiniz?`)) {
-      await deleteMenuItem(id);
+      const res = await deleteMenuItem(id);
+      if (!res.success) {
+        alert('Silme hatası: ' + (res.error || 'Bilinmeyen hata'));
+      }
       loadData();
     }
   };

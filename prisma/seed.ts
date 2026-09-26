@@ -1,6 +1,8 @@
 import { PrismaClient, Role, TableStatus, OrderStatus } from "@prisma/client";
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
+const hashSync = (pw: string) => bcrypt.hashSync(pw, 12);
 
 async function main() {
   console.log("=== MERİT HOTELS & RESORTS A LA CARTE VERİTABANI KURULUMU BAŞLIYOR ===");
@@ -21,7 +23,7 @@ async function main() {
     data: {
       name: "Sistem Yöneticisi (Admin)",
       username: "admin",
-      password: "admin123",
+      password: hashSync("admin123"),
       pin: "1111",
       role: Role.ADMIN,
     },
@@ -31,7 +33,7 @@ async function main() {
     data: {
       name: "Executive Chef (Koordinatör Şef)",
       username: "sef",
-      password: "sef123",
+      password: hashSync("sef123"),
       pin: "8888",
       role: Role.CHEF,
     },
@@ -108,7 +110,7 @@ async function main() {
     data: {
       name: "The Roof Garden Mutfak",
       username: "mutfak.roof",
-      password: "1234",
+      password: hashSync("1234"),
       pin: "2001",
       role: Role.KITCHEN,
       assignedTo: { create: [{ restaurantId: roofGarden.id }] },
@@ -119,7 +121,7 @@ async function main() {
     data: {
       name: "The Steak House Mutfak",
       username: "mutfak.steak",
-      password: "1234",
+      password: hashSync("1234"),
       pin: "2002",
       role: Role.KITCHEN,
       assignedTo: { create: [{ restaurantId: steakHouse.id }] },
@@ -130,7 +132,7 @@ async function main() {
     data: {
       name: "Blue Sea Mutfak",
       username: "mutfak.bluesea",
-      password: "1234",
+      password: hashSync("1234"),
       pin: "2003",
       role: Role.KITCHEN,
       assignedTo: { create: [{ restaurantId: blueSea.id }] },
@@ -141,7 +143,7 @@ async function main() {
     data: {
       name: "Mandarin Mutfak",
       username: "mutfak.mandarin",
-      password: "1234",
+      password: hashSync("1234"),
       pin: "2004",
       role: Role.KITCHEN,
       assignedTo: { create: [{ restaurantId: mandarin.id }] },
@@ -152,7 +154,7 @@ async function main() {
     data: {
       name: "Bella Merit Mutfak",
       username: "mutfak.bella",
-      password: "1234",
+      password: hashSync("1234"),
       pin: "2005",
       role: Role.KITCHEN,
       assignedTo: { create: [{ restaurantId: bellaMerit.id }] },
@@ -164,7 +166,7 @@ async function main() {
     data: {
       name: "Ahmet Yılmaz (Garson)",
       username: "ahmet",
-      password: "1234",
+      password: hashSync("1234"),
       pin: "1234",
       role: Role.WAITER,
       assignedTo: {
@@ -183,7 +185,7 @@ async function main() {
     data: {
       name: "Mehmet Kaya (Garson)",
       username: "mehmet",
-      password: "1234",
+      password: hashSync("1234"),
       pin: "5678",
       role: Role.WAITER,
       assignedTo: {
@@ -200,7 +202,7 @@ async function main() {
     data: {
       name: "Merit Mutfak Ekibi",
       username: "mutfak",
-      password: "1234",
+      password: hashSync("1234"),
       pin: "2000",
       role: Role.KITCHEN,
       assignedTo: {
@@ -220,7 +222,7 @@ async function main() {
     data: {
       name: "Merit Garson Ekibi",
       username: "garson",
-      password: "1234",
+      password: hashSync("1234"),
       pin: "1234",
       role: Role.WAITER,
       assignedTo: {

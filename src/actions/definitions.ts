@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { Role, TableStatus } from "@/lib/types";
+import bcrypt from 'bcryptjs';
 
 // ==========================================
 // ALAKART RESTORAN TANIMLARI
@@ -408,7 +409,7 @@ export async function getUsers() {
         },
       },
     });
-    return { success: true, data: users };
+    return { success: true, data: users.map(u => ({ ...u, password: undefined })) };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -423,11 +424,12 @@ export async function createUser(data: {
   restaurantIds?: string[];
 }) {
   try {
+    const hashedPassword = await bcrypt.hash((data.password?.trim() || data.pin.trim()), 12);
     const user = await prisma.user.create({
       data: {
         name: data.name.trim(),
         username: data.username.trim().toLowerCase(),
-        password: data.password?.trim() || data.pin.trim(),
+        password: hashedPassword,
         pin: data.pin.trim(),
         role: data.role as any,
         ...(data.restaurantIds && data.restaurantIds.length > 0 && {
@@ -464,7 +466,7 @@ export async function updateUser(
       data: {
         ...(data.name && { name: data.name.trim() }),
         ...(data.username && { username: data.username.trim().toLowerCase() }),
-        ...(data.password !== undefined && { password: data.password.trim() }),
+        ...(data.password !== undefined && data.password.trim() !== '' && { password: await bcrypt.hash(data.password.trim(), 12) }),
         ...(data.pin && { pin: data.pin.trim() }),
         ...(data.role && { role: data.role as any }),
         ...(data.active !== undefined && { active: data.active }),

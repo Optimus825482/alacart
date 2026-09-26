@@ -76,9 +76,16 @@ export default function AdminTablesPage() {
     loadData();
   };
 
-  const handleDelete = async (id: string, tName: string) => {
-    if (confirm(`"${tName}" masasını silmek istediğinize emin misiniz?`)) {
-      await deleteTable(id);
+  const handleDelete = async (t: any) => {
+    if (t.status === "OCCUPIED" || (t.orders && t.orders.length > 0)) {
+      alert("Bu masada aktif siparişler bulunuyor. Lütfen önce siparişleri tamamlayın veya iptal edin.");
+      return;
+    }
+    if (confirm(`"${t.name}" masasını silmek istediğinize emin misiniz?`)) {
+      const res = await deleteTable(t.id);
+      if (!res.success) {
+        alert('Silme hatası: ' + (res.error || 'Bilinmeyen hata'));
+      }
       loadData();
     }
   };
@@ -147,7 +154,7 @@ export default function AdminTablesPage() {
                       <Edit2 className="w-3 h-3" />
                     </button>
                     <button
-                      onClick={() => handleDelete(t.id, t.name)}
+                      onClick={() => handleDelete(t)}
                       className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400"
                       title="Sil"
                     >

@@ -5,9 +5,9 @@ import { authorize, CHEF_REPORT_ROLES } from "@/lib/auth-guard";
 import { resolveDateRange, getBusinessTimezone } from "@/lib/date-range";
 
 // ==========================================
-// MASTER KDS (KOORDINATOR SEF CANLI IZLEME)
+// CANLI MUTFAK EKRANI (KOORDINATOR SEF CANLI IZLEME)
 // ==========================================
-export async function getChefMasterKds(restaurantId?: string) {
+export async function getSefCanliMutfak(restaurantId?: string) {
   const auth = await authorize(CHEF_REPORT_ROLES);
   if (!auth.ok) {
     return { success: false, error: auth.error, data: null };
@@ -42,7 +42,7 @@ export async function getChefMasterKds(restaurantId?: string) {
 
     return { success: true, data: orders };
   } catch (error: any) {
-    console.error("getChefMasterKds error:", error);
+    console.error("getSefCanliMutfak error:", error);
     return { success: false, error: error.message, data: null };
   }
 }

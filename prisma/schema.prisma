@@ -9,8 +9,8 @@ datasource db {
 
 enum Role {
   ADMIN     // Sistem Yöneticisi (Tüm sistem tanımları, kullanıcılar, genel ayarlar)
-  CHEF      // Şef Modülü (Tüm alakartlar arası geçiş, master KDS, tarih filtreli PDF/Excel raporlar, audit)
-  KITCHEN   // Mutfak Modülü (Sadece görevli olduğu alakartın KDS ekranı ve adisyon yazıcısı)
+  CHEF      // Şef Modülü (Tüm alakartlar arası geçiş, canlı mutfak ekranı, tarih filtreli PDF/Excel raporlar, audit)
+  KITCHEN   // Mutfak Modülü (Sadece görevli olduğu alakartın canlı mutfak ekranı ve adisyon yazıcısı)
   WAITER    // Garson Modülü (Görevli olduğu alakartın mobil sipariş terminali ve masa yönetimi)
 }
 

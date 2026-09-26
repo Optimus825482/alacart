@@ -25,7 +25,7 @@ import { playKitchenChime } from "@/lib/sound";
 import { getRestaurantTheme } from "@/lib/themes";
 import clsx from "clsx";
 
-export default function KitchenKDSPage() {
+export default function MutfakEkraniPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<SessionUser | null>(null);
@@ -300,9 +300,10 @@ export default function KitchenKDSPage() {
   // ===========================================================================
   // DURUM 1: MUTFAK KULLANICISI HENÜZ RESTORAN SEÇMEDİYSE
   // ===========================================================================
-  // Alakart otomatik atanır (loginAction): her alakartın kendi mutfak kullanıcısı
-  // vardır (mutfak.roofgarden, mutfak.steakhouse, ...). Giriş sonrası seçim ekranı
-  // gösterilmez. Yalnızca ataması olmayan kullanıcılar bu ekranı görür.
+  // Alakart otomatik atanır (loginAction): her alakartın kendi mutfak kullanıcı adı
+  // vardır (mutfak.roof, mutfak.steak, mutfak.bluesea, mutfak.mandarin,
+  // mutfak.bella). Giriş sonrası seçim ekranı gösterilmez. Yalnızca ataması
+  // olmayan kullanıcılar bu ekranı görür.
   if (!session?.activeRestaurantId) {
     return (
       <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-lg mx-auto w-full justify-center text-center">
@@ -320,10 +321,10 @@ export default function KitchenKDSPage() {
   }
 
   // ===========================================
-  // DURUM 2: RESTORAN KİLİTLİ VE MUTFAK KDS EKRANI
+  // DURUM 2: RESTORAN KİLİTLİ VE CANLI MUTFAK EKRANI
   // ===========================================
   // ===========================================
-  // DURUM 2: RESTORAN KİLİTLİ VE MUTFAK KDS EKRANI
+  // DURUM 2: RESTORAN KİLİTLİ VE CANLI MUTFAK EKRANI
   // ===========================================
   const filteredOrders = orders
     .filter((o) => {
@@ -352,7 +353,7 @@ export default function KitchenKDSPage() {
 
   return (
     <div className={clsx("flex-1 flex flex-col p-4 sm:p-6 max-w-7xl mx-auto w-full", currentTheme.bgDark)}>
-      {/* Sabit Mutfak Header (Karışıklığı Önleyen Özel Renkli KDS Barı) */}
+      {/* Sabit Mutfak Header (Karışıklığı Önleyen Özel Renkli Bar) */}
       <div className={clsx("sticky top-14 z-40 border rounded-3xl p-4 sm:p-5 mb-6 shadow-2xl backdrop-blur-md", currentTheme.border, currentTheme.cardBg)}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -363,7 +364,7 @@ export default function KitchenKDSPage() {
                 <span className={clsx("text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded border", currentTheme.badge)}>
                   SEÇİLEN ALAKART
                 </span>
-                <span className="text-[11px] text-zinc-400 hidden sm:inline">Mutfak KDS Terminali</span>
+                <span className="text-[11px] text-zinc-400 hidden sm:inline">Canlı Mutfak Ekranı</span>
               </div>
               <h2 className="text-lg sm:text-2xl font-black text-white mt-0.5 flex flex-wrap items-center gap-1.5">
                 <span className="text-zinc-400 text-xs sm:text-sm font-bold">Seçilen Alakart:</span>

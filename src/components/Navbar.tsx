@@ -67,7 +67,7 @@ export function Navbar() {
       label: "ŞEF",
       href: "/chef",
       icon: Award,
-      badge: "Master KDS & Rapor",
+      badge: "Canlı Mutfak & Rapor",
     });
   }
 

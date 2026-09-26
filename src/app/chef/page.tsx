@@ -29,7 +29,7 @@ import clsx from "clsx";
 import { getRestaurants, getTables, getCategoriesTree } from "@/actions/definitions";
 import { createOrder, getRestaurantWaiters, updateOrderStatus, markOrderPrinted } from "@/actions/orders";
 import {
-  getChefMasterKds,
+  getSefCanliMutfak,
   getChefAnalyticsAndReport,
   getAuditLogs,
   getWaiterSessionsAndLogins,
@@ -42,14 +42,14 @@ import { ChefAnalyticsPrintReport, ChefAuditPrintReport } from "./chef-print-rep
 
 export default function ChefModulePage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<"kds" | "orderEntry" | "waiters" | "analytics" | "audit">("kds");
+  const [activeTab, setActiveTab] = useState<"canliMutfak" | "orderEntry" | "waiters" | "analytics" | "audit">("canliMutfak");
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string>("ALL");
 
-  // Master KDS state
-  const [kdsOrders, setKdsOrders] = useState<any[]>([]);
-  const [loadingKds, setLoadingKds] = useState(true);
-  const [autoRefreshKds, setAutoRefreshKds] = useState(true);
+  // Canlı Mutfak (tüm alakartlar) state
+  const [canliMutfakOrders, setCanliMutfakOrders] = useState<any[]>([]);
+  const [loadingCanliMutfak, setLoadingCanliMutfak] = useState(true);
+  const [autoRefreshCanliMutfak, setAutoRefreshCanliMutfak] = useState(true);
 
   // Waiter sessions & login tracking state
   const [waiterData, setWaiterData] = useState<{ waiters: any[]; history: any[] }>({ waiters: [], history: [] });
@@ -228,7 +228,7 @@ export default function ChefModulePage() {
     });
     setEntryCart([]);
     setEntryNotes("");
-    loadKds();
+    loadCanliMutfak();
     loadLive();
   };
 
@@ -244,13 +244,13 @@ export default function ChefModulePage() {
     });
   }, []);
 
-  // Fetch KDS orders
-  const loadKds = async () => {
-    const res = await getChefMasterKds(selectedRestaurantId);
+  // Canlı mutfak siparişlerini çek
+  const loadCanliMutfak = async () => {
+    const res = await getSefCanliMutfak(selectedRestaurantId);
     if (res.success && res.data) {
-      setKdsOrders(res.data);
+      setCanliMutfakOrders(res.data);
     }
-    setLoadingKds(false);
+    setLoadingCanliMutfak(false);
   };
 
   // Fetch Analytics
@@ -303,8 +303,8 @@ export default function ChefModulePage() {
 
   // Reload data on tab or restaurant filter change
   useEffect(() => {
-    if (activeTab === "kds") {
-      loadKds();
+    if (activeTab === "canliMutfak") {
+      loadCanliMutfak();
       loadLive();
     } else if (activeTab === "waiters") {
       loadWaiters();
@@ -315,15 +315,15 @@ export default function ChefModulePage() {
     }
   }, [activeTab, selectedRestaurantId]);
 
-  // Auto-refresh for KDS tab
+  // Canlı Mutfak sekmesi için otomatik yenileme
   useEffect(() => {
-    if (activeTab !== "kds" || !autoRefreshKds) return;
+    if (activeTab !== "canliMutfak" || !autoRefreshCanliMutfak) return;
     const interval = setInterval(() => {
-      loadKds();
+      loadCanliMutfak();
       loadLive();
     }, 7000);
     return () => clearInterval(interval);
-  }, [activeTab, autoRefreshKds, selectedRestaurantId]);
+  }, [activeTab, autoRefreshCanliMutfak, selectedRestaurantId]);
 
   // Auto-refresh for Waiters tab (10s)
   useEffect(() => {
@@ -341,7 +341,7 @@ export default function ChefModulePage() {
       name: currentUser?.name || "Koordinatör Şef",
       role: "CHEF",
     });
-    loadKds();
+    loadCanliMutfak();
   };
 
   const handlePrint = async (orderId: string) => {
@@ -351,7 +351,7 @@ export default function ChefModulePage() {
       role: "CHEF",
     });
     window.print();
-    loadKds();
+    loadCanliMutfak();
   };
 
   // Excel'e aktar (.xlsx)
@@ -523,7 +523,7 @@ export default function ChefModulePage() {
 
           <button
             onClick={() => {
-              if (activeTab === "kds") { loadKds(); loadLive(); }
+              if (activeTab === "canliMutfak") { loadCanliMutfak(); loadLive(); }
               if (activeTab === "orderEntry") loadEntryData(entryRestaurantId);
               if (activeTab === "waiters") loadWaiters();
               if (activeTab === "analytics") loadReport();
@@ -540,18 +540,18 @@ export default function ChefModulePage() {
       {/* Navigation Tabs */}
       <div className="flex items-center gap-2 border-b border-zinc-800/80 pb-3 overflow-x-auto scrollbar-none">
         <button
-          onClick={() => setActiveTab("kds")}
+          onClick={() => setActiveTab("canliMutfak")}
           className={clsx(
             "flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-sm",
-            activeTab === "kds"
+            activeTab === "canliMutfak"
               ? "bg-amber-500 text-zinc-950 shadow-amber-500/20"
               : "bg-[#0f1422] text-zinc-400 hover:text-white hover:bg-zinc-800 border border-zinc-800"
           )}
         >
           <Layers className="w-4 h-4" />
-          <span>Canlı Master KDS</span>
+          <span>Canlı Mutfak Ekranı</span>
           <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-zinc-950/40 text-current ml-1">
-            {kdsOrders.length}
+            {canliMutfakOrders.length}
           </span>
         </button>
 
@@ -619,23 +619,23 @@ export default function ChefModulePage() {
       </div>
 
       {/* ======================================================== */}
-      {/* TAB 1: MASTER KDS (CANLI OPERASYON) */}
+      {/* TAB 1: CANLI MUTFAK EKRANI (CANLI OPERASYON) */}
       {/* ======================================================== */}
-      {activeTab === "kds" && (
+      {activeTab === "canliMutfak" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-xs font-bold text-zinc-300">
-                Canlı Mutfak Akışı ({kdsOrders.length} Bekleyen / Hazırlanan Sipariş)
+                Canlı Mutfak Akışı ({canliMutfakOrders.length} Bekleyen / Hazırlanan Sipariş)
               </span>
             </div>
 
             <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-400 hover:text-zinc-200">
               <input
                 type="checkbox"
-                checked={autoRefreshKds}
-                onChange={(e) => setAutoRefreshKds(e.target.checked)}
+                checked={autoRefreshCanliMutfak}
+                onChange={(e) => setAutoRefreshCanliMutfak(e.target.checked)}
                 className="rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-0"
               />
               <span>Otomatik Canlı Güncelleme (7 sn)</span>
@@ -704,9 +704,9 @@ export default function ChefModulePage() {
             </div>
           )}
 
-          {loadingKds ? (
-            <div className="p-16 text-center text-zinc-500">Master KDS yükleniyor...</div>
-          ) : kdsOrders.length === 0 ? (
+          {loadingCanliMutfak ? (
+            <div className="p-16 text-center text-zinc-500">Canlı mutfak ekranı yükleniyor...</div>
+          ) : canliMutfakOrders.length === 0 ? (
             <div className="p-16 rounded-3xl bg-[#0f1422] border border-zinc-800 text-center">
               <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-3 opacity-60" />
               <h3 className="text-base font-bold text-white">Tüm Alakart Mutfakları Sakin</h3>
@@ -716,7 +716,7 @@ export default function ChefModulePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {kdsOrders.map((order) => {
+              {canliMutfakOrders.map((order) => {
                 const diffMs = new Date().getTime() - new Date(order.createdAt).getTime();
                 const elapsedMins = Math.floor(diffMs / 60000);
                 const isUrgent = elapsedMins >= 15;

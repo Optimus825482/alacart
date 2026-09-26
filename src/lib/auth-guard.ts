@@ -38,7 +38,7 @@ export interface ServerSession {
 export const ADMIN_ONLY: Role[] = ["ADMIN"];
 export const CHEF_REPORT_ROLES: Role[] = ["CHEF", "ADMIN"];
 
-/** KDS / mutfak akışını GÖRME ve takip etme yetkisi (durum değiştirme hariç). */
+/** Canlı mutfak ekranı akışını GÖRME ve takip etme yetkisi (durum değiştirme hariç). */
 export const KITCHEN_VIEW_ROLES: Role[] = ["KITCHEN", "CHEF", "ADMIN"];
 
 /** "Hazırlanıyor" ve "Tamamlandı" işaretleme yetkisi — yalnızca mutfak. */

@@ -114,7 +114,7 @@ export async function createOrder(data: {
 }
 
 // ==========================================
-// MUTFAK EKRANI İÇİN AKTİF SİPARİŞLER (KDS)
+// MUTFAK EKRANI İÇİN AKTİF SİPARİŞLER
 // ==========================================
 
 export async function getActiveKitchenOrders(restaurantId?: string) {
@@ -134,7 +134,7 @@ export async function getActiveKitchenOrders(restaurantId?: string) {
             createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
           },
           {
-            // Garson tarafından iptal edilen siparişler de KDS'de listelenir (son 24 saat)
+            // Garson tarafından iptal edilen siparişler de mutfak ekranında listelenir (son 24 saat)
             status: "CANCELLED",
             createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
           },
@@ -167,7 +167,7 @@ export async function getActiveKitchenOrders(restaurantId?: string) {
 }
 
 // ==========================================
-// SİPARİŞ DURUMU GÜNCELLEME (MUTFAK KDS)
+// SİPARİŞ DURUMU GÜNCELLEME (MUTFAK EKRANI)
 // ==========================================
 
 export async function updateOrderStatus(

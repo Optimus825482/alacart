@@ -2,9 +2,9 @@ import { requirePageRole } from "@/lib/auth-guard";
 import { KITCHEN_VIEW_ROLES } from "@/lib/auth-guard";
 
 /**
- * Mutfak (KDS) Modulu sayfa korumasi.
+ * Mutfak Modulu sayfa korumasi.
  *
- * KDS akisini gormeye yetkili roller: KITCHEN, CHEF, ADMIN.
+ * Canli mutfak akisini gormeye yetkili roller: KITCHEN, CHEF, ADMIN.
  * Durum isaretleme ("Hazirlaniyor" / "Tamamlandi") ayrica sunucu tarafinda
  * KITCHEN_STATUS_ROLES ile sinirlandirilir; sef yalnizca izler.
  */

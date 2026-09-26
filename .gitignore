@@ -36,6 +36,14 @@ yarn-error.log*
 # vercel
 .vercel
 
-# typescript
-*.tsbuildinfo
+# temporary build/dev artifacts
+dev-server.log
+tsconfig.tsbuildinfo
 next-env.d.ts
+
+# local test / dev logs
+_dev.log
+_dev*.log
+
+# libreoffice lock files
+.~lock.*#

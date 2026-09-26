@@ -56,14 +56,29 @@ export default function AdminUsersPage() {
   };
 
   const toggleRestaurant = (rid: string) => {
-    setSelectedRestaurantIds((prev) =>
-      prev.includes(rid) ? prev.filter((id) => id !== rid) : [...prev, rid]
-    );
+    setSelectedRestaurantIds((prev) => {
+      if (prev.includes(rid)) return prev.filter((id) => id !== rid);
+      // Mutfak rolu: her alakartin kendi mutfak kullanici adi + sifresi vardir,
+      // bu yuzden yalnizca TEK bir alakart secilebilir.
+      if (role === "KITCHEN") return [rid];
+      return [...prev, rid];
+    });
+  };
+
+  const handleRoleChange = (nextRole: "ADMIN" | "CHEF" | "WAITER" | "KITCHEN") => {
+    setRole(nextRole);
+    // Mutfak rolune gecildiginde secim en fazla bir alakarta dusurulur.
+    setSelectedRestaurantIds((prev) => (prev.length > 1 ? [prev[0]] : prev));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !username.trim() || !pin.trim()) return;
+
+    if (role === "KITCHEN" && selectedRestaurantIds.length !== 1) {
+      alert("Mutfak rolu icin tam olarak 1 alakart restoran secilmelidir.");
+      return;
+    }
 
     setSubmitting(true);
     if (editingUser) {
@@ -123,7 +138,7 @@ export default function AdminUsersPage() {
           </span>
           <h2 className="text-2xl font-black text-white">Kullanıcı & Garson Tanımları</h2>
           <span className="text-xs text-zinc-400">
-            Garsonlar, Mutfak Personeli, Yöneticiler ve Dokunmatik PIN Kodları
+            Garsonlar, Mutfak, Yöneticiler ve Dokunmatik PIN Kodları
           </span>
         </div>
 
@@ -148,7 +163,10 @@ export default function AdminUsersPage() {
             return (
               <div
                 key={u.id}
-                className="p-5 rounded-3xl bg-[#0f1422] border border-zinc-800 flex flex-col justify-between"
+                className={clsx(
+                  "p-5 rounded-3xl bg-[#0f1422] border flex flex-col justify-between",
+                  u.active === false ? "border-zinc-800/60 opacity-55" : "border-zinc-800"
+                )}
               >
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-2">
@@ -199,7 +217,7 @@ export default function AdminUsersPage() {
                   {u.assignedTo && u.assignedTo.length > 0 && (
                     <div className="mt-2">
                       <span className="text-[10px] text-zinc-500 block mb-1">
-                        Yetkili Alakart Restoranlar:
+                        {u.role === "KITCHEN" ? "Bağlı Olduğu Alakart:" : "Yetkili Alakart Restoranlar:"}
                       </span>
                       <div className="flex flex-wrap gap-1">
                         {u.assignedTo.map((a: any) => (
@@ -216,8 +234,8 @@ export default function AdminUsersPage() {
                 </div>
 
                 <div className="pt-3 border-t border-zinc-800/80 mt-3 text-right">
-                  <span className="text-[10px] text-emerald-400 font-semibold">
-                    ● Sistemde Aktif
+                  <span className={clsx("text-[10px] font-semibold", u.active === false ? "text-zinc-500" : "text-emerald-400")}>
+                    {u.active === false ? "\u25CB Pasif \u2014 Giri\u015F Yapamaz" : "\u25CF Sistemde Aktif"}
                   </span>
                 </div>
               </div>
@@ -245,12 +263,12 @@ export default function AdminUsersPage() {
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
                 <label className="text-zinc-400 block mb-1 font-semibold">
-                  Ad Soyad *
+                  {role === "KITCHEN" ? "Mutfak Adı *" : "Ad Soyad *"}
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="Örn: Ahmet Yılmaz"
+                  placeholder={role === "KITCHEN" ? "Örn: The Roof Garden Mutfak" : "Örn: Ahmet Yılmaz"}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
@@ -265,7 +283,7 @@ export default function AdminUsersPage() {
                   <input
                     type="text"
                     required
-                    placeholder="Örn: ahmetyilmaz"
+                    placeholder={role === "KITCHEN" ? "Örn: mutfak.roof" : "Örn: ahmetyilmaz"}
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white lowercase focus:outline-none focus:border-amber-500"
@@ -308,12 +326,12 @@ export default function AdminUsersPage() {
                   </label>
                   <select
                     value={role}
-                    onChange={(e: any) => setRole(e.target.value)}
+                    onChange={(e: any) => handleRoleChange(e.target.value)}
                     className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
                   >
                     <option value="WAITER">Garson</option>
                     <option value="CHEF">Koordinatör Şef</option>
-                    <option value="KITCHEN">Mutfak Personeli</option>
+                    <option value="KITCHEN">Mutfak</option>
                     <option value="ADMIN">Sistem Yöneticisi</option>
                   </select>
                 </div>
@@ -322,8 +340,17 @@ export default function AdminUsersPage() {
               {/* Alakart Yetkilendirmesi */}
               <div>
                 <label className="text-zinc-400 block mb-1.5 font-semibold">
-                  Yetkili Olduğu Alakart Restoranlar
+                  {role === "KITCHEN"
+                    ? "Bağlı Olduğu Alakart Restoran *"
+                    : "Yetkili Olduğu Alakart Restoranlar"}
                 </label>
+                {role === "KITCHEN" && (
+                  <p className="text-[10px] leading-relaxed text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/25 rounded-lg px-2.5 py-2 mb-2">
+                    Her alakartın mutfağı genel kullanıma açıktır ve kendi kullanıcı adı +
+                    şifresiyle çalışır. Bu nedenle mutfak hesabı yalnızca bir alakarta
+                    bağlanır. Giriş sonrası alakart seçim ekranı gösterilmez.
+                  </p>
+                )}
                 <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
                   {restaurants.map((r) => {
                     const isChecked = selectedRestaurantIds.includes(r.id);

@@ -1,7 +1,7 @@
 {
   "name": "Merit A La Carte - Ultra All-Inclusive",
   "short_name": "Merit Alacarte",
-  "description": "5 Yıldızlı Otel Ultra Her Şey Dahil A La Carte Sipariş ve Mutfak KDS Sistemi",
+  "description": "5 Yıldızlı Otel Ultra Her Şey Dahil A La Carte Sipariş ve Mutfak Yönetim Sistemi",
   "start_url": "/login",
   "display": "standalone",
   "orientation": "portrait",

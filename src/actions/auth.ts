@@ -51,6 +51,8 @@ export async function loginAction(formData: FormData) {
     // Alakart otomatik atanır:
     //  - Kullanıcı tam olarak 1 alakarta atanmışsa (ör. "ahmet" -> The Roof Garden,
     //    "mutfak.roof" -> The Roof Garden) giriş sonrası seçim ekranı GÖSTERİLMEZ.
+    //  - MUTFAK rolü daima 1 alakarta bağlıdır: her alakartın kendi mutfak
+    //    kullanıcı adı ve şifresi vardır (mutfak genel kullanıma açıktır).
     //  - Birden fazla alakarta atanmışsa (ör. admin, sef) seçim ekranı açılır.
     const primaryAssignment = user.assignedTo.length === 1 ? user.assignedTo[0] : null;
     const defaultRestaurantId: string | null = primaryAssignment

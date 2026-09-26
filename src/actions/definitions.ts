@@ -43,6 +43,93 @@ export async function getRestaurants() {
   }
 }
 
+// ==========================================
+// OTOMATİK MUTFAK HESABI ÜRETIMI
+// ==========================================
+// İş kuralı: Mutfak genel kullanıma açıktır ve her alakart restoranın kendi
+// mutfak hesabı vardır. Yeni bir alakart tanımlandığı anda sistem otomatik
+// olarak o restoran için "mutfak.<KOD>" kullanıcı adı, benzersiz bir PIN ve
+// varsayılan şifre ile bir MUTFAK (KITCHEN) hesabı üretir; hesap yalnızca
+// o alakarta bağlanır. Böylece yeni alakart eklendiğinde mutfak hesabını
+// elle oluşturmak unutulmaz.
+
+const MUTFAK_VARSAYILAN_SIFRE = "1234";
+
+/** "ROOF GARDEN" -> "mutfak.roof.garden" */
+function mutfakKullaniciAdiUret(code: string): string {
+  const govde = code
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ".")
+    .replace(/^\.+|\.+$/g, "");
+  return govde ? `mutfak.${govde}` : "mutfak.alakart";
+}
+
+/** Kullanıcı adı çakışırsa sonuna sayı ekleyerek benzersizleştirir. */
+async function benzersizKullaniciAdiUret(base: string): Promise<string> {
+  const mevcut = new Set(
+    (
+      await prisma.user.findMany({
+        where: { username: { startsWith: "mutfak" } },
+        select: { username: true },
+      })
+    ).map((u) => u.username)
+  );
+  if (!mevcut.has(base)) return base;
+  let n = 2;
+  while (mevcut.has(`${base}${n}`)) n++;
+  return `${base}${n}`;
+}
+
+/** Hiçbir kullanıcıda kullanılmayan 4 haneli PIN üretir. */
+async function benzersizPinUret(): Promise<string> {
+  const kullanilan = new Set(
+    (
+      await prisma.user.findMany({
+        where: { pin: { not: null } },
+        select: { pin: true },
+      })
+    )
+      .map((u) => u.pin)
+      .filter((p): p is string => !!p)
+  );
+  for (let p = 2001; p <= 9999; p++) {
+    if (!kullanilan.has(String(p))) return String(p);
+  }
+  for (let p = 1000; p <= 2000; p++) {
+    if (!kullanilan.has(String(p))) return String(p);
+  }
+  throw new Error("Kullanilabilir PIN kalmadi.");
+}
+
+/**
+ * Verilen alakart için mutfak hesabini olusturur.
+ * Hem normal hem de transaction istemcisiyle calisabilir.
+ */
+async function mutfakHesabiUret(
+  db: { user: { create: (args: any) => Promise<any> } },
+  restaurantId: string,
+  restaurantName: string,
+  restaurantCode: string
+) {
+  const username = await benzersizKullaniciAdiUret(mutfakKullaniciAdiUret(restaurantCode));
+  const pin = await benzersizPinUret();
+  const password = MUTFAK_VARSAYILAN_SIFRE;
+
+  await db.user.create({
+    data: {
+      name: `${restaurantName} Mutfak`,
+      username,
+      password: await bcrypt.hash(password, 12),
+      pin,
+      role: "KITCHEN" as any,
+      active: true,
+      assignedTo: { create: { restaurantId } },
+    },
+  });
+
+  return { username, pin, password };
+}
+
 export async function createRestaurant(data: {
   name: string;
   code: string;
@@ -55,19 +142,97 @@ export async function createRestaurant(data: {
   }
 
   try {
-    const restaurant = await prisma.restaurant.create({
-      data: {
-        name: data.name.trim(),
-        code: data.code.trim().toUpperCase(),
-        description: data.description?.trim(),
-        active: data.active ?? true,
-      },
+    const name = data.name.trim();
+    const code = data.code.trim().toUpperCase();
+    // Kullanici adi ve PIN, kayit oncesi hazirlanir; mutfak hesabi
+    // restoranla ayni transaction icinde olusturulur.
+    const username = await benzersizKullaniciAdiUret(mutfakKullaniciAdiUret(code));
+    const pin = await benzersizPinUret();
+    const password = MUTFAK_VARSAYILAN_SIFRE;
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const restaurant = await prisma.$transaction(async (tx) => {
+      const created = await tx.restaurant.create({
+        data: {
+          name,
+          code,
+          description: data.description?.trim(),
+          active: data.active ?? true,
+        },
+      });
+
+      await tx.user.create({
+        data: {
+          name: `${name} Mutfak`,
+          username,
+          password: hashedPassword,
+          pin,
+          role: "KITCHEN" as any,
+          active: true,
+          assignedTo: { create: { restaurantId: created.id } },
+        },
+      });
+
+      return created;
     });
+
     revalidatePath("/admin");
+    revalidatePath("/admin/users");
     revalidatePath("/waiter");
-    return { success: true, data: restaurant };
+    revalidatePath("/kitchen");
+    return {
+      success: true,
+      data: restaurant,
+      kitchenUser: { username, pin, password },
+    };
   } catch (error: any) {
     console.error("createRestaurant error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Mutfak hesabi olmayan alakartlar icin eksik hesaplari tamamlar.
+ * (Kuraldan once eklenmis alakartlar icin kurtarma agzi.)
+ */
+export async function eksikMutfakHesaplariniTamamla() {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
+  try {
+    const eksikler = await prisma.restaurant.findMany({
+      where: { users: { none: { user: { role: "KITCHEN" } } } },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const olusanlar: {
+      restaurant: string;
+      username: string;
+      pin: string;
+      password: string;
+    }[] = [];
+
+    for (const restoran of eksikler) {
+      const hesap = await mutfakHesabiUret(
+        prisma,
+        restoran.id,
+        restoran.name,
+        restoran.code
+      );
+      olusanlar.push({ restaurant: restoran.name, ...hesap });
+    }
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/users");
+    revalidatePath("/kitchen");
+    return {
+      success: true,
+      data: { eksikSayisi: eksikler.length, olusanlar },
+    };
+  } catch (error: any) {
+    console.error("eksikMutfakHesaplariniTamamla error:", error);
     return { success: false, error: error.message };
   }
 }
@@ -106,9 +271,29 @@ export async function deleteRestaurant(id: string) {
   }
 
   try {
-    await prisma.restaurant.delete({ where: { id } });
+    const etkilenenMutfakHesaplari = await prisma.user.findMany({
+      where: { role: "KITCHEN", assignedTo: { some: { restaurantId: id } } },
+      select: { id: true, assignedTo: { select: { restaurantId: true } } },
+    });
+
+    await prisma.$transaction(async (tx) => {
+      await tx.restaurant.delete({ where: { id } });
+
+      // Alakart silinince, yalnizca bu alakarta bagli olan mutfak
+      // hesaplari giris yapamaz hale getirilir (hesap silinmez, geri
+      // alinabilir); baska alakarta bagli hesaplar etkilenmez.
+      for (const hesap of etkilenenMutfakHesaplari) {
+        const kalan = hesap.assignedTo.filter((a) => a.restaurantId !== id);
+        if (kalan.length === 0) {
+          await tx.user.update({ where: { id: hesap.id }, data: { active: false } });
+        }
+      }
+    });
+
     revalidatePath("/admin");
+    revalidatePath("/admin/users");
     revalidatePath("/waiter");
+    revalidatePath("/kitchen");
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

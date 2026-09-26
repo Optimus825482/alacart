@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Check, X, UtensilsCrossed } from "lucide-react";
+import { Plus, Edit2, Trash2, Check, X, UtensilsCrossed, ChefHat } from "lucide-react";
 import {
   getRestaurants,
   createRestaurant,
   updateRestaurant,
   deleteRestaurant,
+  eksikMutfakHesaplariniTamamla,
 } from "@/actions/definitions";
 
 export default function AdminRestaurantsPage() {
@@ -56,13 +57,65 @@ export default function AdminRestaurantsPage() {
 
     setSubmitting(true);
     if (editingRestaurant) {
-      await updateRestaurant(editingRestaurant.id, { name, code, description });
-    } else {
-      await createRestaurant({ name, code, description });
+      const res: any = await updateRestaurant(editingRestaurant.id, { name, code, description });
+      if (!res.success) {
+        setSubmitting(false);
+        alert("Guncelleme hatasi: " + (res.error || "Bilinmeyen hata"));
+        return;
+      }
+      setSubmitting(false);
+      setIsModalOpen(false);
+      loadData();
+      return;
     }
+
+    const res: any = await createRestaurant({ name, code, description });
     setSubmitting(false);
+    if (!res.success) {
+      alert("Alakart eklenemedi: " + (res.error || "Bilinmeyen hata"));
+      return;
+    }
     setIsModalOpen(false);
     loadData();
+
+    if (res.kitchenUser) {
+      alert(
+        `"${name.trim()}" alakarti ve mutfak hesabi otomatik olusturuldu.\n\n` +
+          `Kullanici Adi : ${res.kitchenUser.username}\n` +
+          `PIN          : ${res.kitchenUser.pin}\n` +
+          `Sifre        : ${res.kitchenUser.password}`
+      );
+    }
+  };
+
+  const handleMutfakHesabiTamamla = async () => {
+    if (
+      !confirm(
+        "Mutfak hesabi olmayan alakartlar icin otomatik hesap olusturulsun mu?"
+      )
+    )
+      return;
+    const res: any = await eksikMutfakHesaplariniTamamla();
+    if (!res.success) {
+      alert("Hata: " + (res.error || "Bilinmeyen hata"));
+      return;
+    }
+    const olusan = res.data?.olusanlar ?? [];
+    if (olusan.length === 0) {
+      alert("Tum alakartlarin mutfak hesabi mevcut. Eksik hesap bulunamadi.");
+    } else {
+      alert(
+        olusan.length +
+          " adet mutfak hesabi olusturuldu:\n\n" +
+          olusan
+            .map(
+              (x: any) =>
+                `${x.restaurant} -> ${x.username} | PIN ${x.pin} | sifre ${x.password}`
+            )
+            .join("\n")
+      );
+      loadData();
+    }
   };
 
   const handleDelete = async (id: string, rName: string) => {
@@ -86,13 +139,25 @@ export default function AdminRestaurantsPage() {
           <h2 className="text-2xl font-black text-white">Alakart Restoranlar</h2>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm shadow-md shadow-amber-500/20"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Yeni Alakart Ekle</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleMutfakHesabiTamamla}
+            title="Mutfak hesabi olmayan alakartlar icin otomatik hesap olusturur"
+            className="flex items-center gap-2 px-3 py-2.5 rounded-2xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 hover:text-white font-bold text-xs sm:text-sm"
+          >
+            <ChefHat className="w-4 h-4" />
+            <span className="hidden sm:inline">Eksik Mutfak Hesabi Olustur</span>
+            <span className="sm:hidden">Eksik Mutfak</span>
+          </button>
+
+          <button
+            onClick={openCreateModal}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm shadow-md shadow-amber-500/20"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Yeni Alakart Ekle</span>
+          </button>
+        </div>
       </div>
 
       {/* List */}

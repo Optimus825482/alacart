@@ -463,11 +463,6 @@ export default function ChefModulePage() {
                                     ★ {item.itemNotes}
                                   </span>
                                 )}
-                                {item.menuItem.allergens && (
-                                  <span className="text-[9px] text-rose-400">
-                                    Alerjen: {item.menuItem.allergens}
-                                  </span>
-                                )}
                               </div>
                             </div>
                             <span className="text-sm font-black text-amber-400 px-2 py-0.5 rounded-lg bg-zinc-800">

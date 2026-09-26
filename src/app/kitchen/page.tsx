@@ -327,13 +327,32 @@ export default function KitchenKDSPage() {
   // ===========================================
   // DURUM 2: RESTORAN KİLİTLİ VE MUTFAK KDS EKRANI
   // ===========================================
-  const filteredOrders = orders.filter((o) => {
-    if (statusFilter === "ACTIVE") return o.status === "PENDING" || o.status === "PREPARING";
-    if (statusFilter === "PENDING") return o.status === "PENDING";
-    if (statusFilter === "UPDATED") return (o.isUpdated || (o.revision && o.revision > 1)) && (o.status === "PENDING" || o.status === "PREPARING");
-    if (statusFilter === "PREPARING") return o.status === "PREPARING";
-    return true;
-  });
+  // ===========================================
+  // DURUM 2: RESTORAN KİLİTLİ VE MUTFAK KDS EKRANI
+  // ===========================================
+  const filteredOrders = orders
+    .filter((o) => {
+      if (statusFilter === "ACTIVE") return o.status === "PENDING" || o.status === "PREPARING";
+      if (statusFilter === "PENDING") return o.status === "PENDING";
+      if (statusFilter === "UPDATED") return (o.isUpdated || (o.revision && o.revision > 1)) && (o.status === "PENDING" || o.status === "PREPARING");
+      if (statusFilter === "PREPARING") return o.status === "PREPARING";
+      if (statusFilter === "COMPLETED") return o.status === "COMPLETED";
+      return true;
+    })
+    .sort((a, b) => {
+      const statusWeight: Record<string, number> = {
+        PENDING: 1,
+        PREPARING: 2,
+        COMPLETED: 3,
+        CANCELLED: 4,
+      };
+      const weightDiff = (statusWeight[a.status] || 99) - (statusWeight[b.status] || 99);
+      if (weightDiff !== 0) return weightDiff;
+      if (a.status === "COMPLETED") {
+        return new Date(b.completedAt || b.updatedAt).getTime() - new Date(a.completedAt || a.updatedAt).getTime();
+      }
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
 
   return (
     <div className={clsx("flex-1 flex flex-col p-4 sm:p-6 max-w-7xl mx-auto w-full", currentTheme.bgDark)}>
@@ -422,6 +441,7 @@ export default function KitchenKDSPage() {
             { key: "PENDING", label: "Bekleyenler (Ocak Bekliyor)", count: orders.filter((o) => o.status === "PENDING").length },
             { key: "UPDATED", label: "⚠️ Güncellenenler (Revizyon)", count: orders.filter((o) => (o.isUpdated || (o.revision && o.revision > 1)) && (o.status === "PENDING" || o.status === "PREPARING")).length },
             { key: "PREPARING", label: "Hazırlanıyor", count: orders.filter((o) => o.status === "PREPARING").length },
+            { key: "COMPLETED", label: "✓ Tamamlananlar", count: orders.filter((o) => o.status === "COMPLETED").length },
             { key: "ALL", label: "Tümü", count: orders.length },
           ].map((tab) => (
             <button
@@ -448,7 +468,7 @@ export default function KitchenKDSPage() {
         <div className="flex-1 flex flex-col items-center justify-center p-12 rounded-3xl bg-zinc-900/30 border border-zinc-800/60 text-center">
           <ChefHat className="w-12 h-12 text-zinc-600 mb-3" />
           <h3 className="text-base font-bold text-white mb-1">
-            {session.activeRestaurantName} İçin Bekleyen Sipariş Yok
+            {session.activeRestaurantName} İçin Bu Filtrede Sipariş Bulunmuyor
           </h3>
           <p className="text-zinc-500 text-xs max-w-sm">
             Garson masadan yeni veya güncellenmiş bir sipariş gönderdiğinde sesli otel zili çalacak ve bu ekrana düşecektir.
@@ -460,6 +480,7 @@ export default function KitchenKDSPage() {
             const elapsed = getElapsedMinutes(order.createdAt);
             const isUrgent = elapsed >= 12;
             const isPreparing = order.status === "PREPARING";
+            const isCompleted = order.status === "COMPLETED";
             const isOrderUpdated = Boolean(order.isUpdated || (order.revision && order.revision > 1));
             const updateElapsed = order.lastModifiedAt ? getElapsedMinutes(order.lastModifiedAt) : null;
 
@@ -468,7 +489,9 @@ export default function KitchenKDSPage() {
                 key={order.id}
                 className={clsx(
                   "rounded-3xl border transition-all flex flex-col justify-between overflow-hidden shadow-xl",
-                  isOrderUpdated
+                  isCompleted
+                    ? "bg-[#0a1a14]/70 border-emerald-500/50 shadow-emerald-500/5"
+                    : isOrderUpdated
                     ? "bg-[#18140a] border-amber-400 ring-2 ring-amber-400/50 shadow-2xl shadow-amber-500/10"
                     : isPreparing
                     ? "bg-[#0b1424] border-blue-500/40"
@@ -477,8 +500,20 @@ export default function KitchenKDSPage() {
                     : "bg-[#111726] border-amber-500/30"
                 )}
               >
-                {/* Güncellenen Sipariş Dikkat Rozeti */}
-                {isOrderUpdated && (
+                {/* Durum Rozeti */}
+                {isCompleted ? (
+                  <div className="bg-emerald-500/20 border-b border-emerald-500/40 text-emerald-300 px-3.5 py-1.5 font-bold text-xs flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <span>MUTFAK TAMAMLADI • SERVİSE HAZIR</span>
+                    </div>
+                    {order.completedAt && (
+                      <span className="font-mono text-[11px] text-emerald-400/80">
+                        {new Date(order.completedAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
+                      </span>
+                    )}
+                  </div>
+                ) : isOrderUpdated ? (
                   <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-zinc-950 px-3.5 py-1.5 font-black text-xs flex items-center justify-between shadow-md">
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm">⚠️</span>
@@ -488,7 +523,7 @@ export default function KitchenKDSPage() {
                       REVİZYON #{order.revision || 2}
                     </span>
                   </div>
-                )}
+                ) : null}
 
                 {/* Header */}
                 <div className="p-4 border-b border-zinc-800/80 bg-zinc-950/40 flex items-center justify-between">
@@ -513,7 +548,9 @@ export default function KitchenKDSPage() {
                     <div
                       className={clsx(
                         "inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold font-mono",
-                        isUrgent
+                        isCompleted
+                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                          : isUrgent
                           ? "bg-rose-500 text-white animate-pulse"
                           : isPreparing
                           ? "bg-blue-500/20 text-blue-300 border border-blue-500/40"
@@ -521,7 +558,7 @@ export default function KitchenKDSPage() {
                       )}
                     >
                       <Clock className="w-3.5 h-3.5" />
-                      <span>{elapsed} dk</span>
+                      <span>{isCompleted ? "Tamamlandı" : `${elapsed} dk`}</span>
                     </div>
                     {isOrderUpdated && updateElapsed !== null && (
                       <span className="text-[10px] text-amber-300 font-bold block mt-0.5">
@@ -581,12 +618,6 @@ export default function KitchenKDSPage() {
                             </span>
                           </div>
                         )}
-
-                        {item.menuItem?.allergens && (
-                          <div className="mt-0.5 ml-8 text-[10px] text-rose-400">
-                            Alerjen: {item.menuItem.allergens}
-                          </div>
-                        )}
                       </div>
                     </div>
                   ))}
@@ -619,13 +650,29 @@ export default function KitchenKDSPage() {
                       </button>
                     )}
 
-                    <button
-                      onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-black transition-all active:scale-95 shadow-md shadow-emerald-500/20"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Tamamlandı</span>
-                    </button>
+                    {!isCompleted ? (
+                      <button
+                        onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-black transition-all active:scale-95 shadow-md shadow-emerald-500/20"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Tamamlandı</span>
+                      </button>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Tamamlandı</span>
+                        </span>
+                        <button
+                          onClick={() => handleUpdateStatus(order.id, "PREPARING")}
+                          className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-medium border border-zinc-700 transition"
+                          title="Gerekirse tekrar hazırlanıyor durumuna al"
+                        >
+                          Geri Al (Ocak)
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -720,11 +767,6 @@ export default function KitchenKDSPage() {
                 {it.itemNotes && (
                   <div style={{ fontSize: "12px", fontWeight: "bold", paddingLeft: "10px" }}>
                     &gt;&gt; ÖZEL: {it.itemNotes}
-                  </div>
-                )}
-                {it.menuItem?.allergens && (
-                  <div style={{ fontSize: "10px", paddingLeft: "10px" }}>
-                    [Alerjen: {it.menuItem.allergens}]
                   </div>
                 )}
               </div>

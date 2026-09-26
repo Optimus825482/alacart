@@ -962,12 +962,6 @@ export default function WaiterTerminalPage() {
                         </p>
                       )}
 
-                      {item.allergens && (
-                        <span className="text-[10px] text-amber-400/90 bg-amber-400/10 px-2 py-0.5 rounded-md inline-block">
-                          ⚠️ {item.allergens}
-                        </span>
-                      )}
-
                       {item.defaultNotes && (
                         <div className="mt-1 flex items-center gap-1.5 flex-wrap">
                           <span className="text-[10px] text-amber-400 font-semibold flex items-center gap-1">

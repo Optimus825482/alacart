@@ -96,10 +96,16 @@ export async function getActiveKitchenOrders(restaurantId?: string) {
   try {
     const orders = await prisma.order.findMany({
       where: {
-        status: { in: ["PENDING", "PREPARING"] },
         ...(restaurantId ? { restaurantId } : {}),
+        OR: [
+          { status: { in: ["PENDING", "PREPARING"] } },
+          {
+            status: "COMPLETED",
+            createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+          },
+        ],
       },
-      orderBy: { createdAt: "asc" }, // En eski sipariş en üstte
+      orderBy: { createdAt: "asc" },
       include: {
         restaurant: { select: { id: true, name: true, code: true } },
         table: { select: { id: true, name: true } },
@@ -110,7 +116,6 @@ export async function getActiveKitchenOrders(restaurantId?: string) {
               select: {
                 id: true,
                 name: true,
-                allergens: true,
                 category: { select: { name: true } },
               },
             },

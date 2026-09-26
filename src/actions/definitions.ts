@@ -4,12 +4,18 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { Role, TableStatus } from "@/lib/types";
 import bcrypt from 'bcryptjs';
+import { authorize, ADMIN_ONLY, ANY_AUTHENTICATED } from "@/lib/auth-guard";
 
 // ==========================================
 // ALAKART RESTORAN TANIMLARI
 // ==========================================
 
 export async function getRestaurants() {
+  const auth = await authorize(ANY_AUTHENTICATED);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const restaurants = await prisma.restaurant.findMany({
       orderBy: { createdAt: "asc" },
@@ -43,6 +49,11 @@ export async function createRestaurant(data: {
   description?: string;
   active?: boolean;
 }) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const restaurant = await prisma.restaurant.create({
       data: {
@@ -65,6 +76,11 @@ export async function updateRestaurant(
   id: string,
   data: { name?: string; code?: string; description?: string; active?: boolean }
 ) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const restaurant = await prisma.restaurant.update({
       where: { id },
@@ -84,6 +100,11 @@ export async function updateRestaurant(
 }
 
 export async function deleteRestaurant(id: string) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     await prisma.restaurant.delete({ where: { id } });
     revalidatePath("/admin");
@@ -99,6 +120,11 @@ export async function deleteRestaurant(id: string) {
 // ==========================================
 
 export async function getTables(restaurantId?: string) {
+  const auth = await authorize(ANY_AUTHENTICATED);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const tables = await prisma.restaurantTable.findMany({
       where: restaurantId ? { restaurantId } : undefined,
@@ -123,6 +149,11 @@ export async function createTable(data: {
   capacity?: number;
   restaurantId: string;
 }) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const table = await prisma.restaurantTable.create({
       data: {
@@ -143,6 +174,11 @@ export async function updateTable(
   id: string,
   data: { name?: string; capacity?: number; status?: TableStatus; restaurantId?: string }
 ) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const table = await prisma.restaurantTable.update({
       where: { id },
@@ -162,6 +198,11 @@ export async function updateTable(
 }
 
 export async function deleteTable(id: string) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     await prisma.restaurantTable.delete({ where: { id } });
     revalidatePath("/admin");
@@ -177,6 +218,11 @@ export async function deleteTable(id: string) {
 // ==========================================
 
 export async function getCategoriesTree(restaurantId?: string) {
+  const auth = await authorize(ANY_AUTHENTICATED);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const whereClause: any = { active: true };
     if (restaurantId && restaurantId !== "ALL") {
@@ -226,6 +272,11 @@ export async function createCategory(data: {
   parentId?: string | null;
   restaurantId?: string | null;
 }) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     let targetRestId = data.restaurantId || null;
     if (!targetRestId && data.parentId) {
@@ -268,6 +319,11 @@ export async function updateCategory(
     active?: boolean;
   }
 ) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const cat = await prisma.category.update({
       where: { id },
@@ -288,6 +344,11 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(id: string) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     await prisma.category.delete({ where: { id } });
     revalidatePath("/admin");
@@ -303,6 +364,11 @@ export async function deleteCategory(id: string) {
 // ==========================================
 
 export async function getMenuItems(categoryId?: string) {
+  const auth = await authorize(ANY_AUTHENTICATED);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const items = await prisma.menuItem.findMany({
       where: categoryId ? { categoryId } : undefined,
@@ -328,6 +394,11 @@ export async function createMenuItem(data: {
   categoryId: string;
   displayOrder?: number;
 }) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const item = await prisma.menuItem.create({
       data: {
@@ -361,6 +432,11 @@ export async function updateMenuItem(
     active?: boolean;
   }
 ) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const item = await prisma.menuItem.update({
       where: { id },
@@ -384,6 +460,11 @@ export async function updateMenuItem(
 }
 
 export async function deleteMenuItem(id: string) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     await prisma.menuItem.delete({ where: { id } });
     revalidatePath("/admin");
@@ -399,6 +480,11 @@ export async function deleteMenuItem(id: string) {
 // ==========================================
 
 export async function getUsers() {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const users = await prisma.user.findMany({
       orderBy: { name: "asc" },
@@ -422,6 +508,11 @@ export async function createUser(data: {
   role: Role;
   restaurantIds?: string[];
 }) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     const hashedPassword = await bcrypt.hash((data.password?.trim() || data.pin.trim()), 12);
     const user = await prisma.user.create({
@@ -459,6 +550,11 @@ export async function updateUser(
     restaurantIds?: string[];
   }
 ) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     await prisma.user.update({
       where: { id },
@@ -492,6 +588,11 @@ export async function updateUser(
 }
 
 export async function deleteUser(id: string) {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
   try {
     await prisma.user.delete({ where: { id } });
     revalidatePath("/admin");

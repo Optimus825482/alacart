@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { OrderStatus, TableStatus } from "@/lib/types";
 import { logAudit } from "@/lib/audit";
+import { authorize, KITCHEN_ROLES, WAITER_ROLES, ADMIN_ONLY } from "@/lib/auth-guard";
 
 // ==========================================
 // SİPARİŞ OLUŞTURMA (GARSON EKRANI)
@@ -20,9 +21,30 @@ export async function createOrder(data: {
     itemNotes?: string;
   }>;
 }) {
+  const auth = await authorize(WAITER_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
   try {
     if (!data.items || data.items.length === 0) {
       return { success: false, error: "En az bir ürün seçilmelidir." };
+    }
+
+    // Garson kimligi sunucu tarafinda oturumdan alinir; istemciden gelen deger guvenilmez.
+    const waiterId = auth.session.role === "WAITER" ? auth.session.id : data.waiterId;
+
+    // Masa, siparisin ait oldugu alakarta ait olmak zorunda (rapor bütünlüğü).
+    const targetTable = await prisma.restaurantTable.findUnique({
+      where: { id: data.tableId },
+      select: { id: true, restaurantId: true },
+    });
+    if (!targetTable || targetTable.restaurantId !== data.restaurantId) {
+      return {
+        success: false,
+        error: "Masa, secilen alakarta ait degil. Siparis olusturulamadi.",
+        data: null,
+      };
     }
 
     // İşlemi transaction içinde gerçekleştir
@@ -38,7 +60,7 @@ export async function createOrder(data: {
         data: {
           restaurantId: data.restaurantId,
           tableId: data.tableId,
-          waiterId: data.waiterId,
+          waiterId,
           notes: data.notes?.trim(),
           status: "PENDING",
           items: {
@@ -68,7 +90,7 @@ export async function createOrder(data: {
     await logAudit({
       userId: newOrder.waiterId,
       userName: newOrder.waiter?.name || "Garson",
-      userRole: "WAITER",
+      userRole: auth.session.role,
       action: "ORDER_CREATED",
       entity: "Order",
       entityId: newOrder.id,
@@ -93,6 +115,11 @@ export async function createOrder(data: {
 // ==========================================
 
 export async function getActiveKitchenOrders(restaurantId?: string) {
+  const auth = await authorize(KITCHEN_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
   try {
     const orders = await prisma.order.findMany({
       where: {
@@ -138,8 +165,13 @@ export async function getActiveKitchenOrders(restaurantId?: string) {
 export async function updateOrderStatus(
   orderId: string,
   newStatus: OrderStatus,
-  user?: { id?: string; name?: string; role?: string }
+  _legacyActor?: { id?: string; name?: string; role?: string }
 ) {
+  const auth = await authorize(KITCHEN_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
   try {
     const updatedOrder = await prisma.$transaction(async (tx) => {
       const existing = await tx.order.findUnique({
@@ -199,9 +231,9 @@ export async function updateOrderStatus(
     });
 
     await logAudit({
-      userId: user?.id,
-      userName: user?.name || "Mutfak / Şef",
-      userRole: user?.role || "KITCHEN",
+      userId: auth.session.id,
+      userName: auth.session.name,
+      userRole: auth.session.role,
       action: `STATUS_${newStatus}`,
       entity: "Order",
       entityId: orderId,
@@ -227,8 +259,13 @@ export async function updateOrderStatus(
 
 export async function markOrderPrinted(
   orderId: string,
-  user?: { id?: string; name?: string; role?: string }
+  _legacyActor?: { id?: string; name?: string; role?: string }
 ) {
+  const auth = await authorize(KITCHEN_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
   try {
     const order = await prisma.order.update({
       where: { id: orderId },
@@ -237,9 +274,9 @@ export async function markOrderPrinted(
     });
 
     await logAudit({
-      userId: user?.id,
-      userName: user?.name || "Mutfak Personeli",
-      userRole: user?.role || "KITCHEN",
+      userId: auth.session.id,
+      userName: auth.session.name,
+      userRole: auth.session.role,
       action: "ORDER_PRINTED",
       entity: "Order",
       entityId: orderId,
@@ -260,6 +297,11 @@ export async function markOrderPrinted(
 // ==========================================
 
 export async function getTableActiveOrders(tableId: string) {
+  const auth = await authorize(WAITER_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
   try {
     const orders = await prisma.order.findMany({
       where: {
@@ -297,10 +339,18 @@ export async function updateOrder(data: {
     itemNotes?: string;
   }>;
 }) {
+  const auth = await authorize(WAITER_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
   try {
     if (!data.items || data.items.length === 0) {
       return { success: false, error: "En az bir ürün bulunmalıdır." };
     }
+
+    // Garson kimligi oturumdan alinir; istemciden gelen deger guvenilmez.
+    const waiterId = auth.session.role === "WAITER" ? auth.session.id : data.waiterId;
 
     const updatedOrder = await prisma.$transaction(async (tx) => {
       // Mevcut siparişi bul
@@ -329,7 +379,7 @@ export async function updateOrder(data: {
         where: { id: data.orderId },
         data: {
           notes: data.notes?.trim(),
-          waiterId: data.waiterId,
+          waiterId,
           status: "PENDING", // Mutfağın dikkatine tekrar sunulur
           isUpdated: true,
           revision: { increment: 1 },
@@ -359,9 +409,9 @@ export async function updateOrder(data: {
     });
 
     await logAudit({
-      userId: data.waiterId,
+      userId: waiterId,
       userName: updatedOrder.waiter?.name || "Garson",
-      userRole: "WAITER",
+      userRole: auth.session.role,
       action: "ORDER_UPDATED",
       entity: "Order",
       entityId: updatedOrder.id,
@@ -382,76 +432,46 @@ export async function updateOrder(data: {
 }
 
 // ==========================================
-// YÖNETİM RAPORLARI VE İSTATİSTİKLERİ
+// SİSTEM TANIMLARI ÖZETİ (SİSTEM YÖNETİCİSİ MODÜLÜ)
+// Burada yalnızca tanım sayıları döner. Canlı işleyiş, tüketim ve
+// denetim verileri Sistem Yöneticisi ekranında BULUNMAZ; Şef Modülü'ne aittir.
 // ==========================================
+export async function getAdminDefinitionsSummary() {
+  const auth = await authorize(ADMIN_ONLY);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
 
-export async function getAdminDashboardStats() {
   try {
     const [
-      totalOrdersToday,
-      activePendingOrders,
-      activePreparingOrders,
-      occupiedTablesCount,
+      totalRestaurants,
+      activeRestaurants,
       totalTablesCount,
-      topItems,
+      totalCategoriesCount,
+      totalMenuItemsCount,
+      totalUsersCount,
     ] = await Promise.all([
-      // Bugün verilen toplam sipariş
-      prisma.order.count({
-        where: {
-          createdAt: {
-            gte: new Date(new Date().setHours(0, 0, 0, 0)),
-          },
-        },
-      }),
-      // Bekleyen siparişler
-      prisma.order.count({ where: { status: "PENDING" } }),
-      // Hazırlanan siparişler
-      prisma.order.count({ where: { status: "PREPARING" } }),
-      // Dolu masa sayısı
-      prisma.restaurantTable.count({ where: { status: "OCCUPIED" } }),
-      // Toplam masa sayısı
+      prisma.restaurant.count(),
+      prisma.restaurant.count({ where: { active: true } }),
       prisma.restaurantTable.count(),
-      // En çok tercih edilen yiyecek ve içecekler
-      prisma.orderItem.groupBy({
-        by: ["menuItemId"],
-        _sum: { quantity: true },
-        orderBy: { _sum: { quantity: "desc" } },
-        take: 8,
-      }),
+      prisma.category.count(),
+      prisma.menuItem.count(),
+      prisma.user.count({ where: { active: true } }),
     ]);
-
-    // Ürün isimlerini çek
-    const itemIds = topItems.map((ti) => ti.menuItemId);
-    const menuItems = await prisma.menuItem.findMany({
-      where: { id: { in: itemIds } },
-      select: { id: true, name: true, category: { select: { name: true } } },
-    });
-
-    const itemMap = new Map(menuItems.map((m) => [m.id, m]));
-
-    const popularItems = topItems.map((ti) => ({
-      name: itemMap.get(ti.menuItemId)?.name || "Bilinmeyen Ürün",
-      categoryName: itemMap.get(ti.menuItemId)?.category.name || "",
-      totalCount: ti._sum.quantity || 0,
-    }));
 
     return {
       success: true,
       data: {
-        totalOrdersToday,
-        activePendingOrders,
-        activePreparingOrders,
-        occupiedTablesCount,
+        totalRestaurants,
+        activeRestaurants,
         totalTablesCount,
-        occupancyRate:
-          totalTablesCount > 0
-            ? Math.round((occupiedTablesCount / totalTablesCount) * 100)
-            : 0,
-        popularItems,
+        totalCategoriesCount,
+        totalMenuItemsCount,
+        totalUsersCount,
       },
     };
   } catch (error: any) {
-    console.error("getAdminDashboardStats error:", error);
-    return { success: false, error: error.message };
+    console.error("getAdminDefinitionsSummary error:", error);
+    return { success: false, error: error.message, data: null };
   }
 }

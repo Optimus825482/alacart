@@ -1,0 +1,291 @@
+
+> alacarte@0.1.0 dev
+> next dev
+
+▲ Next.js 16.3.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.100:3000
+- Environments: .env
+✓ Ready in 830ms
+✓ Running next.config.ts took 45ms
+
+ GET /admin 307 in 702ms (next.js: 321ms, application-code: 381ms)
+ GET /chef 307 in 1195ms (next.js: 992ms, application-code: 204ms)
+ GET /admin 200 in 369ms (next.js: 8ms, application-code: 361ms)
+ GET /admin/users 200 in 102ms (next.js: 42ms, application-code: 60ms)
+ GET /admin/restaurants 200 in 123ms (next.js: 39ms, application-code: 84ms)
+ GET /admin/tables 200 in 126ms (next.js: 40ms, application-code: 86ms)
+ GET /admin/menu 200 in 140ms (next.js: 45ms, application-code: 95ms)
+ GET /admin/reports 307 in 135ms (next.js: 46ms, application-code: 88ms)
+ GET /admin/audit 307 in 385ms (next.js: 267ms, application-code: 117ms)
+⨯ TypeError: Cannot read properties of null (reading 'totalOrders')
+    at ChefAnalyticsPrintReport (src\app\chef\chef-print-report.tsx:214:63)
+  212 |       <KpiRow
+  213 |         items={[
+> 214 |           { label: "Toplam Siparis", value: String(reportData.totalOrders ?? 0) },
+      |                                                               ^
+  215 |           { label: "Tamamlanan", value: String(reportData.completedOrders ?? 0) },
+  216 |           { label: "Iptal", value: String(reportData.cancelledOrders ?? 0) },
+  217 |           { {
+  digest: '3695519564'
+}
+ GET /chef 500 in 126ms (next.js: 9ms, application-code: 117ms)
+⨯ TypeError: Cannot read properties of null (reading 'totalOrders')
+    at ChefAnalyticsPrintReport (src\app\chef\chef-print-report.tsx:214:63)
+  212 |       <KpiRow
+  213 |         items={[
+> 214 |           { label: "Toplam Siparis", value: String(reportData.totalOrders ?? 0) },
+      |                                                               ^
+  215 |           { label: "Tamamlanan", value: String(reportData.completedOrders ?? 0) },
+  216 |           { label: "Iptal", value: String(reportData.cancelledOrders ?? 0) },
+  217 |           { {
+  digest: '3695519564'
+}
+ GET /chef 500 in 81ms (next.js: 8ms, application-code: 73ms)
+ GET /admin 307 in 157ms (next.js: 8ms, application-code: 149ms)
+ GET /admin/users 307 in 91ms (next.js: 14ms, application-code: 77ms)
+ GET /admin/restaurants 307 in 72ms (next.js: 8ms, application-code: 64ms)
+ GET /chef 307 in 68ms (next.js: 8ms, application-code: 60ms)
+ GET /admin 307 in 118ms (next.js: 8ms, application-code: 111ms)
+ GET /admin/users 307 in 86ms (next.js: 9ms, application-code: 77ms)
+ GET /admin/menu 307 in 67ms (next.js: 7ms, application-code: 60ms)
+ GET /admin 307 in 96ms (next.js: 8ms, application-code: 88ms)
+ GET /chef 307 in 60ms (next.js: 10ms, application-code: 50ms)
+ GET /admin 200 in 109ms (next.js: 8ms, application-code: 102ms)
+ GET /admin/users 200 in 62ms (next.js: 8ms, application-code: 54ms)
+ GET /admin/restaurants 200 in 54ms (next.js: 8ms, application-code: 46ms)
+ GET /admin/tables 200 in 58ms (next.js: 8ms, application-code: 50ms)
+ GET /admin/menu 200 in 57ms (next.js: 10ms, application-code: 47ms)
+ GET /admin/reports 307 in 76ms (next.js: 7ms, application-code: 69ms)
+ GET /admin/audit 307 in 63ms (next.js: 6ms, application-code: 57ms)
+ GET /chef 200 in 54ms (next.js: 8ms, application-code: 47ms)
+ GET /chef 200 in 49ms (next.js: 7ms, application-code: 42ms)
+ GET /admin 307 in 96ms (next.js: 6ms, application-code: 90ms)
+ GET /admin/users 307 in 75ms (next.js: 6ms, application-code: 69ms)
+ GET /admin/restaurants 307 in 68ms (next.js: 8ms, application-code: 60ms)
+ GET /chef 307 in 62ms (next.js: 12ms, application-code: 50ms)
+ GET /admin 307 in 145ms (next.js: 8ms, application-code: 137ms)
+ GET /admin/users 307 in 63ms (next.js: 8ms, application-code: 56ms)
+ GET /admin/menu 307 in 74ms (next.js: 9ms, application-code: 65ms)
+ GET /admin/reports 307 in 69ms (next.js: 8ms, application-code: 60ms)
+ GET /admin/audit 307 in 79ms (next.js: 9ms, application-code: 70ms)
+ GET /admin 307 in 125ms (next.js: 10ms, application-code: 115ms)
+ GET /chef 307 in 62ms (next.js: 6ms, application-code: 56ms)
+ GET /admin/menu 307 in 64ms (next.js: 8ms, application-code: 56ms)
+ GET /admin 307 in 100ms (next.js: 7ms, application-code: 93ms)
+ GET /admin/reports 307 in 73ms (next.js: 8ms, application-code: 65ms)
+ GET /admin/audit 307 in 86ms (next.js: 9ms, application-code: 77ms)
+ GET /admin 307 in 117ms (next.js: 9ms, application-code: 108ms)
+ GET /admin/users 307 in 81ms (next.js: 10ms, application-code: 71ms)
+ GET /chef 307 in 68ms (next.js: 7ms, application-code: 62ms)
+ GET /admin/menu 307 in 67ms (next.js: 7ms, application-code: 60ms)
+ GET /admin 307 in 105ms (next.js: 7ms, application-code: 98ms)
+ GET /chef 307 in 61ms (next.js: 8ms, application-code: 54ms)
+ GET /admin/reports 307 in 67ms (next.js: 7ms, application-code: 60ms)
+ GET /admin/audit 307 in 61ms (next.js: 7ms, application-code: 55ms)
+ GET /admin 307 in 93ms (next.js: 6ms, application-code: 87ms)
+ GET /admin/users 307 in 62ms (next.js: 10ms, application-code: 53ms)
+ GET /chef 307 in 54ms (next.js: 8ms, application-code: 46ms)
+ GET /admin/menu 307 in 61ms (next.js: 7ms, application-code: 54ms)
+ GET /admin 307 in 89ms (next.js: 6ms, application-code: 83ms)
+ GET /chef 307 in 50ms (next.js: 6ms, application-code: 45ms)
+ GET /admin 200 in 99ms (next.js: 7ms, application-code: 92ms)
+ GET /chef 200 in 50ms (next.js: 7ms, application-code: 43ms)
+ GET /chef 200 in 47ms (next.js: 7ms, application-code: 40ms)
+ POST /chef 200 in 31ms (next.js: 8ms, application-code: 24ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /chef 200 in 37ms (next.js: 9ms, application-code: 28ms)
+  └─ ƒ getSessionUser() in 16ms src/actions/auth.ts
+ POST /chef 200 in 41ms (next.js: 14ms, application-code: 27ms)
+  └─ ƒ getRestaurants() in 7ms src/actions/definitions.ts
+ POST /chef 200 in 38ms (next.js: 10ms, application-code: 28ms)
+  └─ ƒ getChefMasterKds("ALL") in 10ms src/actions/chef.ts
+ POST /chef 200 in 60ms (next.js: 14ms, application-code: 46ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 27ms src/actions/chef.ts
+ POST /chef 200 in 31ms (next.js: 10ms, application-code: 21ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /chef 200 in 35ms (next.js: 10ms, application-code: 25ms)
+  └─ ƒ getSessionUser() in 13ms src/actions/auth.ts
+ POST /chef 200 in 35ms (next.js: 10ms, application-code: 25ms)
+  └─ ƒ getRestaurants() in 11ms src/actions/definitions.ts
+ POST /chef 200 in 26ms (next.js: 9ms, application-code: 17ms)
+  └─ ƒ getChefMasterKds("ALL") in 5ms src/actions/chef.ts
+ POST /chef 200 in 26ms (next.js: 7ms, application-code: 19ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 7ms src/actions/chef.ts
+ GET /chef 200 in 64ms (next.js: 6ms, application-code: 57ms)
+ POST /chef 200 in 42ms (next.js: 9ms, application-code: 33ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts
+ POST /chef 200 in 38ms (next.js: 10ms, application-code: 28ms)
+  └─ ƒ getSessionUser() in 15ms src/actions/auth.ts
+ POST /chef 200 in 29ms (next.js: 9ms, application-code: 20ms)
+  └─ ƒ getRestaurants() in 6ms src/actions/definitions.ts
+ POST /chef 200 in 26ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getChefMasterKds("ALL") in 6ms src/actions/chef.ts
+ POST /chef 200 in 32ms (next.js: 9ms, application-code: 23ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 11ms src/actions/chef.ts
+ POST /chef 200 in 23ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /chef 200 in 30ms (next.js: 7ms, application-code: 23ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /chef 200 in 32ms (next.js: 12ms, application-code: 20ms)
+  └─ ƒ getRestaurants() in 7ms src/actions/definitions.ts
+ POST /chef 200 in 24ms (next.js: 9ms, application-code: 15ms)
+  └─ ƒ getChefMasterKds("ALL") in 4ms src/actions/chef.ts
+ POST /chef 200 in 31ms (next.js: 6ms, application-code: 25ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 12ms src/actions/chef.ts
+ POST /chef 200 in 52ms (next.js: 9ms, application-code: 43ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 29ms src/actions/chef.ts
+ POST /chef 200 in 34ms (next.js: 8ms, application-code: 26ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 13ms src/actions/chef.ts
+ GET /chef 200 in 48ms (next.js: 7ms, application-code: 42ms)
+ POST /chef 200 in 31ms (next.js: 7ms, application-code: 24ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts
+ POST /chef 200 in 28ms (next.js: 7ms, application-code: 21ms)
+  └─ ƒ getSessionUser() in 10ms src/actions/auth.ts
+ POST /chef 200 in 36ms (next.js: 10ms, application-code: 26ms)
+  └─ ƒ getRestaurants() in 5ms src/actions/definitions.ts
+ POST /chef 200 in 39ms (next.js: 12ms, application-code: 26ms)
+  └─ ƒ getChefMasterKds("ALL") in 4ms src/actions/chef.ts
+ POST /chef 200 in 46ms (next.js: 12ms, application-code: 34ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 17ms src/actions/chef.ts
+ POST /chef 200 in 21ms (next.js: 7ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /chef 200 in 26ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getSessionUser() in 8ms src/actions/auth.ts
+ POST /chef 200 in 34ms (next.js: 6ms, application-code: 28ms)
+  └─ ƒ getRestaurants() in 16ms src/actions/definitions.ts
+ POST /chef 200 in 27ms (next.js: 6ms, application-code: 21ms)
+  └─ ƒ getChefMasterKds("ALL") in 11ms src/actions/chef.ts
+ POST /chef 200 in 32ms (next.js: 6ms, application-code: 26ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 16ms src/actions/chef.ts
+ POST /chef 200 in 39ms (next.js: 9ms, application-code: 30ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 16ms src/actions/chef.ts
+ POST /chef 200 in 28ms (next.js: 8ms, application-code: 20ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 5ms src/actions/chef.ts
+ GET /login 200 in 532ms (next.js: 482ms, application-code: 50ms)
+ GET /chef 200 in 83ms (next.js: 20ms, application-code: 63ms)
+ POST /chef 200 in 25ms (next.js: 9ms, application-code: 16ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /chef 200 in 30ms (next.js: 9ms, application-code: 21ms)
+  └─ ƒ getSessionUser() in 8ms src/actions/auth.ts
+ POST /chef 200 in 105ms (next.js: 10ms, application-code: 95ms)
+  └─ ƒ getRestaurants() in 81ms src/actions/definitions.ts
+ POST /chef 200 in 23ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getChefMasterKds("ALL") in 5ms src/actions/chef.ts
+ POST /chef 200 in 128ms (next.js: 8ms, application-code: 120ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 108ms src/actions/chef.ts
+ POST /chef 200 in 33ms (next.js: 7ms, application-code: 26ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts
+ POST /chef 200 in 27ms (next.js: 8ms, application-code: 19ms)
+  └─ ƒ getSessionUser() in 8ms src/actions/auth.ts
+ POST /chef 200 in 35ms (next.js: 7ms, application-code: 28ms)
+  └─ ƒ getRestaurants() in 17ms src/actions/definitions.ts
+ POST /chef 200 in 21ms (next.js: 7ms, application-code: 14ms)
+  └─ ƒ getChefMasterKds("ALL") in 4ms src/actions/chef.ts
+ POST /chef 200 in 80ms (next.js: 7ms, application-code: 73ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 62ms src/actions/chef.ts
+ POST /chef 200 in 61ms (next.js: 12ms, application-code: 49ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 29ms src/actions/chef.ts
+ POST /chef 200 in 29ms (next.js: 9ms, application-code: 20ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 8ms src/actions/chef.ts
+ GET /login 200 in 49ms (next.js: 6ms, application-code: 43ms)
+ GET /chef 200 in 50ms (next.js: 8ms, application-code: 42ms)
+ POST /chef 200 in 33ms (next.js: 9ms, application-code: 25ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts
+ POST /chef 200 in 26ms (next.js: 9ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 6ms src/actions/auth.ts
+ POST /chef 200 in 26ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getRestaurants() in 6ms src/actions/definitions.ts
+ POST /chef 200 in 33ms (next.js: 7ms, application-code: 26ms)
+  └─ ƒ getChefMasterKds("ALL") in 15ms src/actions/chef.ts
+ POST /chef 200 in 34ms (next.js: 9ms, application-code: 25ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 12ms src/actions/chef.ts
+ POST /chef 200 in 22ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 4ms src/actions/auth.ts
+ POST /chef 200 in 20ms (next.js: 7ms, application-code: 12ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /chef 200 in 30ms (next.js: 6ms, application-code: 24ms)
+  └─ ƒ getRestaurants() in 12ms src/actions/definitions.ts
+ POST /chef 200 in 23ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getChefMasterKds("ALL") in 3ms src/actions/chef.ts
+ POST /chef 200 in 33ms (next.js: 7ms, application-code: 26ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 16ms src/actions/chef.ts
+ POST /chef 200 in 54ms (next.js: 9ms, application-code: 45ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 30ms src/actions/chef.ts
+ POST /chef 200 in 38ms (next.js: 10ms, application-code: 28ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 13ms src/actions/chef.ts
+ GET /chef 200 in 67ms (next.js: 8ms, application-code: 59ms)
+ POST /chef 200 in 36ms (next.js: 7ms, application-code: 29ms)
+  └─ ƒ getSessionUser() in 15ms src/actions/auth.ts
+ POST /chef 200 in 27ms (next.js: 10ms, application-code: 16ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /chef 200 in 34ms (next.js: 7ms, application-code: 26ms)
+  └─ ƒ getRestaurants() in 12ms src/actions/definitions.ts
+ POST /chef 200 in 42ms (next.js: 8ms, application-code: 33ms)
+  └─ ƒ getChefMasterKds("ALL") in 19ms src/actions/chef.ts
+ POST /chef 200 in 30ms (next.js: 6ms, application-code: 24ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 11ms src/actions/chef.ts
+ POST /chef 200 in 26ms (next.js: 10ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /chef 200 in 22ms (next.js: 7ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /chef 200 in 26ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getRestaurants() in 3ms src/actions/definitions.ts
+ POST /chef 200 in 26ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getChefMasterKds("ALL") in 3ms src/actions/chef.ts
+ POST /chef 200 in 36ms (next.js: 9ms, application-code: 27ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 13ms src/actions/chef.ts
+ POST /chef 200 in 42ms (next.js: 9ms, application-code: 33ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 19ms src/actions/chef.ts
+ POST /chef 200 in 26ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 4ms src/actions/chef.ts
+ GET /chef 200 in 80ms (next.js: 10ms, application-code: 69ms)
+ POST /chef 200 in 40ms (next.js: 9ms, application-code: 31ms)
+  └─ ƒ getSessionUser() in 10ms src/actions/auth.ts
+ POST /chef 200 in 40ms (next.js: 12ms, application-code: 28ms)
+  └─ ƒ getSessionUser() in 9ms src/actions/auth.ts
+ POST /chef 200 in 101ms (next.js: 11ms, application-code: 90ms)
+  └─ ƒ getRestaurants() in 73ms src/actions/definitions.ts
+ POST /chef 200 in 29ms (next.js: 9ms, application-code: 20ms)
+  └─ ƒ getChefMasterKds("ALL") in 4ms src/actions/chef.ts
+ POST /chef 200 in 142ms (next.js: 11ms, application-code: 132ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 114ms src/actions/chef.ts
+ POST /chef 200 in 23ms (next.js: 9ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /chef 200 in 24ms (next.js: 7ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 4ms src/actions/auth.ts
+ POST /chef 200 in 36ms (next.js: 8ms, application-code: 29ms)
+  └─ ƒ getRestaurants() in 16ms src/actions/definitions.ts
+ POST /chef 200 in 41ms (next.js: 8ms, application-code: 33ms)
+  └─ ƒ getChefMasterKds("ALL") in 17ms src/actions/chef.ts
+ POST /chef 200 in 29ms (next.js: 7ms, application-code: 23ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 10ms src/actions/chef.ts
+ POST /chef 200 in 26ms (next.js: 10ms, application-code: 16ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 5ms src/actions/chef.ts
+ POST /chef 200 in 22ms (next.js: 7ms, application-code: 15ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 4ms src/actions/chef.ts
+ GET /chef 200 in 72ms (next.js: 10ms, application-code: 62ms)
+ POST /chef 200 in 32ms (next.js: 13ms, application-code: 20ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /chef 200 in 21ms (next.js: 8ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /chef 200 in 45ms (next.js: 11ms, application-code: 35ms)
+  └─ ƒ getRestaurants() in 21ms src/actions/definitions.ts
+ POST /chef 200 in 22ms (next.js: 7ms, application-code: 14ms)
+  └─ ƒ getChefMasterKds("ALL") in 4ms src/actions/chef.ts
+ POST /chef 200 in 49ms (next.js: 12ms, application-code: 38ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 20ms src/actions/chef.ts
+ POST /chef 200 in 41ms (next.js: 11ms, application-code: 30ms)
+  └─ ƒ getSessionUser() in 13ms src/actions/auth.ts
+ POST /chef 200 in 27ms (next.js: 8ms, application-code: 19ms)
+  └─ ƒ getSessionUser() in 4ms src/actions/auth.ts
+ POST /chef 200 in 45ms (next.js: 9ms, application-code: 36ms)
+  └─ ƒ getRestaurants() in 15ms src/actions/definitions.ts
+ POST /chef 200 in 68ms (next.js: 21ms, application-code: 47ms)
+  └─ ƒ getChefMasterKds("ALL") in 16ms src/actions/chef.ts
+ POST /chef 200 in 30ms (next.js: 10ms, application-code: 20ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 7ms src/actions/chef.ts
+ POST /chef 200 in 56ms (next.js: 22ms, application-code: 34ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 21ms src/actions/chef.ts
+ POST /chef 200 in 36ms (next.js: 8ms, application-code: 28ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 18ms src/actions/chef.ts

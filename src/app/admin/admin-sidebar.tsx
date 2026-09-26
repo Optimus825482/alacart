@@ -7,9 +7,7 @@ import {
   UtensilsCrossed,
   Layers,
   Users,
-  BarChart3,
   Armchair,
-  Shield,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -22,8 +20,6 @@ export function AdminSidebar() {
     { href: "/admin/tables", label: "Masa Tanımları", icon: Armchair },
     { href: "/admin/menu", label: "Menü & Hiyerarşik Kategoriler", icon: Layers },
     { href: "/admin/users", label: "Kullanıcı & Garson Tanımları", icon: Users },
-    { href: "/admin/reports", label: "Tüketim Raporları", icon: BarChart3 },
-    { href: "/admin/audit", label: "Denetim Logları", icon: Shield },
   ];
 
   return (

@@ -65,3 +65,59 @@ body {
     margin: 0;
   }
 }
+
+/* ========================================================
+   ŞEF MODÜLÜ RAPOR / DENETİM YAZDIRMA
+   Ekran arayüzü tamamen gizlenir; yalnızca beyaz rapor bloğu basılır.
+   Böylece "Yazdır -> PDF olarak kaydet" ile okunabilir bir PDF elde edilir.
+   ======================================================== */
+@media print {
+  /* Uygulama navigasyon çubuğu ekran çıktısına karışmasın */
+  /* Koyu tema yazdirilabilir sayfada devre disi kalmali; boylece PDF'in
+     ust/alt bosluklari koyu bir bant olarak gorunmez, tam beyaz kalir. */
+  html[data-chef-print],
+  html[data-chef-print] body,
+  html[data-chef-print] #__next,
+  html[data-chef-print] main {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  html[data-chef-print] body > header {
+    display: none !important;
+  }
+
+  html[data-chef-print] #chef-app-shell {
+    display: none !important;
+  }
+
+  html[data-chef-print] #printable-chef-report,
+  html[data-chef-print] #printable-chef-audit {
+    display: block !important;
+    visibility: visible !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  html[data-chef-print] #printable-chef-report *,
+  html[data-chef-print] #printable-chef-audit * {
+    visibility: visible !important;
+  }
+
+  /* Aynı anda basılan iki rapor bloğundan yalnızca ilgili olan çıkar */
+  html[data-chef-print="report"] #printable-chef-audit,
+  html[data-chef-print="audit"] #printable-chef-report {
+    display: none !important;
+  }
+
+  html[data-chef-print] thead {
+    display: table-header-group;
+  }
+
+  html[data-chef-print] tr,
+  html[data-chef-print] section {
+    page-break-inside: avoid;
+  }
+}

@@ -12,13 +12,12 @@ import {
   Flame,
   Check,
   Filter,
-  LogOut,
   RefreshCw,
   Utensils,
   X,
   Eye,
 } from "lucide-react";
-import { getSessionUser, logoutAction, selectRestaurantAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
+import { getSessionUser, selectRestaurantAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
 import { getRestaurants } from "@/actions/definitions";
 import { playKitchenChime } from "@/lib/sound";
 import { getRestaurantTheme, RESTAURANT_THEMES } from "@/lib/themes";
@@ -302,8 +301,8 @@ export default function KitchenKDSPage() {
   if (!session?.activeRestaurantId) {
     return (
       <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-4xl mx-auto w-full justify-center">
-        {/* Üst Bar: Kullanıcı Bilgisi ve Çıkış Butonu */}
-        <div className="flex items-center justify-between pb-4 mb-6 border-b border-zinc-800">
+        {/* Üst Bar: Kullanıcı Bilgisi */}
+        <div className="flex items-center pb-4 mb-6 border-b border-zinc-800">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
               <ChefHat className="w-4 h-4" />
@@ -315,15 +314,6 @@ export default function KitchenKDSPage() {
               </span>
             </div>
           </div>
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-900/60 transition-all shadow-sm"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Çıkış Yap</span>
-            </button>
-          </form>
         </div>
 
         <div className="text-center mb-8">
@@ -486,16 +476,6 @@ export default function KitchenKDSPage() {
               <RefreshCw className="w-4 h-4" />
             </button>
 
-            {/* Restorandan Güvenli Çıkış */}
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-900/60"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Çıkış Yap</span>
-              </button>
-            </form>
           </div>
         </div>
 

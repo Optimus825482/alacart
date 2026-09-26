@@ -1,12 +1,18 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { OrderStatus } from "@/lib/types";
+import { authorize, CHEF_REPORT_ROLES } from "@/lib/auth-guard";
+import { resolveDateRange, getBusinessTimezone } from "@/lib/date-range";
 
 // ==========================================
-// MASTER KDS (KOORDİNATÖR ŞEF CANLI İZLEME)
+// MASTER KDS (KOORDINATOR SEF CANLI IZLEME)
 // ==========================================
 export async function getChefMasterKds(restaurantId?: string) {
+  const auth = await authorize(CHEF_REPORT_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
   try {
     const orders = await prisma.order.findMany({
       where: {
@@ -37,48 +43,92 @@ export async function getChefMasterKds(restaurantId?: string) {
     return { success: true, data: orders };
   } catch (error: any) {
     console.error("getChefMasterKds error:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, data: null };
   }
 }
 
 // ==========================================
-// ŞEF TARİH ARALIKLI RAPOR VE HAZIRLIK SÜRESİ ANALİTİĞİ
+// CANLI SERVIS ANLIK GORUNTU (SEF EKRANI)
+// Admin modulunden tasinan canli sayilarla eslestirilir.
+// ==========================================
+export async function getLiveServiceSnapshot(restaurantId?: string) {
+  const auth = await authorize(CHEF_REPORT_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
+  try {
+    const range = resolveDateRange();
+    if (!range.ok) {
+      return { success: false, error: range.error, data: null };
+    }
+
+    const scope = restaurantId && restaurantId !== "ALL" ? { restaurantId } : {};
+
+    const [pending, preparing, occupiedTables, totalTables, todayOrders, todayCompleted] =
+      await Promise.all([
+        prisma.order.count({ where: { ...scope, status: "PENDING" } }),
+        prisma.order.count({ where: { ...scope, status: "PREPARING" } }),
+        prisma.restaurantTable.count({ where: { ...scope, status: "OCCUPIED" } }),
+        prisma.restaurantTable.count({ where: scope }),
+        prisma.order.count({
+          where: { ...scope, createdAt: { gte: range.start, lte: range.end } },
+        }),
+        prisma.order.count({
+          where: {
+            ...scope,
+            status: "COMPLETED",
+            completedAt: { gte: range.start, lte: range.end },
+          },
+        }),
+      ]);
+
+    return {
+      success: true,
+      data: {
+        pendingOrders: pending,
+        preparingOrders: preparing,
+        activeOrders: pending + preparing,
+        occupiedTables,
+        totalTables,
+        occupancyRate:
+          totalTables > 0 ? Math.round((occupiedTables / totalTables) * 100) : 0,
+        todayOrders,
+        todayCompletedOrders: todayCompleted,
+        timeZone: getBusinessTimezone(),
+      },
+    };
+  } catch (error: any) {
+    console.error("getLiveServiceSnapshot error:", error);
+    return { success: false, error: error.message, data: null };
+  }
+}
+
+// ==========================================
+// SEF TARIH ARALIKLI RAPOR VE HAZIRLIK SURESI ANALITIGI
 // ==========================================
 export async function getChefAnalyticsAndReport(params: {
   restaurantId?: string;
   startDate?: string;
   endDate?: string;
 }) {
+  const auth = await authorize(CHEF_REPORT_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
   try {
-    const { restaurantId, startDate, endDate } = params;
-
-    let start: Date;
-    let end: Date;
-
-    if (startDate) {
-      start = new Date(`${startDate}T00:00:00.000Z`);
-    } else {
-      start = new Date();
-      start.setHours(0, 0, 0, 0);
+    const { restaurantId } = params;
+    const range = resolveDateRange(params.startDate, params.endDate);
+    if (!range.ok) {
+      return { success: false, error: range.error, data: null };
     }
-
-    if (endDate) {
-      end = new Date(`${endDate}T23:59:59.999Z`);
-    } else {
-      end = new Date();
-      end.setHours(23, 59, 59, 999);
-    }
-
-    const whereClause: any = {
-      createdAt: {
-        gte: start,
-        lte: end,
-      },
-      ...(restaurantId && restaurantId !== "ALL" ? { restaurantId } : {}),
-    };
 
     const orders = await prisma.order.findMany({
-      where: whereClause,
+      where: {
+        createdAt: { gte: range.start, lte: range.end },
+        ...(restaurantId && restaurantId !== "ALL" ? { restaurantId } : {}),
+      },
       orderBy: { createdAt: "desc" },
       include: {
         restaurant: { select: { id: true, name: true, code: true } },
@@ -98,12 +148,15 @@ export async function getChefAnalyticsAndReport(params: {
       },
     });
 
-    // İstatistik ve süre hesaplamaları
     let totalPrepMinutes = 0;
     let completedOrdersWithDuration = 0;
     const dishCounts: Record<string, { name: string; category: string; count: number }> = {};
-    const waiterStats: Record<string, { name: string; count: number }> = {};
-    const restaurantStats: Record<string, { name: string; count: number; completedCount: number }> = {};
+    const waiterStats: Record<string, { name: string; count: number; completedCount: number }> = {};
+    const restaurantStats: Record<
+      string,
+      { name: string; count: number; completedCount: number; cancelledCount: number }
+    > = {};
+    const tableStats: Record<string, { name: string; count: number }> = {};
 
     const ordersFormatted = orders.map((o) => {
       let prepDurationMinutes: number | null = null;
@@ -118,31 +171,39 @@ export async function getChefAnalyticsAndReport(params: {
         prepDurationMinutes = Math.max(1, Math.round(diffMs / (1000 * 60)));
       }
 
-      // Dish aggregation
       o.items.forEach((item) => {
         const key = item.menuItem.name;
         if (!dishCounts[key]) {
           dishCounts[key] = {
             name: item.menuItem.name,
-            category: item.menuItem.category?.name || "Diğer",
+            category: item.menuItem.category?.name || "Diger",
             count: 0,
           };
         }
         dishCounts[key].count += item.quantity;
       });
 
-      // Waiter stats
       const wName = o.waiter?.name || "Bilinmiyor";
-      if (!waiterStats[wName]) waiterStats[wName] = { name: wName, count: 0 };
+      if (!waiterStats[wName]) waiterStats[wName] = { name: wName, count: 0, completedCount: 0 };
       waiterStats[wName].count++;
+      if (o.status === "COMPLETED") waiterStats[wName].completedCount++;
 
-      // Restaurant stats
       const rName = o.restaurant.name;
       if (!restaurantStats[rName]) {
-        restaurantStats[rName] = { name: rName, count: 0, completedCount: 0 };
+        restaurantStats[rName] = {
+          name: rName,
+          count: 0,
+          completedCount: 0,
+          cancelledCount: 0,
+        };
       }
       restaurantStats[rName].count++;
       if (o.status === "COMPLETED") restaurantStats[rName].completedCount++;
+      if (o.status === "CANCELLED") restaurantStats[rName].cancelledCount++;
+
+      const tName = o.table.name;
+      if (!tableStats[tName]) tableStats[tName] = { name: tName, count: 0 };
+      tableStats[tName].count++;
 
       return {
         id: o.id,
@@ -153,7 +214,9 @@ export async function getChefAnalyticsAndReport(params: {
         status: o.status,
         notes: o.notes,
         itemCount: o.items.reduce((acc, i) => acc + i.quantity, 0),
-        itemsSummary: o.items.map((i) => `${i.quantity}x ${i.menuItem.name}`).join(", "),
+        itemsSummary: o.items
+          .map((i) => `${i.quantity}x ${i.menuItem.name}${i.itemNotes ? ` (${i.itemNotes})` : ""}`)
+          .join(", "),
         createdAt: o.createdAt.toISOString(),
         preparingStartedAt: o.preparingStartedAt ? o.preparingStartedAt.toISOString() : null,
         printedAt: o.printedAt ? o.printedAt.toISOString() : null,
@@ -174,8 +237,10 @@ export async function getChefAnalyticsAndReport(params: {
     return {
       success: true,
       data: {
-        startDate: start.toISOString(),
-        endDate: end.toISOString(),
+        startDate: range.start.toISOString(),
+        endDate: range.end.toISOString(),
+        timeZone: range.timeZone,
+        dayCount: range.dayCount,
         totalOrders: orders.length,
         completedOrders: orders.filter((o) => o.status === "COMPLETED").length,
         activeOrders: orders.filter((o) => ["PENDING", "PREPARING"].includes(o.status)).length,
@@ -183,24 +248,30 @@ export async function getChefAnalyticsAndReport(params: {
         avgPrepMinutes,
         topDishes,
         waiterStats: Object.values(waiterStats).sort((a, b) => b.count - a.count),
-        restaurantStats: Object.values(restaurantStats),
+        restaurantStats: Object.values(restaurantStats).sort((a, b) => b.count - a.count),
+        tableStats: Object.values(tableStats).sort((a, b) => b.count - a.count),
         orders: ordersFormatted,
       },
     };
   } catch (error: any) {
     console.error("getChefAnalyticsAndReport error:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, data: null };
   }
 }
 
 // ==========================================
-// SİSTEM DENETİM İZLERİ (AUDIT LOGS)
+// SISTEM DENETIM IZLERI (AUDIT LOGS)
 // ==========================================
 export async function getAuditLogs(params?: {
   restaurantId?: string;
   action?: string;
   limit?: number;
 }) {
+  const auth = await authorize(CHEF_REPORT_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
   try {
     const logs = await prisma.auditLog.findMany({
       where: {
@@ -219,19 +290,26 @@ export async function getAuditLogs(params?: {
     return { success: true, data: logs };
   } catch (error: any) {
     console.error("getAuditLogs error:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, data: null };
   }
 }
 
 // ==========================================
-// GARSON GİRİŞ & ALAKART TAKİBİ (ŞEF MODÜLÜ İÇİN)
+// GARSON GIRIS & ALAKART TAKIBI (SEF MODULU ICIN)
 // ==========================================
 export async function getWaiterSessionsAndLogins(params?: { restaurantId?: string }) {
-  try {
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
+  const auth = await authorize(CHEF_REPORT_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
 
-    // 1. Tüm aktif garsonları çek
+  try {
+    const range = resolveDateRange();
+    if (!range.ok) {
+      return { success: false, error: range.error, data: null };
+    }
+    const todayStart = range.start;
+
     const waiters = await prisma.user.findMany({
       where: { role: "WAITER", active: true },
       select: {
@@ -245,7 +323,6 @@ export async function getWaiterSessionsAndLogins(params?: { restaurantId?: strin
       orderBy: { name: "asc" },
     });
 
-    // 2. Garsonlara ait giriş ve restoran seçim audit loglarını çek
     const logs = await prisma.auditLog.findMany({
       where: {
         userRole: "WAITER",
@@ -261,18 +338,14 @@ export async function getWaiterSessionsAndLogins(params?: { restaurantId?: strin
       },
     });
 
-    // 3. Garson başına sipariş sayılarını çek (Bugün)
     const todayOrders = await prisma.order.findMany({
-      where: {
-        createdAt: { gte: todayStart },
-      },
+      where: { createdAt: { gte: todayStart } },
       select: {
         waiterId: true,
         restaurantId: true,
       },
     });
 
-    // 4. Her garsonun durumunu derle
     const waiterCards = waiters.map((waiter) => {
       const userLogs = logs.filter((l) => l.userId === waiter.id || l.userName === waiter.name);
 
@@ -310,7 +383,7 @@ export async function getWaiterSessionsAndLogins(params?: { restaurantId?: strin
         restaurantEntryTime: restaurantEntryTime ? restaurantEntryTime.toISOString() : null,
         systemLoginTime: systemLoginTime ? new Date(systemLoginTime).toISOString() : null,
         todayOrderCount: waiterTodayOrders.length,
-        lastAction: userLogs[0]?.action || "GİRİŞ YOK",
+        lastAction: userLogs[0]?.action || "GIRIS YOK",
         lastActionTime: userLogs[0]?.createdAt ? new Date(userLogs[0].createdAt).toISOString() : null,
       };
     });
@@ -341,6 +414,6 @@ export async function getWaiterSessionsAndLogins(params?: { restaurantId?: strin
     };
   } catch (error: any) {
     console.error("getWaiterSessionsAndLogins error:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, data: null };
   }
 }

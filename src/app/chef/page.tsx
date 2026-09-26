@@ -22,10 +22,18 @@ import {
 import * as XLSX from "xlsx";
 import clsx from "clsx";
 import { getRestaurants } from "@/actions/definitions";
-import { getChefMasterKds, getChefAnalyticsAndReport, getAuditLogs, getWaiterSessionsAndLogins } from "@/actions/chef";
+import {
+  getChefMasterKds,
+  getChefAnalyticsAndReport,
+  getAuditLogs,
+  getWaiterSessionsAndLogins,
+  getLiveServiceSnapshot,
+} from "@/actions/chef";
+import { todayInTimeZone, describeDateRange, formatInTimeZone } from "@/lib/date-range";
 import { updateOrderStatus, markOrderPrinted } from "@/actions/orders";
 import { getSessionUser } from "@/actions/auth";
 import { RESTAURANT_THEMES } from "@/lib/themes";
+import { ChefAnalyticsPrintReport, ChefAuditPrintReport } from "./chef-print-report";
 
 export default function ChefModulePage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -44,13 +52,14 @@ export default function ChefModulePage() {
   const [waiterSearchQuery, setWaiterSearchQuery] = useState("");
 
   // Date range reporting state
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = todayInTimeZone();
   const [startDate, setStartDate] = useState<string>(todayStr);
   const [endDate, setEndDate] = useState<string>(todayStr);
   const [reportData, setReportData] = useState<any>(null);
   const [loadingReport, setLoadingReport] = useState(false);
 
   // Audit logs state
+  const [liveSnapshot, setLiveSnapshot] = useState<any>(null);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [selectedAuditAction, setSelectedAuditAction] = useState<string>("ALL");
   const [loadingAudit, setLoadingAudit] = useState(false);
@@ -106,6 +115,14 @@ export default function ChefModulePage() {
     setLoadingAudit(false);
   };
 
+  // Fetch Live Service Snapshot
+  const loadLive = async () => {
+    const res = await getLiveServiceSnapshot(selectedRestaurantId);
+    if (res.success && res.data) {
+      setLiveSnapshot(res.data);
+    }
+  };
+
   // Fetch Waiter Sessions & Login Activity
   const loadWaiters = async () => {
     setLoadingWaiters(true);
@@ -122,6 +139,7 @@ export default function ChefModulePage() {
   useEffect(() => {
     if (activeTab === "kds") {
       loadKds();
+      loadLive();
     } else if (activeTab === "waiters") {
       loadWaiters();
     } else if (activeTab === "analytics") {
@@ -136,6 +154,7 @@ export default function ChefModulePage() {
     if (activeTab !== "kds" || !autoRefreshKds) return;
     const interval = setInterval(() => {
       loadKds();
+      loadLive();
     }, 7000);
     return () => clearInterval(interval);
   }, [activeTab, autoRefreshKds, selectedRestaurantId]);
@@ -169,7 +188,7 @@ export default function ChefModulePage() {
     loadKds();
   };
 
-  // Export to Excel (.xlsx)
+  // Excel'e aktar (.xlsx)
   const handleExportExcel = () => {
     if (!reportData || !reportData.orders || reportData.orders.length === 0) {
       alert("Dışa aktarılacak sipariş verisi bulunamadı.");
@@ -222,8 +241,78 @@ export default function ChefModulePage() {
     XLSX.writeFile(wb, filename);
   };
 
+  const selectedRestaurantLabel =
+    selectedRestaurantId === "ALL"
+      ? "Tüm Alakart Restoranları (Merit Geneli)"
+      : restaurants.find((r) => r.id === selectedRestaurantId)?.name || "Tüm Alakart Restoranları";
+
+  // Yazdırma sırasında yalnızca rapor bloğu görünür olur; böylece PDF çıktısı
+  // koyu ekran arayüzü değil, okunabilir beyaz sayfa olarak üretilir.
+  const printSection = (section: "report" | "audit") => {
+    const root = document.documentElement;
+    root.setAttribute("data-chef-print", section);
+
+    // Sayfa boyutu global tanımlı olduğu için (mutfak adisyonu 80mm) rapor
+    // çıktısı için yazdırma anında geçici olarak A4'e alınır ve sonra kaldırılır.
+    const pageOverride = document.createElement("style");
+    pageOverride.setAttribute("data-chef-page-override", "true");
+    pageOverride.textContent = "@page { size: A4 portrait; margin: 12mm; }";
+    document.head.appendChild(pageOverride);
+
+    const restore = () => {
+      root.removeAttribute("data-chef-print");
+      pageOverride.remove();
+    };
+
+    window.addEventListener("afterprint", restore, { once: true });
+    window.print();
+    setTimeout(restore, 2000);
+  };
+
+  const handlePrintReport = () => {
+    if (!reportData) {
+      alert("Önce raporu yükleyin.");
+      return;
+    }
+    printSection("report");
+  };
+
+  const handlePrintAudit = () => {
+    if (auditLogs.length === 0) {
+      alert("Yazdırılacak denetim kaydı bulunamadı.");
+      return;
+    }
+    printSection("audit");
+  };
+
+  // Denetim izlerini Excel'e aktar
+  const handleExportAuditExcel = () => {
+    if (auditLogs.length === 0) {
+      alert("Dışa aktarılacak denetim kaydı bulunamadı.");
+      return;
+    }
+
+    const rows = auditLogs.map((log) => ({
+      "Zaman": formatInTimeZone(log.createdAt),
+      "Kullanıcı": log.userName,
+      "Rol": log.userRole,
+      "İşlem": log.action,
+      "Alakart": log.restaurant?.name || "-",
+      "Detay": log.details || "-",
+    }));
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, "Denetim İzleri");
+    XLSX.writeFile(
+      wb,
+      `Merit_Alacarte_Denetim_${selectedRestaurantId === "ALL" ? "TUM_ALAKART" : selectedRestaurantId}.xlsx`
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-[#070a12] text-zinc-100 p-4 sm:p-6 lg:p-8 space-y-6">
+    <>
+      <div id="chef-app-shell" className="min-h-screen bg-[#070a12] text-zinc-100 p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Top Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
         <div className="flex items-center gap-4">
@@ -257,7 +346,7 @@ export default function ChefModulePage() {
               onChange={(e) => setSelectedRestaurantId(e.target.value)}
               className="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-amber-500"
             >
-              <option value="ALL">🌐 Tüm Alakart Restoranlar (Merit Geneli)</option>
+              <option value="ALL">🌐 Tüm Alakart Restoranları (Merit Geneli)</option>
               {restaurants.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.name}
@@ -268,7 +357,7 @@ export default function ChefModulePage() {
 
           <button
             onClick={() => {
-              if (activeTab === "kds") loadKds();
+              if (activeTab === "kds") { loadKds(); loadLive(); }
               if (activeTab === "waiters") loadWaiters();
               if (activeTab === "analytics") loadReport();
               if (activeTab === "audit") loadAudit();
@@ -367,6 +456,68 @@ export default function ChefModulePage() {
               <span>Otomatik Canlı Güncelleme (7 sn)</span>
             </label>
           </div>
+
+          {/* ======================================================== */}
+          {/* CANLI SERVİS ÖZETİ (Sistem Yöneticisi ekranından taşınan */}
+          {/* canlı sayılar yalnızca Şef Modülünde gösterilir)          */}
+          {/* ======================================================== */}
+          {liveSnapshot && (
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+              <div className="p-4 rounded-3xl bg-[#0f1422] border border-zinc-800">
+                <span className="text-zinc-400 text-xs block mb-1">Aktif Sipariş</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">
+                    {liveSnapshot.activeOrders}
+                  </span>
+                  <span className="text-xs text-zinc-500 font-medium">Canlı</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-3xl bg-[#0f1422] border border-zinc-800">
+                <span className="text-zinc-400 text-xs block mb-1">Bekleyen</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-rose-400">
+                    {liveSnapshot.pendingOrders}
+                  </span>
+                  <span className="text-xs text-zinc-500 font-medium">Sipariş</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-3xl bg-[#0f1422] border border-zinc-800">
+                <span className="text-zinc-400 text-xs block mb-1">Hazırlanan</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-sky-400">
+                    {liveSnapshot.preparingOrders}
+                  </span>
+                  <span className="text-xs text-zinc-500 font-medium">Sipariş</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-3xl bg-[#0f1422] border border-zinc-800">
+                <span className="text-zinc-400 text-xs block mb-1">Dolu Masa</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">
+                    {liveSnapshot.occupiedTables}
+                  </span>
+                  <span className="text-xs text-zinc-500 font-medium">
+                    / {liveSnapshot.totalTables}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-3xl bg-[#0f1422] border border-zinc-800">
+                <span className="text-zinc-400 text-xs block mb-1">Bugün Tamamlanan</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-emerald-400">
+                    {liveSnapshot.todayCompletedOrders}
+                  </span>
+                  <span className="text-xs text-zinc-500 font-medium">
+                    %{liveSnapshot.occupancyRate} doluluk
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {loadingKds ? (
             <div className="p-16 text-center text-zinc-500">Master KDS yükleniyor...</div>
@@ -866,7 +1017,7 @@ export default function ChefModulePage() {
               </button>
 
               <button
-                onClick={() => window.print()}
+                onClick={handlePrintReport}
                 className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs border border-zinc-700 transition-all"
               >
                 <Printer className="w-4 h-4" />
@@ -1101,7 +1252,27 @@ export default function ChefModulePage() {
                 <option value="STATUS_PREPARING">Hazırlanmaya Başlandı (STATUS_PREPARING)</option>
                 <option value="STATUS_COMPLETED">Tamamlandı (STATUS_COMPLETED)</option>
                 <option value="ORDER_PRINTED">Fiş Basıldı (ORDER_PRINTED)</option>
+                <option value="ORDER_UPDATED">Sipariş Güncellendi (ORDER_UPDATED)</option>
+                <option value="MENU_CREATED">Menü Tanımlandı (MENU_CREATED)</option>
               </select>
+            </div>
+
+            {/* Denetim izi çıktıları */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleExportAuditExcel}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition-all"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                <span>Excel</span>
+              </button>
+              <button
+                onClick={handlePrintAudit}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[11px] border border-zinc-700 transition-all"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Yazdır / PDF</span>
+              </button>
             </div>
           </div>
 
@@ -1162,6 +1333,21 @@ export default function ChefModulePage() {
           )}
         </div>
       )}
-    </div>
+      </div>
+
+      <ChefAnalyticsPrintReport
+        reportData={reportData}
+        startDate={startDate}
+        endDate={endDate}
+        restaurantLabel={selectedRestaurantLabel}
+        currentUser={currentUser}
+      />
+
+      <ChefAuditPrintReport
+        auditLogs={auditLogs}
+        restaurantLabel={selectedRestaurantLabel}
+        currentUser={currentUser}
+      />
+    </>
   );
 }

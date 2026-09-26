@@ -172,17 +172,9 @@ export default function AdminTablesPage() {
                 </span>
               </div>
 
-              <div className="pt-3 border-t border-zinc-800/80 mt-3 flex items-center justify-between text-[11px]">
-                <span className="text-zinc-500">Durum:</span>
-                <span
-                  className={`font-bold px-2 py-0.5 rounded ${
-                    t.status === "OCCUPIED"
-                      ? "bg-amber-400/10 text-amber-300"
-                      : "bg-emerald-400/10 text-emerald-300"
-                  }`}
-                >
-                  {t.status === "OCCUPIED" ? "Dolu / Siparişte" : "Boş"}
-                </span>
+              <div className="pt-3 border-t border-zinc-800/80 mt-3 text-[11px] text-zinc-500">
+                Masa doluluğu / sipariş durumu bu ekranda gösterilmez; canlı işleyiş
+                Şef Modülü&apos;nden izlenir.
               </div>
             </div>
           ))}

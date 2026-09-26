@@ -3112,3 +3112,38 @@ Import traces:
   └─ ƒ getMyOrdersToday() in 20ms src/actions/orders.ts
  POST /waiter 200 in 40ms (next.js: 7ms, application-code: 32ms)
   └─ ƒ getMyOrdersToday() in 18ms src/actions/orders.ts
+ GET /login 200 in 159ms (next.js: 11ms, application-code: 148ms)
+ POST /login 200 in 98ms (next.js: 39ms, application-code: 59ms)
+  └─ ƒ getSessionUser() in 4ms src/actions/auth.ts
+ POST /login 200 in 57ms (next.js: 27ms, application-code: 30ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ GET /login 200 in 52ms (next.js: 11ms, application-code: 41ms)
+ POST /login 200 in 36ms (next.js: 8ms, application-code: 28ms)
+  └─ ƒ getSessionUser() in 14ms src/actions/auth.ts
+ POST /login 200 in 31ms (next.js: 7ms, application-code: 23ms)
+  └─ ƒ getSessionUser() in 9ms src/actions/auth.ts
+ POST /login 200 in 323ms (next.js: 6ms, application-code: 316ms)
+  └─ ƒ loginAction({}) in 292ms src/actions/auth.ts
+ GET /waiter 200 in 32ms (next.js: 8ms, application-code: 24ms)
+ GET /waiter 200 in 65ms (next.js: 8ms, application-code: 57ms)
+ GET /waiter 200 in 35ms (next.js: 8ms, application-code: 27ms)
+ POST /waiter 200 in 23ms (next.js: 8ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /waiter 200 in 21ms (next.js: 8ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /waiter 200 in 21ms (next.js: 6ms, application-code: 16ms)
+  └─ ƒ getRestaurants() in 4ms src/actions/definitions.ts
+ POST /waiter 200 in 22ms (next.js: 7ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 4ms src/actions/auth.ts
+ POST /waiter 200 in 32ms (next.js: 6ms, application-code: 25ms)
+  └─ ƒ getRestaurants() in 12ms src/actions/definitions.ts
+ POST /waiter 200 in 47ms (next.js: 10ms, application-code: 37ms)
+  └─ ƒ selectRestaurantAction("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 8ms src/actions/auth.ts
+ POST /waiter 200 in 25ms (next.js: 6ms, application-code: 19ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 8ms src/actions/definitions.ts
+ POST /waiter 200 in 29ms (next.js: 10ms, application-code: 19ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 10ms src/actions/definitions.ts
+ POST /waiter 200 in 20ms (next.js: 8ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /waiter 200 in 99ms (next.js: 9ms, application-code: 90ms)
+  └─ ƒ getTableActiveOrders("c01161a5-c689-47ea-ae56-314deb6144a5") in 75ms src/actions/orders.ts

@@ -35,7 +35,8 @@ export default function KitchenKDSPage() {
   const [printingOrder, setPrintingOrder] = useState<any | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
 
-  const previousOrderIdsRef = useRef<Set<string>>(new Set());
+  // Her siparişin ID'sini, son revizyon numarasını ve düzenleme zamanını takip eden ref
+  const previousOrdersMapRef = useRef<Map<string, { status: string; revision: number; lastModifiedAt?: string | null }>>(new Map());
 
   // Oturum ve Mutfak Restoranı Kontrolü
   useEffect(() => {
@@ -106,7 +107,7 @@ export default function KitchenKDSPage() {
     }
   };
 
-  // Siparişleri Çek
+  // Siparişleri Çek (Yeni veya Güncellenen Siparişleri Anında Algılar)
   const fetchOrders = async () => {
     if (!session?.activeRestaurantId) return;
 
@@ -117,20 +118,54 @@ export default function KitchenKDSPage() {
       if (data.success && data.data) {
         const newOrders = data.data;
 
-        const currentIds = new Set<string>(newOrders.map((o: any) => String(o.id)));
-        const hasNewIncoming = newOrders.some(
-          (o: any) => !previousOrderIdsRef.current.has(o.id) && o.status === "PENDING"
+        // 1. Yepyeni düşen sipariş (ID haritamızda yok)
+        const brandNewOrders = newOrders.filter(
+          (o: any) => !previousOrdersMapRef.current.has(o.id) && o.status === "PENDING"
         );
 
-        if (hasNewIncoming && previousOrderIdsRef.current.size > 0) {
+        // 2. Güncellenen / İlave eklenen sipariş (ID haritamızda var ama revizyonu veya son düzenlenme zamanı artmış)
+        const updatedOrdersList: any[] = [];
+        newOrders.forEach((o: any) => {
+          const prev = previousOrdersMapRef.current.get(o.id);
+          if (prev) {
+            const hasNewRevision = (o.revision || 1) > (prev.revision || 1);
+            const hasNewModifiedTime =
+              o.lastModifiedAt &&
+              prev.lastModifiedAt &&
+              new Date(o.lastModifiedAt).getTime() > new Date(prev.lastModifiedAt).getTime();
+            const wasJustUpdated = o.isUpdated && (hasNewRevision || hasNewModifiedTime);
+
+            if (wasJustUpdated && o.status === "PENDING") {
+              updatedOrdersList.push(o);
+            }
+          }
+        });
+
+        const hasNewIncoming = brandNewOrders.length > 0;
+        const hasIncomingUpdate = updatedOrdersList.length > 0;
+
+        // Sesli uyarı & Oto Yazdırma tetikleme (İlk yükleme hariç)
+        if ((hasNewIncoming || hasIncomingUpdate) && previousOrdersMapRef.current.size > 0) {
           if (soundEnabled) playKitchenChime();
+
           if (autoPrintEnabled) {
-            const firstNew = newOrders.find((o: any) => !previousOrderIdsRef.current.has(o.id));
-            if (firstNew) handlePrintTicket(firstNew);
+            // Öncelik güncellenen siparişin yeni revizyon fişini basmakta
+            const orderToPrint = updatedOrdersList[0] || brandNewOrders[0];
+            if (orderToPrint) handlePrintTicket(orderToPrint);
           }
         }
 
-        previousOrderIdsRef.current = currentIds;
+        // Haritayı güncelle
+        const nextMap = new Map<string, { status: string; revision: number; lastModifiedAt?: string | null }>();
+        newOrders.forEach((o: any) => {
+          nextMap.set(o.id, {
+            status: o.status,
+            revision: o.revision || 1,
+            lastModifiedAt: o.lastModifiedAt,
+          });
+        });
+        previousOrdersMapRef.current = nextMap;
+
         setOrders(newOrders);
         setLastRefreshed(new Date());
       }
@@ -289,12 +324,13 @@ export default function KitchenKDSPage() {
     );
   }
 
-  // ===========================================================================
+  // ===========================================
   // DURUM 2: RESTORAN KİLİTLİ VE MUTFAK KDS EKRANI
-  // ===========================================================================
+  // ===========================================
   const filteredOrders = orders.filter((o) => {
     if (statusFilter === "ACTIVE") return o.status === "PENDING" || o.status === "PREPARING";
     if (statusFilter === "PENDING") return o.status === "PENDING";
+    if (statusFilter === "UPDATED") return (o.isUpdated || (o.revision && o.revision > 1)) && (o.status === "PENDING" || o.status === "PREPARING");
     if (statusFilter === "PREPARING") return o.status === "PREPARING";
     return true;
   });
@@ -363,8 +399,6 @@ export default function KitchenKDSPage() {
               <RefreshCw className="w-4 h-4" />
             </button>
 
-
-
             {/* Restorandan Güvenli Çıkış */}
             <form action={logoutAction}>
               <button
@@ -386,6 +420,7 @@ export default function KitchenKDSPage() {
           {[
             { key: "ACTIVE", label: "Aktif Siparişler", count: orders.filter((o) => o.status === "PENDING" || o.status === "PREPARING").length },
             { key: "PENDING", label: "Bekleyenler (Ocak Bekliyor)", count: orders.filter((o) => o.status === "PENDING").length },
+            { key: "UPDATED", label: "⚠️ Güncellenenler (Revizyon)", count: orders.filter((o) => (o.isUpdated || (o.revision && o.revision > 1)) && (o.status === "PENDING" || o.status === "PREPARING")).length },
             { key: "PREPARING", label: "Hazırlanıyor", count: orders.filter((o) => o.status === "PREPARING").length },
             { key: "ALL", label: "Tümü", count: orders.length },
           ].map((tab) => (
@@ -416,7 +451,7 @@ export default function KitchenKDSPage() {
             {session.activeRestaurantName} İçin Bekleyen Sipariş Yok
           </h3>
           <p className="text-zinc-500 text-xs max-w-sm">
-            Garson masadan yeni bir sipariş gönderdiğinde sesli otel zili çalacak ve bu ekrana düşecektir.
+            Garson masadan yeni veya güncellenmiş bir sipariş gönderdiğinde sesli otel zili çalacak ve bu ekrana düşecektir.
           </p>
         </div>
       ) : (
@@ -425,19 +460,36 @@ export default function KitchenKDSPage() {
             const elapsed = getElapsedMinutes(order.createdAt);
             const isUrgent = elapsed >= 12;
             const isPreparing = order.status === "PREPARING";
+            const isOrderUpdated = Boolean(order.isUpdated || (order.revision && order.revision > 1));
+            const updateElapsed = order.lastModifiedAt ? getElapsedMinutes(order.lastModifiedAt) : null;
 
             return (
               <div
                 key={order.id}
                 className={clsx(
                   "rounded-3xl border transition-all flex flex-col justify-between overflow-hidden shadow-xl",
-                  isPreparing
+                  isOrderUpdated
+                    ? "bg-[#18140a] border-amber-400 ring-2 ring-amber-400/50 shadow-2xl shadow-amber-500/10"
+                    : isPreparing
                     ? "bg-[#0b1424] border-blue-500/40"
                     : isUrgent
                     ? "bg-[#1f0f12] border-rose-500/60 ring-1 ring-rose-500/40"
                     : "bg-[#111726] border-amber-500/30"
                 )}
               >
+                {/* Güncellenen Sipariş Dikkat Rozeti */}
+                {isOrderUpdated && (
+                  <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-zinc-950 px-3.5 py-1.5 font-black text-xs flex items-center justify-between shadow-md">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm">⚠️</span>
+                      <span>SİPARİŞ DÜZENLENDİ / İLAVE GELDİ</span>
+                    </div>
+                    <span className="font-mono text-[11px] bg-black/25 px-2 py-0.5 rounded font-black tracking-wider">
+                      REVİZYON #{order.revision || 2}
+                    </span>
+                  </div>
+                )}
+
                 {/* Header */}
                 <div className="p-4 border-b border-zinc-800/80 bg-zinc-950/40 flex items-center justify-between">
                   <div>
@@ -449,6 +501,11 @@ export default function KitchenKDSPage() {
                       <span className="text-xs font-mono font-normal text-zinc-500">
                         #{order.orderNumber}
                       </span>
+                      {isOrderUpdated && (
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/50">
+                          Rev. #{order.revision || 2}
+                        </span>
+                      )}
                     </h3>
                   </div>
 
@@ -466,7 +523,12 @@ export default function KitchenKDSPage() {
                       <Clock className="w-3.5 h-3.5" />
                       <span>{elapsed} dk</span>
                     </div>
-                    <span className="text-[10px] text-zinc-400 block mt-1">
+                    {isOrderUpdated && updateElapsed !== null && (
+                      <span className="text-[10px] text-amber-300 font-bold block mt-0.5">
+                        Güncelleme: {updateElapsed === 0 ? "Az önce" : `${updateElapsed} dk önce`}
+                      </span>
+                    )}
+                    <span className="text-[10px] text-zinc-400 block mt-0.5">
                       Garson: {order.waiter?.name}
                     </span>
                   </div>
@@ -474,13 +536,29 @@ export default function KitchenKDSPage() {
 
                 {/* Masa Notu */}
                 {order.notes && (
-                  <div className="p-2.5 mx-3 mt-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 font-medium">
-                    📌 <strong>Masa Notu:</strong> {order.notes}
+                  <div
+                    className={clsx(
+                      "p-2.5 mx-3 mt-3 rounded-xl border text-xs font-medium",
+                      isOrderUpdated
+                        ? "bg-amber-500/20 border-amber-500/40 text-amber-200"
+                        : "bg-amber-500/10 border-amber-500/20 text-amber-300"
+                    )}
+                  >
+                    📌 <strong>{isOrderUpdated ? "Güncel Masa Notu:" : "Masa Notu:"}</strong> {order.notes}
                   </div>
                 )}
 
-                {/* Kalemler */}
-                <div className="p-4 space-y-2.5 flex-1">
+                {/* Kalemler Başlığı & Listesi */}
+                <div className="px-4 pt-3 pb-1 flex items-center justify-between text-[11px] text-zinc-400">
+                  <span className="font-bold uppercase tracking-wider text-zinc-500">
+                    {isOrderUpdated ? "Güncel Sipariş Kalemleri" : "Sipariş Kalemleri"}
+                  </span>
+                  <span className="font-mono text-amber-400 font-bold">
+                    {order.items?.length || 0} Çeşit Ürün
+                  </span>
+                </div>
+
+                <div className="p-4 pt-1 space-y-2.5 flex-1">
                   {order.items?.map((item: any) => (
                     <div
                       key={item.id}
@@ -518,10 +596,15 @@ export default function KitchenKDSPage() {
                 <div className="p-3 border-t border-zinc-800/80 bg-zinc-950/60 flex items-center justify-between gap-2">
                   <button
                     onClick={() => handlePrintTicket(order)}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold transition-all active:scale-95"
+                    className={clsx(
+                      "flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all active:scale-95",
+                      isOrderUpdated
+                        ? "bg-amber-500/20 border border-amber-500/50 text-amber-300 hover:bg-amber-500/30"
+                        : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                    )}
                   >
                     <Printer className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Yazdır</span>
+                    <span>{isOrderUpdated ? `Güncel Fişi Yazdır (Rev #${order.revision || 2})` : "Yazdır"}</span>
                     {order.printedAt && <Check className="w-3 h-3 text-emerald-400" />}
                   </button>
 
@@ -554,27 +637,81 @@ export default function KitchenKDSPage() {
       {/* 80mm Termal Adisyon Gizli Yazdırma Şablonu */}
       {printingOrder && (
         <div id="printable-kitchen-ticket" className="hidden">
-          <div style={{ textAlign: "center", borderBottom: "1px dashed #000", paddingBottom: "6px", marginBottom: "8px" }}>
+          <div
+            style={{
+              textAlign: "center",
+              borderBottom: (printingOrder.isUpdated || (printingOrder.revision && printingOrder.revision > 1)) ? "2px solid #000" : "1px dashed #000",
+              paddingBottom: "6px",
+              marginBottom: "8px",
+            }}
+          >
             <h2 style={{ fontSize: "16px", fontWeight: "bold", margin: "0 0 2px 0" }}>MERİT HOTELS & RESORTS</h2>
             <div style={{ fontSize: "13px", fontWeight: "bold" }}>{printingOrder.restaurant?.name}</div>
-            <div style={{ fontSize: "11px" }}>*** MUTFAK SİPARİŞ FİŞİ ***</div>
+
+            {printingOrder.isUpdated || (printingOrder.revision && printingOrder.revision > 1) ? (
+              <div
+                style={{
+                  margin: "5px 0",
+                  border: "2px solid #000",
+                  padding: "4px",
+                  backgroundColor: "#000",
+                  color: "#fff",
+                }}
+              >
+                <div style={{ fontSize: "13px", fontWeight: "bold", letterSpacing: "1px" }}>
+                  *** GÜNCELLENEN SİPARİŞ ***
+                </div>
+                <div style={{ fontSize: "11px", fontWeight: "bold" }}>
+                  REVİZYON #{printingOrder.revision || 2} - İLAVE / DEĞİŞİKLİK
+                </div>
+                <div style={{ fontSize: "9px", marginTop: "2px" }}>
+                  DİKKAT: ESKİ FİŞİ İPTAL EDİNİZ, BU GÜNCEL FİŞTİR!
+                </div>
+              </div>
+            ) : (
+              <div style={{ fontSize: "11px", margin: "4px 0" }}>*** MUTFAK SİPARİŞ FİŞİ ***</div>
+            )}
           </div>
 
           <div style={{ borderBottom: "1px dashed #000", paddingBottom: "6px", marginBottom: "8px", fontSize: "12px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "18px", fontWeight: "bold" }}>
               <span>MASA: {printingOrder.table?.name}</span>
-              <span>#{printingOrder.orderNumber}</span>
+              <span>
+                #{printingOrder.orderNumber}
+                {(printingOrder.isUpdated || (printingOrder.revision && printingOrder.revision > 1)) && (
+                  <span style={{ fontSize: "12px", marginLeft: "4px" }}>(REV #{printingOrder.revision || 2})</span>
+                )}
+              </span>
             </div>
             <div>Garson: {printingOrder.waiter?.name}</div>
-            <div>Tarih: {new Date(printingOrder.createdAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}</div>
+            <div>İlk Sipariş: {new Date(printingOrder.createdAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}</div>
+            {printingOrder.isUpdated && printingOrder.lastModifiedAt && (
+              <div style={{ fontWeight: "bold" }}>
+                GÜNCELLEME: {new Date(printingOrder.lastModifiedAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
+              </div>
+            )}
             {printingOrder.notes && (
               <div style={{ marginTop: "4px", fontWeight: "bold", border: "1px solid #000", padding: "2px 4px" }}>
-                MASA NOTU: {printingOrder.notes}
+                {printingOrder.isUpdated ? "GÜNCEL MASA NOTU:" : "MASA NOTU:"} {printingOrder.notes}
               </div>
             )}
           </div>
 
           <div style={{ borderBottom: "1px dashed #000", paddingBottom: "8px", marginBottom: "8px" }}>
+            <div
+              style={{
+                fontSize: "11px",
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                marginBottom: "4px",
+                borderBottom: "1px solid #000",
+                paddingBottom: "2px",
+              }}
+            >
+              {(printingOrder.isUpdated || (printingOrder.revision && printingOrder.revision > 1))
+                ? "GÜNCEL SİPARİŞ LİSTESİ"
+                : "SİPARİŞ KALEMLERİ"} ({printingOrder.items?.length || 0} ÇEŞİT):
+            </div>
             {printingOrder.items?.map((it: any, idx: number) => (
               <div key={idx} style={{ marginBottom: "6px" }}>
                 <div style={{ fontSize: "14px", fontWeight: "bold" }}>
@@ -595,7 +732,13 @@ export default function KitchenKDSPage() {
           </div>
 
           <div style={{ textAlign: "center", fontSize: "10px", marginTop: "6px" }}>
-            * Ultra All-Inclusive Otel Konsepti - Fiyat Yoktur *
+            {(printingOrder.isUpdated || (printingOrder.revision && printingOrder.revision > 1)) ? (
+              <div style={{ fontWeight: "bold", border: "1px dashed #000", padding: "3px" }}>
+                * REVİZYON #{printingOrder.revision || 2} - LÜTFEN ÖNCEKİ FİŞİ İPTAL EDİNİZ *
+              </div>
+            ) : (
+              <div>* Ultra All-Inclusive Otel Konsepti - Fiyat Yoktur *</div>
+            )}
           </div>
         </div>
       )}

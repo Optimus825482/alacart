@@ -303,24 +303,21 @@ export async function updateOrder(data: {
         data: { status: "OCCUPIED" },
       });
 
-      // 2. Siparişin genel notlarını ve durumunu güncelle (İlave eklendiyse mutfakta PENDING olsun)
-      await tx.order.update({
+      // 2. Kalemleri yeniden yapılandır
+      await tx.orderItem.deleteMany({
+        where: { orderId: data.orderId },
+      });
+
+      // 3. Siparişin genel notlarını, durumunu ve revizyon bilgilerini güncelle
+      const order = await tx.order.update({
         where: { id: data.orderId },
         data: {
           notes: data.notes?.trim(),
           waiterId: data.waiterId,
           status: "PENDING", // Mutfağın dikkatine tekrar sunulur
-        },
-      });
-
-      // 3. Kalemleri yeniden yapılandır
-      await tx.orderItem.deleteMany({
-        where: { orderId: data.orderId },
-      });
-
-      const order = await tx.order.update({
-        where: { id: data.orderId },
-        data: {
+          isUpdated: true,
+          revision: { increment: 1 },
+          lastModifiedAt: new Date(),
           items: {
             create: data.items.map((item) => ({
               menuItemId: item.menuItemId,
@@ -352,7 +349,7 @@ export async function updateOrder(data: {
       action: "ORDER_UPDATED",
       entity: "Order",
       entityId: updatedOrder.id,
-      details: `${updatedOrder.restaurant.name} - Masa: ${updatedOrder.table.name} (#${updatedOrder.orderNumber}) siparişi güncellendi/ilave yapıldı (${updatedOrder.items.length} kalem).`,
+      details: `${updatedOrder.restaurant.name} - Masa: ${updatedOrder.table.name} (#${updatedOrder.orderNumber}, Revizyon #${updatedOrder.revision}) siparişi güncellendi/ilave yapıldı (${updatedOrder.items.length} kalem).`,
       restaurantId: updatedOrder.restaurantId,
     });
 

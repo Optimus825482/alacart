@@ -140,6 +140,11 @@ model Order {
 
   items              OrderItem[]
   
+  // Düzenleme / Güncelleme / Revizyon Takibi
+  isUpdated          Boolean           @default(false)   // Sipariş sonradan garson tarafından güncellendi / ilave eklendi mi?
+  revision           Int               @default(1)       // Sipariş revizyon numarası (1: İlk sipariş, 2+: Güncellenmiş)
+  lastModifiedAt     DateTime?                           // Garson tarafından son düzenlenme / güncellenme anı
+
   // Detaylı Zaman Damgaları (Zaman/Süre Raporları ve Audit için)
   preparingStartedAt DateTime?         // Mutfakta "Hazırlanıyor" dendiği an
   printedAt          DateTime?         // Termal fiş basılma anı

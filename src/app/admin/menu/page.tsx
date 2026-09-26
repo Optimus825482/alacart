@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Plus,
   Edit2,
@@ -12,6 +12,9 @@ import {
   X,
   Check,
   Search,
+  Upload,
+  Image as ImageIcon,
+  Loader2,
 } from "lucide-react";
 import {
   getCategoriesTree,
@@ -43,10 +46,11 @@ export default function AdminMenuPage() {
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
-  const [itemAllergens, setItemAllergens] = useState("");
   const [itemImageUrl, setItemImageUrl] = useState("");
   const [itemDefaultNotes, setItemDefaultNotes] = useState("");
   const [itemCategoryId, setItemCategoryId] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -106,6 +110,41 @@ export default function AdminMenuPage() {
     }
   };
 
+  // Cihazdan Görsel Yükleme (Upload Sistemi)
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Lütfen yalnızca geçerli bir resim dosyası seçin (PNG, JPG, WEBP).");
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.success && data.url) {
+        setItemImageUrl(data.url);
+      } else {
+        alert("Görsel yüklenemedi: " + (data.error || "Bilinmeyen hata"));
+      }
+    } catch (err: any) {
+      console.error("Yükleme hatası:", err);
+      alert("Yükleme sırasında hata oluştu: " + err.message);
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   // Ürün Ekle / Güncelle
   const handleItemSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,7 +155,6 @@ export default function AdminMenuPage() {
       await updateMenuItem(editingItem.id, {
         name: itemName,
         description: itemDescription,
-        allergens: itemAllergens,
         imageUrl: itemImageUrl,
         defaultNotes: itemDefaultNotes,
         categoryId: itemCategoryId,
@@ -125,7 +163,6 @@ export default function AdminMenuPage() {
       await createMenuItem({
         name: itemName,
         description: itemDescription,
-        allergens: itemAllergens,
         imageUrl: itemImageUrl,
         defaultNotes: itemDefaultNotes,
         categoryId: itemCategoryId,
@@ -135,7 +172,6 @@ export default function AdminMenuPage() {
     setIsItemModalOpen(false);
     setItemName("");
     setItemDescription("");
-    setItemAllergens("");
     setItemImageUrl("");
     setItemDefaultNotes("");
     loadData();
@@ -145,7 +181,6 @@ export default function AdminMenuPage() {
     setEditingItem(null);
     setItemName("");
     setItemDescription("");
-    setItemAllergens("");
     setItemImageUrl("");
     setItemDefaultNotes("");
     if (preselectedCatId) setItemCategoryId(preselectedCatId);
@@ -156,7 +191,6 @@ export default function AdminMenuPage() {
     setEditingItem(item);
     setItemName(item.name);
     setItemDescription(item.description || "");
-    setItemAllergens(item.allergens || "");
     setItemImageUrl(item.imageUrl || "");
     setItemDefaultNotes(item.defaultNotes || "");
     setItemCategoryId(item.categoryId);
@@ -264,11 +298,6 @@ export default function AdminMenuPage() {
                     </p>
                   )}
                   <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                    {item.allergens && (
-                      <span className="text-[9px] text-amber-400/80 bg-amber-400/10 px-1.5 py-0.2 rounded inline-block">
-                        Alerjen: {item.allergens}
-                      </span>
-                    )}
                     {item.defaultNotes && (
                       <span className="text-[9px] text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.2 rounded inline-block font-medium">
                         ✨ Servis Notları: {item.defaultNotes}
@@ -571,19 +600,6 @@ export default function AdminMenuPage() {
               </div>
 
               <div>
-                <label className="text-zinc-400 block mb-1 font-semibold">
-                  Alerjen Bilgisi (Varsa)
-                </label>
-                <input
-                  type="text"
-                  placeholder="Örn: Gluten, Laktoz, Kabuklu Deniz Mahsulleri, Ceviz..."
-                  value={itemAllergens}
-                  onChange={(e) => setItemAllergens(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-zinc-400 block font-semibold">
                     Özel Pişirme & Servis Notu Seçenekleri (Varsayılan)
@@ -629,27 +645,102 @@ export default function AdminMenuPage() {
                 </div>
               </div>
 
+              {/* Görsel Yükleme (Upload Sistemi) & Önizleme */}
               <div>
                 <label className="text-zinc-400 block mb-1 font-semibold">
-                  Yemek / İçecek Fotoğrafı URL (Görsel Önizlemeli)
+                  Yemek / İçecek Fotoğrafı (Cihazdan Yükle veya URL)
                 </label>
+
+                {/* Gizli Dosya Girişi */}
                 <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/... (Görsel Web URL)"
-                  value={itemImageUrl}
-                  onChange={(e) => setItemImageUrl(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/png, image/jpeg, image/jpg, image/webp"
+                  className="hidden"
                 />
-                {itemImageUrl && (
-                  <div className="mt-2 flex items-center gap-2 p-2 rounded-xl bg-zinc-900 border border-zinc-800">
-                    <img
-                      src={itemImageUrl}
-                      alt="Önizleme"
-                      className="w-12 h-12 rounded-lg object-cover border border-zinc-700"
-                    />
-                    <span className="text-[10px] text-zinc-400">Görsel Önizleme Başarılı</span>
+
+                {itemImageUrl ? (
+                  /* Seçili / Yüklü Görsel Kartı */
+                  <div className="p-3 rounded-2xl bg-zinc-900 border border-zinc-700/80 flex items-center justify-between gap-3 shadow-md">
+                    <div className="flex items-center gap-3">
+                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-zinc-950 border border-zinc-700 shrink-0">
+                        <img
+                          src={itemImageUrl}
+                          alt="Önizleme"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-white block">Görsel Yüklendi</span>
+                        <span className="text-[11px] text-zinc-400 font-mono break-all line-clamp-1">
+                          {itemImageUrl}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploadingImage}
+                        className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium border border-zinc-700 transition"
+                      >
+                        {uploadingImage ? "Yükleniyor..." : "Değiştir"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setItemImageUrl("")}
+                        className="p-1.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/30 text-rose-300 text-xs transition"
+                        title="Görseli Kaldır"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* Yükleme Butonu & Alanı */
+                  <div
+                    onClick={() => !uploadingImage && fileInputRef.current?.click()}
+                    className={clsx(
+                      "p-5 rounded-2xl border-2 border-dashed border-zinc-700 hover:border-amber-500/60 bg-zinc-900/50 hover:bg-zinc-900/80 cursor-pointer flex flex-col items-center justify-center text-center transition-all group",
+                      uploadingImage && "opacity-60 cursor-wait"
+                    )}
+                  >
+                    <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                      {uploadingImage ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Upload className="w-5 h-5" />
+                      )}
+                    </div>
+                    <span className="text-xs font-bold text-white group-hover:text-amber-300 transition-colors">
+                      {uploadingImage ? "Görsel Sunucuya Yükleniyor..." : "Cihazdan Fotoğraf Yüklemek İçin Tıklayın"}
+                    </span>
+                    <span className="text-[10px] text-zinc-400 mt-0.5">
+                      PNG, JPG veya WEBP (Masaüstü veya galeriden dosya seçebilirsiniz)
+                    </span>
                   </div>
                 )}
+
+                {/* Alternatif Harici Görsel Bağlantısı */}
+                <div className="mt-2 flex items-center gap-2">
+                  <input
+                    type="url"
+                    placeholder="Veya harici görsel web URL'si girin (örn: https://...)"
+                    value={itemImageUrl}
+                    onChange={(e) => setItemImageUrl(e.target.value)}
+                    className="flex-1 bg-zinc-950/60 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
+                  />
+                  {itemImageUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setItemImageUrl("")}
+                      className="text-xs text-zinc-500 hover:text-zinc-300 px-1"
+                    >
+                      Temizle
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="pt-3 border-t border-zinc-800 flex items-center justify-end gap-2">

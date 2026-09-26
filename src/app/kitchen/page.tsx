@@ -15,6 +15,8 @@ import {
   LogOut,
   RefreshCw,
   Utensils,
+  X,
+  Eye,
 } from "lucide-react";
 import { getSessionUser, logoutAction, selectRestaurantAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
 import { getRestaurants } from "@/actions/definitions";
@@ -33,6 +35,7 @@ export default function KitchenKDSPage() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [autoPrintEnabled, setAutoPrintEnabled] = useState(false);
   const [printingOrder, setPrintingOrder] = useState<any | null>(null);
+  const [previewOrder, setPreviewOrder] = useState<any | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
 
   // Her siparişin ID'sini, son revizyon numarasını ve düzenleme zamanını takip eden ref
@@ -151,7 +154,7 @@ export default function KitchenKDSPage() {
           if (autoPrintEnabled) {
             // Öncelik güncellenen siparişin yeni revizyon fişini basmakta
             const orderToPrint = updatedOrdersList[0] || brandNewOrders[0];
-            if (orderToPrint) handlePrintTicket(orderToPrint);
+            if (orderToPrint) handleDirectPrintTicket(orderToPrint);
           }
         }
 
@@ -199,14 +202,44 @@ export default function KitchenKDSPage() {
     }
   };
 
-  // Yazdırma
-  const handlePrintTicket = async (order: any) => {
+  // Doğrudan Arka Planda Yazdırma (Oto Yazdır modu için)
+  const handleDirectPrintTicket = async (order: any) => {
     setPrintingOrder(order);
     fetch("/api/kitchen/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orderId: order.id, action: "print" }),
     }).catch(console.error);
+
+    setTimeout(() => {
+      window.print();
+    }, 150);
+  };
+
+  // Manuel Yazdırma Önizleme Modalını Aç
+  const handleOpenPrintPreview = (order: any) => {
+    setPreviewOrder(order);
+    setPrintingOrder(order);
+  };
+
+  // Önizleme Modalından Yazıcıya Gönder
+  const handleExecutePrintFromPreview = async () => {
+    if (!previewOrder) return;
+    const targetOrder = previewOrder;
+    setPrintingOrder(targetOrder);
+
+    fetch("/api/kitchen/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId: targetOrder.id, action: "print" }),
+    }).catch(console.error);
+
+    // Listede hemen basıldı durumunu göster
+    setOrders((prev) =>
+      prev.map((o) =>
+        o.id === targetOrder.id ? { ...o, printedAt: new Date().toISOString() } : o
+      )
+    );
 
     setTimeout(() => {
       window.print();
@@ -626,7 +659,7 @@ export default function KitchenKDSPage() {
                 {/* Butonlar */}
                 <div className="p-3 border-t border-zinc-800/80 bg-zinc-950/60 flex items-center justify-between gap-2">
                   <button
-                    onClick={() => handlePrintTicket(order)}
+                    onClick={() => handleOpenPrintPreview(order)}
                     className={clsx(
                       "flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all active:scale-95",
                       isOrderUpdated
@@ -634,8 +667,8 @@ export default function KitchenKDSPage() {
                         : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
                     )}
                   >
-                    <Printer className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{isOrderUpdated ? `Güncel Fişi Yazdır (Rev #${order.revision || 2})` : "Yazdır"}</span>
+                    <Eye className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{isOrderUpdated ? `Fişi Önizle & Yazdır (Rev #${order.revision || 2})` : "Yazdır / Önizle"}</span>
                     {order.printedAt && <Check className="w-3 h-3 text-emerald-400" />}
                   </button>
 
@@ -678,6 +711,172 @@ export default function KitchenKDSPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MANUEL YAZDIRMA ÖNİZLEMESİ MODALI (80mm TERMAL ADİSYON)    */}
+      {/* ======================================================== */}
+      {previewOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-zinc-900 border border-zinc-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col my-auto max-h-[92vh]">
+            {/* Modal Üst Barı */}
+            <div className="flex items-center justify-between px-5 py-4 bg-zinc-950 border-b border-zinc-800 text-white shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                  <Eye className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                    <span>Yazdırma Önizlemesi</span>
+                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                      80mm Termal Adisyon
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-zinc-400">
+                    {previewOrder.restaurant?.name} • Masa {previewOrder.table?.name} (#{previewOrder.orderNumber})
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setPreviewOrder(null)}
+                className="w-8 h-8 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition"
+                title="Kapat"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Termal Kağıt Fiş Önizlemesi */}
+            <div className="p-4 sm:p-6 overflow-y-auto bg-zinc-950/70 flex-1 flex justify-center items-start">
+              <div className="w-full max-w-[330px] bg-white text-zinc-950 font-mono shadow-2xl rounded-sm p-5 border border-zinc-300 relative text-left select-none">
+                {/* Üst Tırtıklı Kenar Görünümü */}
+                <div className="border-b-2 border-dashed border-zinc-300 -mt-2 mb-3"></div>
+
+                {/* Başlık */}
+                <div
+                  className={clsx(
+                    "text-center pb-2 mb-2",
+                    (previewOrder.isUpdated || (previewOrder.revision && previewOrder.revision > 1))
+                      ? "border-b-2 border-black"
+                      : "border-b border-dashed border-zinc-400"
+                  )}
+                >
+                  <div className="text-[10px] tracking-widest text-zinc-500 uppercase font-sans font-bold">
+                    MUTFAK ADİSYON FİŞİ
+                  </div>
+                  <h2 className="text-base font-black tracking-tight leading-tight mt-0.5">
+                    MERİT HOTELS & RESORTS
+                  </h2>
+                  <div className="text-xs font-bold text-zinc-800 uppercase mt-0.5">
+                    {previewOrder.restaurant?.name}
+                  </div>
+
+                  {/* Revizyon / İlave Uyarısı */}
+                  {(previewOrder.isUpdated || (previewOrder.revision && previewOrder.revision > 1)) ? (
+                    <div className="my-2 border-2 border-black p-2 bg-black text-white text-center">
+                      <div className="text-xs font-black tracking-wider">*** GÜNCELLENEN SİPARİŞ ***</div>
+                      <div className="text-[11px] font-bold">REVİZYON #{previewOrder.revision || 2} - İLAVE / DÜZENLEME</div>
+                      <div className="text-[9px] mt-0.5 opacity-90">DİKKAT: ESKİ FİŞİ İPTAL EDİNİZ, BU GÜNCEL FİŞTİR!</div>
+                    </div>
+                  ) : (
+                    <div className="text-[11px] font-semibold mt-1">*** MUTFAK SİPARİŞ FİŞİ ***</div>
+                  )}
+                </div>
+
+                {/* Masa & Garson & Zaman Bilgileri */}
+                <div className="border-b border-dashed border-zinc-400 pb-2 mb-2 text-xs space-y-1">
+                  <div className="flex justify-between items-baseline font-bold text-base">
+                    <span>MASA: {previewOrder.table?.name}</span>
+                    <span>
+                      #{previewOrder.orderNumber}
+                      {(previewOrder.isUpdated || (previewOrder.revision && previewOrder.revision > 1)) && (
+                        <span className="text-xs ml-1">(REV #{previewOrder.revision || 2})</span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-zinc-700 text-[11px]">
+                    <span>Garson: <strong>{previewOrder.waiter?.name}</strong></span>
+                    <span>
+                      Saat: {new Date(previewOrder.createdAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </div>
+                  {previewOrder.isUpdated && previewOrder.lastModifiedAt && (
+                    <div className="text-[11px] font-bold bg-zinc-100 p-1 rounded border border-zinc-300">
+                      🔄 Güncelleme: {new Date(previewOrder.lastModifiedAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                    </div>
+                  )}
+                  {previewOrder.notes && (
+                    <div className="mt-1.5 p-1.5 border border-black font-bold text-[11px] bg-zinc-50 leading-snug">
+                      📌 {previewOrder.isUpdated ? "GÜNCEL MASA NOTU:" : "MASA NOTU:"} {previewOrder.notes}
+                    </div>
+                  )}
+                </div>
+
+                {/* Kalemler */}
+                <div className="border-b border-dashed border-zinc-400 pb-2 mb-2">
+                  <div className="text-[10px] font-bold uppercase tracking-wider mb-1.5 border-b border-zinc-300 pb-1 flex justify-between">
+                    <span>{(previewOrder.isUpdated || (previewOrder.revision && previewOrder.revision > 1)) ? "GÜNCEL SİPARİŞ KALEMLERİ" : "SİPARİŞ KALEMLERİ"}</span>
+                    <span>{previewOrder.items?.length || 0} Çeşit</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    {previewOrder.items?.map((it: any, idx: number) => (
+                      <div key={idx} className="leading-snug">
+                        <div className="text-[13px] font-black flex items-start justify-between">
+                          <span>
+                            <strong className="text-base mr-1.5">{it.quantity}x</strong>
+                            {it.menuItem?.name}
+                          </span>
+                        </div>
+                        {it.itemNotes && (
+                          <div className="text-[11px] font-bold pl-5 text-zinc-800">
+                            &gt;&gt; ÖZEL: <span className="underline decoration-dotted">{it.itemNotes}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Alt Bilgi */}
+                <div className="text-center text-[10px] text-zinc-600 pt-1">
+                  {(previewOrder.isUpdated || (previewOrder.revision && previewOrder.revision > 1)) ? (
+                    <div className="font-bold border border-dashed border-black p-1 text-black">
+                      * REVİZYON #{previewOrder.revision || 2} - LÜTFEN ÖNCEKİ FİŞİ İPTAL EDİNİZ *
+                    </div>
+                  ) : (
+                    <div>* Ultra All-Inclusive Otel Konsepti - Fiyat Yoktur *</div>
+                  )}
+                  <div className="mt-1 text-[9px] text-zinc-400 font-mono">
+                    Önizleme Zamanı: {new Date().toLocaleTimeString("tr-TR")}
+                  </div>
+                </div>
+
+                {/* Alt Tırtıklı Kenar Görünümü */}
+                <div className="border-b-2 border-dashed border-zinc-300 -mb-2 mt-3"></div>
+              </div>
+            </div>
+
+            {/* Modal Butonları */}
+            <div className="flex items-center justify-between p-4 bg-zinc-950 border-t border-zinc-800 gap-3 shrink-0">
+              <button
+                onClick={() => setPreviewOrder(null)}
+                className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold transition"
+              >
+                Kapat
+              </button>
+
+              <button
+                onClick={handleExecutePrintFromPreview}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950 text-xs font-black shadow-lg shadow-amber-500/20 active:scale-95 transition"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Yazıcıya Gönder (Yazdır)</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

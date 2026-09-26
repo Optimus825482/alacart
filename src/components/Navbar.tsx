@@ -64,7 +64,7 @@ export function Navbar() {
 
   if (session?.role === "ADMIN" || session?.role === "CHEF") {
     navItems.push({
-      label: "CHIEF",
+      label: "ŞEF",
       href: "/chef",
       icon: Award,
       badge: "Master KDS & Rapor",

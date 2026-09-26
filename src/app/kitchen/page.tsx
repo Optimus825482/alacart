@@ -280,6 +280,14 @@ export default function KitchenKDSPage() {
   };
 
   const currentTheme = getRestaurantTheme(session?.activeRestaurantName);
+  // Rol bazli mutfak yetkileri:
+  //   KITCHEN_STATUS_ROLES -> Hazirlaniyor / Tamamlandi isaretlemesi (KITCHEN, ADMIN)
+  //   ORDER_CANCEL_ROLES   -> Iptal (KITCHEN, CHEF, ADMIN)
+  // Sef canli akisi izler ve iptal edebilir, ancak hazirlik/tamamlama
+  // isaretlemesi YAPAMAZ (sunucu tarafi da zaten engelliyor).
+  const canUpdateStatus = session?.role === "KITCHEN" || session?.role === "ADMIN";
+  const canCancelOrder =
+    session?.role === "KITCHEN" || session?.role === "CHEF" || session?.role === "ADMIN";
 
   if (loading) {
     return (
@@ -717,7 +725,7 @@ export default function KitchenKDSPage() {
                       </div>
                     ) : (
                       <>
-                        {order.status === "PENDING" && (
+                        {canUpdateStatus && order.status === "PENDING" && (
                           <button
                             onClick={() => handleUpdateStatus(order.id, "PREPARING")}
                             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all active:scale-95"
@@ -727,26 +735,30 @@ export default function KitchenKDSPage() {
                           </button>
                         )}
                         {!isCompleted ? (
-                          <button
-                            onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
-                            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-black transition-all active:scale-95 shadow-md shadow-emerald-500/20"
-                          >
-                            <CheckCircle2 className="w-4 h-4" />
-                            <span>Tamamlandı</span>
-                          </button>
+                          canUpdateStatus ? (
+                            <button
+                              onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+                              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-black transition-all active:scale-95 shadow-md shadow-emerald-500/20"
+                            >
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>Tamamlandı</span>
+                            </button>
+                          ) : null
                         ) : (
                           <div className="flex items-center gap-2">
                             <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
                               <Check className="w-3.5 h-3.5 text-emerald-400" />
                               <span>Tamamlandı</span>
                             </span>
-                            <button
-                              onClick={() => handleUpdateStatus(order.id, "PREPARING")}
-                              className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-medium border border-zinc-700 transition"
-                              title="Gerekirse tekrar hazırlanıyor durumuna al"
-                            >
-                              Geri Al (Ocak)
-                            </button>
+                            {canUpdateStatus && (
+                              <button
+                                onClick={() => handleUpdateStatus(order.id, "PREPARING")}
+                                className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-medium border border-zinc-700 transition"
+                                title="Gerekirse tekrar hazırlanıyor durumuna al"
+                              >
+                                Geri Al (Ocak)
+                              </button>
+                            )}
                           </div>
                         )}
                       </>

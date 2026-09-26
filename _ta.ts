@@ -46,6 +46,7 @@ async function main() {
 
   log("");
   log("[4] Arama: 'Kemik'");
+  await c.waitFor("document.querySelector(\"input[placeholder*='Yemek']\")!==null", 25000);
   const yaz = await c.eval("(()=>{const i=document.querySelector(\"input[placeholder*='Yemek']\");if(!i)return 'YOK';const d=Object.getOwnPropertyDescriptor(Object.getPrototypeOf(i),'value');d.set.call(i,'Kemik');i.dispatchEvent(new Event('input',{bubbles:true}));return 'OK'})()");
   ok("Arama kutusuna yazildi", yaz === "OK", yaz);
   const urunGeldi = await c.waitForText("F\u0131r\u0131nlanm\u0131\u015f \u0130likli Dana Kemi\u011fi");
@@ -96,9 +97,12 @@ async function main() {
   await c.clickText("Sipari\u015flerim");
   const liste = await c.waitForText("Bug\u00fcn verdi\u011finiz", 15000);
   ok("Siparislerim listesi acildi", liste);
+  const bitti = await c.waitFor("(document.body.textContent||'').indexOf('Sipari\u015fleriniz y\u00fckleniyor')===-1", 25000);
+  ok("Siparis listesi yuklendi", bitti);
+  await sleep(1500);
   const panelMetin = await c.eval("(document.body.textContent||'').slice(0,2200)");
   log("   PANEL METNI: " + panelMetin);
-  const orderNo = await c.eval("(function(){var m=(document.body.textContent||'').match(/#(\\d+)/);return m?m[1]:''})()");
+  const orderNo = await c.eval("(function(){var m=(document.body.textContent||'').match(/#(\\d{1,6})/);return m?m[1]:''})()");
   log("   siparis no: #" + orderNo);
   ok("Siparis numarasi gorunuyor", orderNo.length > 0, orderNo);
   const durum = await c.eval("[...document.querySelectorAll('span,div')].map(e=>(e.textContent||'').trim()).filter(t=>t.length<40&&/Bekliyor|Haz\u0131rlan\u0131yor|Tamamland\u0131|Revizyon/.test(t)).filter((v,i,a)=>a.indexOf(v)===i).slice(0,4).join(' | ')");

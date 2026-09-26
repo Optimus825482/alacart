@@ -495,7 +495,7 @@ export default function ChefModulePage() {
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
-              Chef Paneli
+              ŞEF PANELİ
             </h1>
           </div>
         </div>

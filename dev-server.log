@@ -3147,3 +3147,3618 @@ Import traces:
   └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
  POST /waiter 200 in 99ms (next.js: 9ms, application-code: 90ms)
   └─ ƒ getTableActiveOrders("c01161a5-c689-47ea-ae56-314deb6144a5") in 75ms src/actions/orders.ts
+ POST /waiter 200 in 61ms (next.js: 11ms, application-code: 50ms)
+  └─ ƒ getMyOrdersToday() in 35ms src/actions/orders.ts
+ POST /waiter 200 in 27ms (next.js: 11ms, application-code: 16ms)
+  └─ ƒ getMyOrdersToday() in 6ms src/actions/orders.ts
+ GET /api/health 200 in 34ms (next.js: 21ms, application-code: 13ms)
+ GET /login 200 in 80ms (next.js: 12ms, application-code: 69ms)
+ POST /login 200 in 27ms (next.js: 10ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /login 200 in 23ms (next.js: 7ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ GET /login 200 in 50ms (next.js: 11ms, application-code: 39ms)
+ POST /login 200 in 31ms (next.js: 8ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 9ms src/actions/auth.ts
+ POST /login 200 in 28ms (next.js: 7ms, application-code: 20ms)
+  └─ ƒ getSessionUser() in 9ms src/actions/auth.ts
+ POST /login 200 in 380ms (next.js: 7ms, application-code: 373ms)
+  └─ ƒ loginAction({}) in 349ms src/actions/auth.ts
+ GET /waiter 200 in 27ms (next.js: 6ms, application-code: 21ms)
+ GET /waiter 200 in 78ms (next.js: 12ms, application-code: 66ms)
+ GET /waiter 200 in 32ms (next.js: 7ms, application-code: 24ms)
+ POST /waiter 200 in 21ms (next.js: 10ms, application-code: 11ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /waiter 200 in 35ms (next.js: 7ms, application-code: 28ms)
+  └─ ƒ getSessionUser() in 17ms src/actions/auth.ts
+ POST /waiter 200 in 33ms (next.js: 6ms, application-code: 27ms)
+  └─ ƒ getRestaurants() in 13ms src/actions/definitions.ts
+ POST /waiter 200 in 26ms (next.js: 10ms, application-code: 16ms)
+  └─ ƒ getSessionUser() in 6ms src/actions/auth.ts
+ POST /waiter 200 in 21ms (next.js: 6ms, application-code: 14ms)
+  └─ ƒ getRestaurants() in 2ms src/actions/definitions.ts
+ POST /waiter 200 in 50ms (next.js: 9ms, application-code: 42ms)
+  └─ ƒ selectRestaurantAction("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 11ms src/actions/auth.ts
+ POST /waiter 200 in 22ms (next.js: 6ms, application-code: 16ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 4ms src/actions/definitions.ts
+ POST /waiter 200 in 26ms (next.js: 6ms, application-code: 20ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 10ms src/actions/definitions.ts
+ POST /waiter 200 in 18ms (next.js: 7ms, application-code: 10ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /waiter 200 in 31ms (next.js: 11ms, application-code: 20ms)
+  └─ ƒ getTableActiveOrders("c01161a5-c689-47ea-ae56-314deb6144a5") in 9ms src/actions/orders.ts
+ POST /waiter 200 in 44ms (next.js: 12ms, application-code: 33ms)
+  └─ ƒ getMyOrdersToday() in 17ms src/actions/orders.ts
+ POST /waiter 200 in 49ms (next.js: 11ms, application-code: 38ms)
+  └─ ƒ getMyOrdersToday() in 15ms src/actions/orders.ts
+ GET /login 200 in 65ms (next.js: 9ms, application-code: 56ms)
+ POST /login 200 in 26ms (next.js: 10ms, application-code: 16ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /login 200 in 21ms (next.js: 8ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 0ms src/actions/auth.ts
+ GET /login 200 in 63ms (next.js: 18ms, application-code: 44ms)
+ POST /login 200 in 22ms (next.js: 8ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /login 200 in 21ms (next.js: 8ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /login 200 in 328ms (next.js: 9ms, application-code: 319ms)
+  └─ ƒ loginAction({}) in 293ms src/actions/auth.ts
+ GET /waiter 200 in 28ms (next.js: 7ms, application-code: 21ms)
+ GET /waiter 200 in 64ms (next.js: 10ms, application-code: 54ms)
+ GET /waiter 200 in 29ms (next.js: 7ms, application-code: 22ms)
+ POST /waiter 200 in 27ms (next.js: 10ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /waiter 200 in 29ms (next.js: 8ms, application-code: 21ms)
+  └─ ƒ getSessionUser() in 8ms src/actions/auth.ts
+ POST /waiter 200 in 32ms (next.js: 7ms, application-code: 25ms)
+  └─ ƒ getRestaurants() in 14ms src/actions/definitions.ts
+ POST /waiter 200 in 25ms (next.js: 8ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 5ms src/actions/auth.ts
+ POST /waiter 200 in 32ms (next.js: 8ms, application-code: 25ms)
+  └─ ƒ getRestaurants() in 12ms src/actions/definitions.ts
+ POST /waiter 200 in 54ms (next.js: 10ms, application-code: 44ms)
+  └─ ƒ selectRestaurantAction("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 10ms src/actions/auth.ts
+ POST /waiter 200 in 35ms (next.js: 7ms, application-code: 29ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 16ms src/actions/definitions.ts
+ POST /waiter 200 in 28ms (next.js: 8ms, application-code: 20ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 7ms src/actions/definitions.ts
+ POST /waiter 200 in 25ms (next.js: 6ms, application-code: 19ms)
+  └─ ƒ getSessionUser() in 6ms src/actions/auth.ts
+ POST /waiter 200 in 32ms (next.js: 8ms, application-code: 24ms)
+  └─ ƒ getMyOrdersToday() in 11ms src/actions/orders.ts
+ POST /waiter 200 in 27ms (next.js: 8ms, application-code: 19ms)
+  └─ ƒ getMyOrdersToday() in 8ms src/actions/orders.ts
+ POST /waiter 200 in 79ms (next.js: 11ms, application-code: 67ms)
+  └─ ƒ cancelOrder({"notifyKitchen":true,"orderId":"1b5c9b55-5b71-461e-848b-9e5b28b44869","reason":""}) in 34ms src/actions/orders.ts
+ POST /waiter 200 in 29ms (next.js: 6ms, application-code: 22ms)
+  └─ ƒ getMyOrdersToday() in 7ms src/actions/orders.ts
+ POST /waiter 200 in 42ms (next.js: 8ms, application-code: 34ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 20ms src/actions/definitions.ts
+ POST /waiter 200 in 29ms (next.js: 8ms, application-code: 22ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 8ms src/actions/definitions.ts
+ GET /login 200 in 84ms (next.js: 12ms, application-code: 72ms)
+ POST /login 200 in 27ms (next.js: 10ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /login 200 in 31ms (next.js: 9ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ GET /login 200 in 57ms (next.js: 8ms, application-code: 50ms)
+ POST /login 200 in 37ms (next.js: 8ms, application-code: 28ms)
+  └─ ƒ getSessionUser() in 14ms src/actions/auth.ts
+ POST /login 200 in 28ms (next.js: 8ms, application-code: 19ms)
+  └─ ƒ getSessionUser() in 7ms src/actions/auth.ts
+ POST /login 200 in 114ms (next.js: 8ms, application-code: 106ms)
+  └─ ƒ loginAction({}) in 80ms src/actions/auth.ts
+ GET /kitchen 200 in 97ms (next.js: 67ms, application-code: 30ms)
+ GET /kitchen 200 in 79ms (next.js: 10ms, application-code: 69ms)
+ GET /kitchen 200 in 33ms (next.js: 8ms, application-code: 26ms)
+ POST /kitchen 200 in 30ms (next.js: 10ms, application-code: 20ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /kitchen 200 in 30ms (next.js: 7ms, application-code: 23ms)
+  └─ ƒ getSessionUser() in 11ms src/actions/auth.ts
+ POST /kitchen 200 in 22ms (next.js: 8ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /kitchen 200 in 43ms (next.js: 10ms, application-code: 33ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 20ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 113ms (next.js: 29ms, application-code: 84ms)
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 36ms (next.js: 5ms, application-code: 31ms)
+ POST /kitchen 200 in 36ms (next.js: 6ms, application-code: 30ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 18ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 33ms (next.js: 11ms, application-code: 22ms)
+ POST /kitchen 200 in 25ms (next.js: 9ms, application-code: 16ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 3ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 24ms (next.js: 4ms, application-code: 19ms)
+ POST /kitchen 200 in 28ms (next.js: 10ms, application-code: 19ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 33ms (next.js: 7ms, application-code: 26ms)
+ POST /kitchen 200 in 25ms (next.js: 8ms, application-code: 17ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 19ms (next.js: 5ms, application-code: 14ms)
+ POST /kitchen 200 in 36ms (next.js: 6ms, application-code: 30ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 18ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 18ms (next.js: 5ms, application-code: 12ms)
+ POST /kitchen 200 in 34ms (next.js: 7ms, application-code: 27ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 13ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 36ms (next.js: 5ms, application-code: 31ms)
+ POST /kitchen 200 in 36ms (next.js: 7ms, application-code: 28ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 14ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 21ms (next.js: 5ms, application-code: 17ms)
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 33ms (next.js: 5ms, application-code: 28ms)
+ POST /kitchen 200 in 34ms (next.js: 8ms, application-code: 26ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 14ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 34ms (next.js: 5ms, application-code: 29ms)
+ POST /kitchen 200 in 55ms (next.js: 13ms, application-code: 42ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 23ms src/actions/orders.ts
+ GET /login 200 in 79ms (next.js: 9ms, application-code: 69ms)
+ POST /login 200 in 27ms (next.js: 11ms, application-code: 16ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /login 200 in 28ms (next.js: 8ms, application-code: 20ms)
+  └─ ƒ getSessionUser() in 5ms src/actions/auth.ts
+ GET /login 200 in 51ms (next.js: 8ms, application-code: 43ms)
+ POST /login 200 in 33ms (next.js: 11ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 7ms src/actions/auth.ts
+ POST /login 200 in 27ms (next.js: 10ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /login 200 in 352ms (next.js: 9ms, application-code: 344ms)
+  └─ ƒ loginAction({}) in 297ms src/actions/auth.ts
+ GET /chef 200 in 120ms (next.js: 93ms, application-code: 27ms)
+ GET /chef 200 in 79ms (next.js: 14ms, application-code: 65ms)
+ GET /chef 200 in 31ms (next.js: 6ms, application-code: 24ms)
+ POST /chef 200 in 27ms (next.js: 11ms, application-code: 16ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /chef 200 in 28ms (next.js: 8ms, application-code: 19ms)
+  └─ ƒ getSessionUser() in 6ms src/actions/auth.ts
+ POST /chef 200 in 27ms (next.js: 9ms, application-code: 17ms)
+  └─ ƒ getRestaurants() in 4ms src/actions/definitions.ts
+ POST /chef 200 in 31ms (next.js: 7ms, application-code: 24ms)
+  └─ ƒ getChefMasterKds("ALL") in 14ms src/actions/chef.ts
+ POST /chef 200 in 125ms (next.js: 7ms, application-code: 118ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 104ms src/actions/chef.ts
+ POST /chef 200 in 28ms (next.js: 7ms, application-code: 21ms)
+  └─ ƒ getSessionUser() in 10ms src/actions/auth.ts
+ POST /chef 200 in 42ms (next.js: 7ms, application-code: 35ms)
+  └─ ƒ getRestaurants() in 23ms src/actions/definitions.ts
+ POST /chef 200 in 25ms (next.js: 9ms, application-code: 15ms)
+  └─ ƒ getChefMasterKds("ALL") in 3ms src/actions/chef.ts
+ POST /chef 200 in 41ms (next.js: 8ms, application-code: 33ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 23ms src/actions/chef.ts
+ POST /chef 200 in 32ms (next.js: 7ms, application-code: 26ms)
+  └─ ƒ getChefMasterKds("ALL") in 15ms src/actions/chef.ts
+ POST /chef 200 in 35ms (next.js: 7ms, application-code: 28ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 15ms src/actions/chef.ts
+ POST /chef 200 in 33ms (next.js: 8ms, application-code: 25ms)
+  └─ ƒ getChefMasterKds("ALL") in 13ms src/actions/chef.ts
+ POST /chef 200 in 30ms (next.js: 13ms, application-code: 17ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 6ms src/actions/chef.ts
+ POST /chef 200 in 43ms (next.js: 7ms, application-code: 36ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 23ms src/actions/chef.ts
+ GET /waiter 200 in 82ms (next.js: 9ms, application-code: 73ms)
+ POST /waiter 200 in 30ms (next.js: 8ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 10ms src/actions/auth.ts
+ POST /waiter 200 in 27ms (next.js: 10ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /waiter 200 in 33ms (next.js: 6ms, application-code: 28ms)
+  └─ ƒ getRestaurants() in 16ms src/actions/definitions.ts
+ POST /waiter 200 in 27ms (next.js: 9ms, application-code: 18ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /waiter 200 in 34ms (next.js: 10ms, application-code: 23ms)
+  └─ ƒ getSessionUser() in 4ms src/actions/auth.ts
+ POST /waiter 200 in 44ms (next.js: 15ms, application-code: 29ms)
+  └─ ƒ getRestaurants() in 12ms src/actions/definitions.ts
+ POST /waiter 200 in 62ms (next.js: 9ms, application-code: 54ms)
+  └─ ƒ selectRestaurantAction("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 24ms src/actions/auth.ts
+ POST /waiter 200 in 40ms (next.js: 7ms, application-code: 32ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 18ms src/actions/definitions.ts
+ POST /waiter 200 in 31ms (next.js: 8ms, application-code: 23ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 12ms src/actions/definitions.ts
+ POST /waiter 200 in 27ms (next.js: 8ms, application-code: 19ms)
+  └─ ƒ getTableActiveOrders("32e584e6-fb64-4120-99fd-8d29d5b0ec4c") in 5ms src/actions/orders.ts
+ GET /kitchen 200 in 64ms (next.js: 8ms, application-code: 56ms)
+ POST /kitchen 200 in 39ms (next.js: 14ms, application-code: 25ms)
+  └─ ƒ getSessionUser() in 9ms src/actions/auth.ts
+ POST /kitchen 200 in 31ms (next.js: 9ms, application-code: 23ms)
+  └─ ƒ getSessionUser() in 11ms src/actions/auth.ts
+ POST /kitchen 200 in 45ms (next.js: 11ms, application-code: 34ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 38ms (next.js: 7ms, application-code: 31ms)
+ POST /kitchen 200 in 26ms (next.js: 10ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /kitchen 200 in 36ms (next.js: 7ms, application-code: 29ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 10ms src/actions/orders.ts
+ POST /waiter 200 in 83ms (next.js: 10ms, application-code: 74ms)
+  └─ ƒ createOrder({"items":["[Object]"],"notes":"","restaurantId":"95a80bec-aa11-4736-9f3f-35ccb60b4985","...":"2 items not stringified"}) in 36ms src/actions/orders.ts
+ POST /waiter 200 in 35ms (next.js: 12ms, application-code: 23ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 4ms src/actions/definitions.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 36ms (next.js: 5ms, application-code: 31ms)
+ POST /kitchen 200 in 35ms (next.js: 6ms, application-code: 28ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 16ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 35ms (next.js: 5ms, application-code: 29ms)
+ POST /kitchen 200 in 36ms (next.js: 7ms, application-code: 30ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 18ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 24ms (next.js: 5ms, application-code: 19ms)
+ POST /kitchen 200 in 39ms (next.js: 9ms, application-code: 30ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 8ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 35ms (next.js: 5ms, application-code: 30ms)
+ POST /kitchen 200 in 34ms (next.js: 8ms, application-code: 25ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 8ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 37ms (next.js: 6ms, application-code: 30ms)
+ POST /kitchen 200 in 35ms (next.js: 10ms, application-code: 25ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 10ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 35ms (next.js: 6ms, application-code: 29ms)
+ POST /kitchen 200 in 32ms (next.js: 10ms, application-code: 23ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 9ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 35ms (next.js: 5ms, application-code: 30ms)
+ POST /kitchen 200 in 38ms (next.js: 7ms, application-code: 31ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 15ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 24ms (next.js: 5ms, application-code: 19ms)
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 37ms (next.js: 7ms, application-code: 31ms)
+ POST /kitchen 200 in 32ms (next.js: 10ms, application-code: 22ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 32ms (next.js: 5ms, application-code: 27ms)
+ POST /kitchen 200 in 23ms (next.js: 7ms, application-code: 16ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 18ms (next.js: 4ms, application-code: 14ms)
+ POST /kitchen 200 in 35ms (next.js: 7ms, application-code: 28ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 16ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 19ms (next.js: 4ms, application-code: 14ms)
+ POST /kitchen 200 in 37ms (next.js: 8ms, application-code: 29ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 10ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 32ms (next.js: 5ms, application-code: 27ms)
+ POST /kitchen 200 in 31ms (next.js: 10ms, application-code: 22ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 35ms (next.js: 6ms, application-code: 29ms)
+✓ Compiled in 287ms
+ GET /kitchen 200 in 212ms (next.js: 19ms, application-code: 193ms)
+ GET /admin/users 200 in 160ms (next.js: 18ms, application-code: 142ms)
+ GET /waiter 200 in 217ms (next.js: 59ms, application-code: 158ms)
+ GET /waiter 200 in 161ms (next.js: 14ms, application-code: 147ms)
+ GET /waiter 200 in 198ms (next.js: 16ms, application-code: 182ms)
+ GET / 200 in 130ms (next.js: 32ms, application-code: 99ms)
+ GET / 200 in 63ms (next.js: 18ms, application-code: 44ms)
+ POST /kitchen 200 in 144ms (next.js: 15ms, application-code: 128ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 58ms src/actions/orders.ts
+ POST / 200 in 104ms (next.js: 15ms, application-code: 88ms)
+  └─ ƒ getSessionUser() in 22ms src/actions/auth.ts
+ GET /chef 200 in 157ms (next.js: 59ms, application-code: 97ms)
+ GET /chef 200 in 59ms (next.js: 16ms, application-code: 43ms)
+ POST /chef 200 in 33ms (next.js: 13ms, application-code: 20ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /chef 200 in 37ms (next.js: 12ms, application-code: 24ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /chef 200 in 47ms (next.js: 13ms, application-code: 33ms)
+  └─ ƒ getRestaurants() in 6ms src/actions/definitions.ts
+ POST /chef 200 in 60ms (next.js: 18ms, application-code: 42ms)
+  └─ ƒ getChefMasterKds("ALL") in 22ms src/actions/chef.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 59ms (next.js: 7ms, application-code: 52ms)
+ POST /chef 200 in 112ms (next.js: 11ms, application-code: 101ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 81ms src/actions/chef.ts
+ POST /chef 200 in 37ms (next.js: 11ms, application-code: 25ms)
+  └─ ƒ getSessionUser() in 7ms src/actions/auth.ts
+ POST /chef 200 in 42ms (next.js: 10ms, application-code: 32ms)
+  └─ ƒ getRestaurants() in 16ms src/actions/definitions.ts
+ POST /chef 200 in 50ms (next.js: 11ms, application-code: 39ms)
+  └─ ƒ getChefMasterKds("ALL") in 22ms src/actions/chef.ts
+ POST /chef 200 in 45ms (next.js: 13ms, application-code: 32ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 16ms src/actions/chef.ts
+ POST /kitchen 200 in 43ms (next.js: 8ms, application-code: 35ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 21ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 43ms (next.js: 5ms, application-code: 39ms)
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 34ms (next.js: 6ms, application-code: 28ms)
+ POST /kitchen 200 in 28ms (next.js: 8ms, application-code: 20ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 7ms src/actions/orders.ts
+ POST /chef 200 in 50ms (next.js: 13ms, application-code: 37ms)
+  └─ ƒ getChefMasterKds("ALL") in 15ms src/actions/chef.ts
+ POST /chef 200 in 40ms (next.js: 16ms, application-code: 24ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 7ms src/actions/chef.ts
+✓ Compiled in 237ms
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 500 in 107ms (next.js: 77ms, application-code: 30ms)
+[browser] fetchOrders error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON (src/app/kitchen/page.tsx:169:15)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+⨯ ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  [90m737 |[0m                         {!isCompleted ? (
+  [90m738 |[0m                           <button
+[31m[1m>[0m [90m739 |[0m                         {canUpdateStatus && (
+  [90m    |[0m                          [31m[1m^^^^^^^^^^^^^^^[0m
+  [90m740 |[0m                             onClick={() => handleUpdateStatus(order.id, [32m"COMPLETED"[0m)}
+  [90m741 |[0m                             className=[32m"flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...[0m
+  [90m742 |[0m                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+
+ POST /kitchen 500 in 33ms (next.js: 21ms, application-code: 12ms)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] fetchCancelAlerts error: Error: An unexpected response was received from the server. (src/app/kitchen/page.tsx:183:15)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 500 in 26ms (next.js: 12ms, application-code: 13ms)
+[browser] fetchOrders error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON (src/app/kitchen/page.tsx:169:15)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ POST /chef 500 in 31ms (next.js: 16ms, application-code: 15ms)
+ POST /chef 500 in 33ms (next.js: 19ms, application-code: 13ms)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+⨯ ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  [90m737 |[0m                         {!isCompleted ? (
+  [90m738 |[0m                           <button
+[31m[1m>[0m [90m739 |[0m                         {canUpdateStatus && (
+  [90m    |[0m                          [31m[1m^^^^^^^^^^^^^^^[0m
+  [90m740 |[0m                             onClick={() => handleUpdateStatus(order.id, [32m"COMPLETED"[0m)}
+  [90m741 |[0m                             className=[32m"flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...[0m
+  [90m742 |[0m                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+
+ POST /kitchen 500 in 34ms (next.js: 18ms, application-code: 16ms)
+[browser] fetchCancelAlerts error: Error: An unexpected response was received from the server. (src/app/kitchen/page.tsx:183:15)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 500 in 26ms (next.js: 12ms, application-code: 14ms)
+[browser] fetchOrders error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON (src/app/kitchen/page.tsx:169:15)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+⨯ ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  [90m737 |[0m                         {!isCompleted ? (
+  [90m738 |[0m                           <button
+[31m[1m>[0m [90m739 |[0m                         {canUpdateStatus && (
+  [90m    |[0m                          [31m[1m^^^^^^^^^^^^^^^[0m
+  [90m740 |[0m                             onClick={() => handleUpdateStatus(order.id, [32m"COMPLETED"[0m)}
+  [90m741 |[0m                             className=[32m"flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...[0m
+  [90m742 |[0m                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+
+ POST /kitchen 500 in 34ms (next.js: 19ms, application-code: 15ms)
+[browser] fetchCancelAlerts error: Error: An unexpected response was received from the server. (src/app/kitchen/page.tsx:183:15)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 500 in 30ms (next.js: 15ms, application-code: 15ms)
+[browser] fetchOrders error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON (src/app/kitchen/page.tsx:169:15)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+✓ Compiled in 90ms
+ POST /chef 500 in 31ms (next.js: 16ms, application-code: 15ms)
+ POST /chef 500 in 26ms (next.js: 14ms, application-code: 13ms)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+⨯ ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  [90m776 |[0m                             </button>
+  [90m777 |[0m                           </div>
+[31m[1m>[0m [90m778 |[0m                         )}
+  [90m    |[0m                          [31m[1m^[0m
+  [90m779 |[0m                       </>
+  [90m780 |[0m                     )}
+  [90m781 |[0m                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+
+ POST /kitchen 500 in 36ms (next.js: 22ms, application-code: 15ms)
+[browser] fetchCancelAlerts error: Error: An unexpected response was received from the server. (src/app/kitchen/page.tsx:183:15)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 500 in 26ms (next.js: 13ms, application-code: 12ms)
+[browser] fetchOrders error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON (src/app/kitchen/page.tsx:169:15)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+⨯ ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  [90m776 |[0m                             </button>
+  [90m777 |[0m                           </div>
+[31m[1m>[0m [90m778 |[0m                         )}
+  [90m    |[0m                          [31m[1m^[0m
+  [90m779 |[0m                       </>
+  [90m780 |[0m                     )}
+  [90m781 |[0m                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+
+ POST /kitchen 500 in 37ms (next.js: 23ms, application-code: 14ms)
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 500 in 28ms (next.js: 15ms, application-code: 13ms)
+[browser] fetchCancelAlerts error: Error: An unexpected response was received from the server. (src/app/kitchen/page.tsx:183:15)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] fetchOrders error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON (src/app/kitchen/page.tsx:169:15)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ POST /chef 500 in 35ms (next.js: 18ms, application-code: 17ms)
+ POST /chef 500 in 37ms (next.js: 21ms, application-code: 16ms)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+⨯ ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  [90m776 |[0m                             </button>
+  [90m777 |[0m                           </div>
+[31m[1m>[0m [90m778 |[0m                         )}
+  [90m    |[0m                          [31m[1m^[0m
+  [90m779 |[0m                       </>
+  [90m780 |[0m                     )}
+  [90m781 |[0m                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 500 in 94ms (next.js: 28ms, application-code: 67ms)
+ POST /kitchen 500 in 97ms (next.js: 55ms, application-code: 41ms)
+[browser] fetchCancelAlerts error: Error: An unexpected response was received from the server. (src/app/kitchen/page.tsx:183:15)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] fetchOrders error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON (src/app/kitchen/page.tsx:169:15)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 500 in 38ms (next.js: 14ms, application-code: 24ms)
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] fetchOrders error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON (src/app/kitchen/page.tsx:169:15)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+⨯ ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  [90m776 |[0m                             </button>
+  [90m777 |[0m                           </div>
+[31m[1m>[0m [90m778 |[0m                         )}
+  [90m    |[0m                          [31m[1m^[0m
+  [90m779 |[0m                       </>
+  [90m780 |[0m                     )}
+  [90m781 |[0m                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+
+ POST /kitchen 500 in 36ms (next.js: 18ms, application-code: 18ms)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ POST /chef 500 in 44ms (next.js: 27ms, application-code: 17ms)
+ POST /chef 500 in 54ms (next.js: 26ms, application-code: 28ms)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+✓ Compiled in 114ms
+[browser] fetchCancelAlerts error: Error: An unexpected response was received from the server. (src/app/kitchen/page.tsx:183:15)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ GET /kitchen 200 in 288ms (next.js: 57ms, application-code: 231ms)
+ GET /waiter 200 in 287ms (next.js: 94ms, application-code: 193ms)
+ GET /chef 200 in 286ms (next.js: 126ms, application-code: 160ms)
+ GET /waiter 200 in 118ms (next.js: 11ms, application-code: 107ms)
+ GET /waiter 200 in 69ms (next.js: 15ms, application-code: 54ms)
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 51ms (next.js: 20ms, application-code: 31ms)
+ POST /kitchen 200 in 35ms (next.js: 16ms, application-code: 19ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 8ms src/actions/orders.ts
+ POST /waiter 200 in 52ms (next.js: 16ms, application-code: 36ms)
+  └─ ƒ getMyOrdersToday() in 23ms src/actions/orders.ts
+ POST /waiter 200 in 29ms (next.js: 9ms, application-code: 20ms)
+  └─ ƒ getMyOrdersToday() in 6ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 20ms (next.js: 5ms, application-code: 15ms)
+ POST /waiter 200 in 32ms (next.js: 8ms, application-code: 24ms)
+  └─ ƒ getMyOrdersToday() in 7ms src/actions/orders.ts
+ POST /waiter 200 in 40ms (next.js: 6ms, application-code: 34ms)
+  └─ ƒ getMyOrdersToday() in 21ms src/actions/orders.ts
+ POST /chef 200 in 34ms (next.js: 12ms, application-code: 22ms)
+  └─ ƒ getChefMasterKds("ALL") in 11ms src/actions/chef.ts
+ POST /chef 200 in 24ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 5ms src/actions/chef.ts
+ POST /kitchen 200 in 46ms (next.js: 7ms, application-code: 39ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 28ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 38ms (next.js: 4ms, application-code: 34ms)
+ POST /kitchen 200 in 37ms (next.js: 8ms, application-code: 30ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 15ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 35ms (next.js: 5ms, application-code: 31ms)
+ POST /chef 200 in 36ms (next.js: 9ms, application-code: 27ms)
+  └─ ƒ getChefMasterKds("ALL") in 11ms src/actions/chef.ts
+ POST /chef 200 in 44ms (next.js: 11ms, application-code: 33ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 20ms src/actions/chef.ts
+ POST /waiter 200 in 87ms (next.js: 14ms, application-code: 73ms)
+  └─ ƒ cancelOrder({"notifyKitchen":true,"orderId":"3736bd3e-e179-49c1-9416-f7c97decc372","reason":"ASDASD"}) in 37ms src/actions/orders.ts
+ POST /waiter 200 in 34ms (next.js: 10ms, application-code: 24ms)
+  └─ ƒ getMyOrdersToday() in 5ms src/actions/orders.ts
+ POST /waiter 200 in 35ms (next.js: 10ms, application-code: 25ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 4ms src/actions/definitions.ts
+ POST /waiter 200 in 36ms (next.js: 7ms, application-code: 29ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 17ms src/actions/definitions.ts
+ POST /kitchen 200 in 36ms (next.js: 7ms, application-code: 29ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 16ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 68ms (next.js: 23ms, application-code: 45ms)
+ POST /kitchen 200 in 36ms (next.js: 10ms, application-code: 26ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 13ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 36ms (next.js: 6ms, application-code: 30ms)
+ POST /kitchen 200 in 50ms (next.js: 18ms, application-code: 32ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 16ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 23ms (next.js: 7ms, application-code: 17ms)
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 36ms (next.js: 5ms, application-code: 31ms)
+ POST /kitchen 200 in 114ms (next.js: 32ms, application-code: 82ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 17ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 34ms (next.js: 5ms, application-code: 29ms)
+ POST /kitchen 200 in 49ms (next.js: 11ms, application-code: 38ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 21ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 18ms (next.js: 4ms, application-code: 14ms)
+ POST /kitchen 200 in 97ms (next.js: 71ms, application-code: 26ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 9ms src/actions/orders.ts
+ POST /chef 200 in 32ms (next.js: 12ms, application-code: 20ms)
+  └─ ƒ getChefMasterKds("ALL") in 5ms src/actions/chef.ts
+ POST /chef 200 in 27ms (next.js: 9ms, application-code: 18ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 4ms src/actions/chef.ts
+ GET /login 200 in 310ms (next.js: 139ms, application-code: 171ms)
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 101ms (next.js: 13ms, application-code: 88ms)
+ POST /login 200 in 38ms (next.js: 16ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /login 200 in 44ms (next.js: 12ms, application-code: 31ms)
+  └─ ƒ getSessionUser() in 13ms src/actions/auth.ts
+ GET /login 200 in 53ms (next.js: 6ms, application-code: 46ms)
+ POST /login 200 in 40ms (next.js: 10ms, application-code: 31ms)
+  └─ ƒ getSessionUser() in 13ms src/actions/auth.ts
+ POST /login 200 in 25ms (next.js: 5ms, application-code: 20ms)
+  └─ ƒ getSessionUser() in 7ms src/actions/auth.ts
+ POST /login 200 in 358ms (next.js: 9ms, application-code: 349ms)
+  └─ ƒ loginAction({}) in 326ms src/actions/auth.ts
+ GET /chef 200 in 32ms (next.js: 9ms, application-code: 23ms)
+ GET /chef 200 in 72ms (next.js: 10ms, application-code: 63ms)
+ GET /chef 200 in 36ms (next.js: 8ms, application-code: 28ms)
+ POST /chef 200 in 30ms (next.js: 10ms, application-code: 20ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /chef 200 in 35ms (next.js: 12ms, application-code: 23ms)
+  └─ ƒ getSessionUser() in 7ms src/actions/auth.ts
+ POST /chef 200 in 33ms (next.js: 8ms, application-code: 25ms)
+  └─ ƒ getRestaurants() in 13ms src/actions/definitions.ts
+ POST /chef 200 in 45ms (next.js: 10ms, application-code: 35ms)
+  └─ ƒ getChefMasterKds("ALL") in 22ms src/actions/chef.ts
+ POST /chef 200 in 33ms (next.js: 10ms, application-code: 24ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 7ms src/actions/chef.ts
+ POST /chef 200 in 31ms (next.js: 15ms, application-code: 16ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /chef 200 in 34ms (next.js: 11ms, application-code: 24ms)
+  └─ ƒ getRestaurants() in 11ms src/actions/definitions.ts
+ POST /chef 200 in 46ms (next.js: 12ms, application-code: 34ms)
+  └─ ƒ getChefMasterKds("ALL") in 18ms src/actions/chef.ts
+ POST /chef 200 in 28ms (next.js: 10ms, application-code: 19ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 7ms src/actions/chef.ts
+ POST /chef 200 in 32ms (next.js: 8ms, application-code: 25ms)
+  └─ ƒ getChefMasterKds("ALL") in 13ms src/actions/chef.ts
+ POST /chef 200 in 31ms (next.js: 10ms, application-code: 21ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 10ms src/actions/chef.ts
+ POST /chef 200 in 29ms (next.js: 7ms, application-code: 23ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 9ms src/actions/chef.ts
+ POST /chef 200 in 31ms (next.js: 9ms, application-code: 22ms)
+  └─ ƒ getChefMasterKds("ALL") in 7ms src/actions/chef.ts
+ POST /chef 200 in 23ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 4ms src/actions/chef.ts
+ GET /waiter 200 in 60ms (next.js: 10ms, application-code: 50ms)
+ POST /waiter 200 in 26ms (next.js: 7ms, application-code: 19ms)
+  └─ ƒ getSessionUser() in 5ms src/actions/auth.ts
+ POST /waiter 200 in 35ms (next.js: 8ms, application-code: 27ms)
+  └─ ƒ getSessionUser() in 14ms src/actions/auth.ts
+ POST /waiter 200 in 30ms (next.js: 6ms, application-code: 24ms)
+  └─ ƒ getRestaurants() in 11ms src/actions/definitions.ts
+ POST /waiter 200 in 24ms (next.js: 7ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 4ms src/actions/auth.ts
+ POST /waiter 200 in 28ms (next.js: 11ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /waiter 200 in 33ms (next.js: 11ms, application-code: 22ms)
+  └─ ƒ getRestaurants() in 5ms src/actions/definitions.ts
+ POST /chef 200 in 28ms (next.js: 7ms, application-code: 21ms)
+  └─ ƒ getChefMasterKds("ALL") in 7ms src/actions/chef.ts
+ POST /chef 200 in 88ms (next.js: 8ms, application-code: 80ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 68ms src/actions/chef.ts
+ GET /kitchen 200 in 56ms (next.js: 10ms, application-code: 46ms)
+ POST /kitchen 200 in 24ms (next.js: 9ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /kitchen 200 in 30ms (next.js: 16ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /kitchen 200 in 21ms (next.js: 6ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /kitchen 200 in 27ms (next.js: 11ms, application-code: 16ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /chef 200 in 28ms (next.js: 9ms, application-code: 19ms)
+  └─ ƒ getChefMasterKds("ALL") in 8ms src/actions/chef.ts
+ POST /chef 200 in 112ms (next.js: 8ms, application-code: 103ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 93ms src/actions/chef.ts
+ GET /login 200 in 102ms (next.js: 11ms, application-code: 91ms)
+ POST /login 200 in 49ms (next.js: 13ms, application-code: 35ms)
+  └─ ƒ getSessionUser() in 6ms src/actions/auth.ts
+ POST /login 200 in 45ms (next.js: 18ms, application-code: 27ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ GET /login 200 in 55ms (next.js: 7ms, application-code: 48ms)
+ POST /login 200 in 30ms (next.js: 10ms, application-code: 20ms)
+  └─ ƒ getSessionUser() in 6ms src/actions/auth.ts
+ POST /login 200 in 28ms (next.js: 11ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /chef 200 in 57ms (next.js: 11ms, application-code: 46ms)
+  └─ ƒ getChefMasterKds("ALL") in 30ms src/actions/chef.ts
+ POST /chef 200 in 95ms (next.js: 8ms, application-code: 87ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 73ms src/actions/chef.ts
+ POST /login 200 in 138ms (next.js: 7ms, application-code: 131ms)
+  └─ ƒ loginAction({}) in 104ms src/actions/auth.ts
+ GET /kitchen 200 in 29ms (next.js: 7ms, application-code: 21ms)
+ GET /kitchen 200 in 80ms (next.js: 8ms, application-code: 71ms)
+ GET /kitchen 200 in 46ms (next.js: 8ms, application-code: 38ms)
+ POST /kitchen 200 in 43ms (next.js: 16ms, application-code: 26ms)
+  └─ ƒ getSessionUser() in 5ms src/actions/auth.ts
+ POST /kitchen 200 in 32ms (next.js: 12ms, application-code: 20ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /kitchen 200 in 76ms (next.js: 9ms, application-code: 67ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 71ms (next.js: 7ms, application-code: 64ms)
+ POST /kitchen 200 in 33ms (next.js: 14ms, application-code: 20ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 18ms (next.js: 4ms, application-code: 14ms)
+ POST /kitchen 200 in 35ms (next.js: 6ms, application-code: 29ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 19ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 19ms (next.js: 4ms, application-code: 15ms)
+ POST /kitchen 200 in 34ms (next.js: 7ms, application-code: 27ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 14ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 22ms (next.js: 5ms, application-code: 17ms)
+ POST /kitchen 200 in 39ms (next.js: 6ms, application-code: 33ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 21ms src/actions/orders.ts
+ GET /login 200 in 51ms (next.js: 11ms, application-code: 39ms)
+ POST /login 200 in 24ms (next.js: 9ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /login 200 in 23ms (next.js: 9ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 4ms src/actions/auth.ts
+ GET /login 200 in 60ms (next.js: 7ms, application-code: 53ms)
+ POST /login 200 in 44ms (next.js: 13ms, application-code: 31ms)
+  └─ ƒ getSessionUser() in 15ms src/actions/auth.ts
+ POST /login 200 in 29ms (next.js: 7ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:739:26
+Error: Expected '</', got 'ident'
+  737 |                         {!isCompleted ? (
+  738 |                           <button
+> 739 |                         {canUpdateStatus && (
+      |                          ^^^^^^^^^^^^^^^
+  740 |                             onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+  741 |                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-...
+  742 |                           >
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+[browser] ./src/app/kitchen/page.tsx:778:26
+Error: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  776 |                             </button>
+  777 |                           </div>
+> 778 |                         )}
+      |                          ^
+  779 |                       </>
+  780 |                     )}
+  781 |                   </div>
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/kitchen/page.tsx [Client Component Browser]
+    ./src/app/kitchen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/kitchen/page.tsx [Client Component SSR]
+    ./src/app/kitchen/page.tsx [Server Component] 
+ POST /waiter 200 in 21ms (next.js: 8ms, application-code: 13ms)
+  └─ ƒ getTableActiveOrders("fa52a2dd-1ac0-4d83-aa04-b0e8245a45a9") in 1ms src/actions/orders.ts
+ POST /waiter 200 in 38ms (next.js: 9ms, application-code: 29ms)
+  └─ ƒ createOrder({"items":["[Object]"],"notes":"","restaurantId":"1f06b1be-14db-485c-9ae4-f7859f5440c1","...":"2 items not stringified"}) in 15ms src/actions/orders.ts
+ GET /login 200 in 44ms (next.js: 7ms, application-code: 37ms)
+ POST /waiter 200 in 93ms (next.js: 7ms, application-code: 85ms)
+  └─ ƒ logoutAction() in 16ms src/actions/auth.ts
+ POST /login 200 in 25ms (next.js: 9ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /login 200 in 335ms (next.js: 8ms, application-code: 326ms)
+  └─ ƒ loginAction({}) in 298ms src/actions/auth.ts
+ GET /waiter 200 in 37ms (next.js: 10ms, application-code: 27ms)
+ GET /waiter 200 in 81ms (next.js: 8ms, application-code: 72ms)
+ GET /waiter 200 in 44ms (next.js: 9ms, application-code: 34ms)
+ POST /waiter 200 in 34ms (next.js: 17ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /waiter 200 in 23ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /waiter 200 in 33ms (next.js: 9ms, application-code: 24ms)
+  └─ ƒ getRestaurants() in 12ms src/actions/definitions.ts
+ POST /waiter 200 in 26ms (next.js: 9ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 4ms src/actions/auth.ts
+ POST /waiter 200 in 31ms (next.js: 11ms, application-code: 20ms)
+  └─ ƒ getRestaurants() in 4ms src/actions/definitions.ts
+ POST /waiter 200 in 65ms (next.js: 11ms, application-code: 55ms)
+  └─ ƒ selectRestaurantAction("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 18ms src/actions/auth.ts
+ POST /waiter 200 in 23ms (next.js: 7ms, application-code: 15ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 6ms src/actions/definitions.ts
+ POST /waiter 200 in 30ms (next.js: 6ms, application-code: 24ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 12ms src/actions/definitions.ts
+ POST /waiter 200 in 38ms (next.js: 11ms, application-code: 27ms)
+  └─ ƒ getTableActiveOrders("86992ee6-9565-48a2-9a8c-12521c85df1e") in 11ms src/actions/orders.ts
+ POST /waiter 200 in 69ms (next.js: 10ms, application-code: 59ms)
+  └─ ƒ createOrder({"items":["[Object]"],"notes":"","restaurantId":"95a80bec-aa11-4736-9f3f-35ccb60b4985","...":"2 items not stringified"}) in 21ms src/actions/orders.ts
+ POST /waiter 200 in 33ms (next.js: 10ms, application-code: 23ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 7ms src/actions/definitions.ts
+ POST /waiter 200 in 27ms (next.js: 8ms, application-code: 19ms)
+  └─ ƒ getMyOrdersToday() in 6ms src/actions/orders.ts
+ POST /waiter 200 in 25ms (next.js: 7ms, application-code: 17ms)
+  └─ ƒ getMyOrdersToday() in 6ms src/actions/orders.ts
+ POST /waiter 200 in 84ms (next.js: 10ms, application-code: 74ms)
+  └─ ƒ cancelOrder({"notifyKitchen":true,"orderId":"e6e95898-e388-4c89-b250-d00a398bf08c","reason":""}) in 44ms src/actions/orders.ts
+ POST /waiter 200 in 34ms (next.js: 13ms, application-code: 21ms)
+  └─ ƒ getMyOrdersToday() in 6ms src/actions/orders.ts
+ POST /waiter 200 in 35ms (next.js: 7ms, application-code: 28ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 15ms src/actions/definitions.ts
+ POST /waiter 200 in 33ms (next.js: 9ms, application-code: 24ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 9ms src/actions/definitions.ts
+ GET /login 200 in 48ms (next.js: 8ms, application-code: 39ms)
+ POST /waiter 200 in 96ms (next.js: 8ms, application-code: 87ms)
+  └─ ƒ logoutAction() in 19ms src/actions/auth.ts
+ POST /login 200 in 32ms (next.js: 11ms, application-code: 21ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ GET /api/health 200 in 24ms (next.js: 15ms, application-code: 10ms)
+ GET /login 200 in 88ms (next.js: 12ms, application-code: 76ms)
+ POST /login 200 in 28ms (next.js: 11ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /login 200 in 23ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ GET /login 200 in 51ms (next.js: 9ms, application-code: 42ms)
+ POST /login 200 in 29ms (next.js: 10ms, application-code: 19ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /login 200 in 28ms (next.js: 6ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 7ms src/actions/auth.ts
+ POST /login 200 in 310ms (next.js: 7ms, application-code: 304ms)
+  └─ ƒ loginAction({}) in 281ms src/actions/auth.ts
+ GET /chef 200 in 30ms (next.js: 8ms, application-code: 22ms)
+ GET /chef 200 in 36ms (next.js: 11ms, application-code: 25ms)
+ POST /chef 200 in 23ms (next.js: 10ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /chef 200 in 32ms (next.js: 7ms, application-code: 25ms)
+  └─ ƒ getSessionUser() in 15ms src/actions/auth.ts
+ POST /chef 200 in 29ms (next.js: 7ms, application-code: 22ms)
+  └─ ƒ getRestaurants() in 11ms src/actions/definitions.ts
+ POST /chef 200 in 20ms (next.js: 8ms, application-code: 12ms)
+  └─ ƒ getChefMasterKds("ALL") in 3ms src/actions/chef.ts
+ POST /chef 200 in 28ms (next.js: 6ms, application-code: 22ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 11ms src/actions/chef.ts
+ POST /chef 200 in 25ms (next.js: 10ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /chef 200 in 52ms (next.js: 9ms, application-code: 42ms)
+  └─ ƒ getRestaurants() in 25ms src/actions/definitions.ts
+ POST /chef 200 in 26ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getChefMasterKds("ALL") in 8ms src/actions/chef.ts
+ POST /chef 200 in 30ms (next.js: 8ms, application-code: 22ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 9ms src/actions/chef.ts
+ POST /chef 200 in 29ms (next.js: 6ms, application-code: 23ms)
+  └─ ƒ getChefMasterKds("ALL") in 12ms src/actions/chef.ts
+ POST /chef 200 in 32ms (next.js: 7ms, application-code: 24ms)
+  └─ ƒ getLiveServiceSnapshot("ALL") in 12ms src/actions/chef.ts
+ POST /chef 200 in 44ms (next.js: 7ms, application-code: 36ms)
+  └─ ƒ getChefAnalyticsAndReport({"endDate":"2026-09-26","restaurantId":"ALL","startDate":"2026-09-26"}) in 25ms src/actions/chef.ts
+ GET /waiter 200 in 58ms (next.js: 9ms, application-code: 50ms)
+ POST /waiter 200 in 27ms (next.js: 9ms, application-code: 18ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ POST /waiter 200 in 22ms (next.js: 9ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 0ms src/actions/auth.ts
+ POST /waiter 200 in 194ms (next.js: 7ms, application-code: 186ms)
+  └─ ƒ getRestaurants() in 175ms src/actions/definitions.ts
+ POST /waiter 200 in 27ms (next.js: 7ms, application-code: 19ms)
+  └─ ƒ getSessionUser() in 10ms src/actions/auth.ts
+ POST /waiter 200 in 30ms (next.js: 8ms, application-code: 21ms)
+  └─ ƒ getSessionUser() in 11ms src/actions/auth.ts
+ POST /waiter 200 in 32ms (next.js: 7ms, application-code: 25ms)
+  └─ ƒ getRestaurants() in 15ms src/actions/definitions.ts
+ GET /kitchen 200 in 64ms (next.js: 12ms, application-code: 52ms)
+ POST /kitchen 200 in 37ms (next.js: 9ms, application-code: 27ms)
+  └─ ƒ getSessionUser() in 14ms src/actions/auth.ts
+ POST /kitchen 200 in 21ms (next.js: 6ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /kitchen 200 in 20ms (next.js: 8ms, application-code: 12ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /kitchen 200 in 30ms (next.js: 8ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts
+ GET /login 200 in 66ms (next.js: 9ms, application-code: 57ms)
+ POST /login 200 in 23ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /login 200 in 30ms (next.js: 8ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 10ms src/actions/auth.ts
+ GET /login 200 in 69ms (next.js: 11ms, application-code: 58ms)
+ POST /login 200 in 46ms (next.js: 10ms, application-code: 36ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts
+ POST /login 200 in 24ms (next.js: 10ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /login 200 in 121ms (next.js: 7ms, application-code: 113ms)
+  └─ ƒ loginAction({}) in 88ms src/actions/auth.ts
+ GET /kitchen 200 in 32ms (next.js: 7ms, application-code: 25ms)
+ GET /kitchen 200 in 73ms (next.js: 10ms, application-code: 63ms)
+ GET /kitchen 200 in 38ms (next.js: 9ms, application-code: 29ms)
+ POST /kitchen 200 in 25ms (next.js: 12ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /kitchen 200 in 20ms (next.js: 7ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /kitchen 200 in 37ms (next.js: 10ms, application-code: 27ms)
+  └─ ƒ getSessionUser() in 0ms src/actions/auth.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 35ms (next.js: 5ms, application-code: 30ms)
+ POST /kitchen 200 in 26ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 7ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 31ms (next.js: 5ms, application-code: 26ms)
+ POST /kitchen 200 in 26ms (next.js: 9ms, application-code: 18ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 6ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 22ms (next.js: 6ms, application-code: 16ms)
+ POST /kitchen 200 in 21ms (next.js: 6ms, application-code: 15ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 22ms (next.js: 6ms, application-code: 16ms)
+ POST /kitchen 200 in 35ms (next.js: 11ms, application-code: 25ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 6ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 25ms (next.js: 4ms, application-code: 21ms)
+ POST /kitchen 200 in 35ms (next.js: 8ms, application-code: 27ms)
+  └─ ƒ getKitchenCancellationAlerts("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 14ms src/actions/orders.ts
+ GET /api/kitchen/orders?restaurantId=95a80bec-aa11-4736-9f3f-35ccb60b4985 200 in 35ms (next.js: 5ms, application-code: 30ms)
+ GET /login 200 in 76ms (next.js: 9ms, application-code: 67ms)
+ POST /login 200 in 30ms (next.js: 10ms, application-code: 21ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /login 200 in 29ms (next.js: 11ms, application-code: 18ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ GET /login 200 in 46ms (next.js: 10ms, application-code: 36ms)
+ POST /login 200 in 29ms (next.js: 9ms, application-code: 21ms)
+  └─ ƒ getSessionUser() in 10ms src/actions/auth.ts
+ POST /login 200 in 22ms (next.js: 9ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /login 200 in 331ms (next.js: 8ms, application-code: 323ms)
+  └─ ƒ loginAction({}) in 299ms src/actions/auth.ts
+ GET /waiter 200 in 33ms (next.js: 8ms, application-code: 26ms)
+ GET /waiter 200 in 87ms (next.js: 9ms, application-code: 77ms)
+ GET /waiter 200 in 53ms (next.js: 11ms, application-code: 42ms)
+ POST /waiter 200 in 33ms (next.js: 9ms, application-code: 24ms)
+  └─ ƒ getSessionUser() in 16ms src/actions/auth.ts
+ POST /waiter 200 in 16ms (next.js: 6ms, application-code: 10ms)
+  └─ ƒ getSessionUser() in 0ms src/actions/auth.ts
+ POST /waiter 200 in 27ms (next.js: 6ms, application-code: 22ms)
+  └─ ƒ getRestaurants() in 12ms src/actions/definitions.ts
+ POST /waiter 200 in 22ms (next.js: 8ms, application-code: 14ms)
+  └─ ƒ getSessionUser() in 0ms src/actions/auth.ts
+ POST /waiter 200 in 38ms (next.js: 8ms, application-code: 30ms)
+  └─ ƒ getRestaurants() in 17ms src/actions/definitions.ts
+ POST /waiter 200 in 59ms (next.js: 7ms, application-code: 52ms)
+  └─ ƒ selectRestaurantAction("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 19ms src/actions/auth.ts
+ POST /waiter 200 in 24ms (next.js: 7ms, application-code: 17ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 6ms src/actions/definitions.ts
+ POST /waiter 200 in 28ms (next.js: 7ms, application-code: 21ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 9ms src/actions/definitions.ts
+ POST /waiter 200 in 31ms (next.js: 7ms, application-code: 24ms)
+  └─ ƒ getSessionUser() in 14ms src/actions/auth.ts
+ POST /waiter 200 in 24ms (next.js: 7ms, application-code: 16ms)
+  └─ ƒ getMyOrdersToday() in 6ms src/actions/orders.ts
+ POST /waiter 200 in 35ms (next.js: 7ms, application-code: 28ms)
+  └─ ƒ getMyOrdersToday() in 17ms src/actions/orders.ts
+ GET /login 200 in 100ms (next.js: 15ms, application-code: 85ms)
+ POST /login 200 in 25ms (next.js: 8ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /login 200 in 36ms (next.js: 9ms, application-code: 27ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts
+ GET /login 200 in 59ms (next.js: 12ms, application-code: 47ms)
+ POST /login 200 in 32ms (next.js: 8ms, application-code: 23ms)
+  └─ ƒ getSessionUser() in 8ms src/actions/auth.ts
+ POST /login 200 in 25ms (next.js: 10ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /login 200 in 319ms (next.js: 7ms, application-code: 313ms)
+  └─ ƒ loginAction({}) in 288ms src/actions/auth.ts
+ GET /waiter 200 in 30ms (next.js: 7ms, application-code: 23ms)
+ GET /waiter 200 in 84ms (next.js: 11ms, application-code: 74ms)
+ GET /waiter 200 in 37ms (next.js: 11ms, application-code: 27ms)
+ POST /waiter 200 in 25ms (next.js: 10ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /waiter 200 in 19ms (next.js: 7ms, application-code: 12ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /waiter 200 in 21ms (next.js: 6ms, application-code: 15ms)
+  └─ ƒ getRestaurants() in 4ms src/actions/definitions.ts
+ POST /waiter 200 in 24ms (next.js: 8ms, application-code: 16ms)
+  └─ ƒ getSessionUser() in 6ms src/actions/auth.ts
+ POST /waiter 200 in 33ms (next.js: 6ms, application-code: 27ms)
+  └─ ƒ getRestaurants() in 15ms src/actions/definitions.ts
+ POST /waiter 200 in 45ms (next.js: 8ms, application-code: 37ms)
+  └─ ƒ selectRestaurantAction("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 11ms src/actions/auth.ts
+ POST /waiter 200 in 23ms (next.js: 7ms, application-code: 16ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/definitions.ts
+ POST /waiter 200 in 32ms (next.js: 7ms, application-code: 25ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 13ms src/actions/definitions.ts
+ POST /waiter 200 in 19ms (next.js: 7ms, application-code: 12ms)
+  └─ ƒ getSessionUser() in 0ms src/actions/auth.ts
+ POST /waiter 200 in 28ms (next.js: 7ms, application-code: 20ms)
+  └─ ƒ getMyOrdersToday() in 9ms src/actions/orders.ts
+ POST /waiter 200 in 28ms (next.js: 9ms, application-code: 19ms)
+  └─ ƒ getMyOrdersToday() in 7ms src/actions/orders.ts
+ POST /waiter 200 in 57ms (next.js: 7ms, application-code: 50ms)
+  └─ ƒ cancelOrder({"notifyKitchen":true,"orderId":"673c2d12-4b18-41ed-b1ef-8dea8bad7c80","reason":""}) in 24ms src/actions/orders.ts
+ POST /waiter 200 in 28ms (next.js: 6ms, application-code: 22ms)
+  └─ ƒ getMyOrdersToday() in 12ms src/actions/orders.ts
+ POST /waiter 200 in 32ms (next.js: 6ms, application-code: 26ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 15ms src/actions/definitions.ts
+ POST /waiter 200 in 21ms (next.js: 6ms, application-code: 15ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/definitions.ts
+ GET /login 200 in 56ms (next.js: 12ms, application-code: 45ms)
+ POST /login 200 in 47ms (next.js: 12ms, application-code: 35ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts
+ POST /login 200 in 26ms (next.js: 11ms, application-code: 15ms)
+  └─ ƒ getSessionUser() in 3ms src/actions/auth.ts
+ GET /login 200 in 53ms (next.js: 9ms, application-code: 43ms)
+ POST /login 200 in 26ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /login 200 in 27ms (next.js: 8ms, application-code: 18ms)
+  └─ ƒ getSessionUser() in 8ms src/actions/auth.ts
+ POST /login 200 in 381ms (next.js: 8ms, application-code: 373ms)
+  └─ ƒ loginAction({}) in 349ms src/actions/auth.ts
+ GET /waiter 200 in 33ms (next.js: 7ms, application-code: 25ms)
+ GET /waiter 200 in 72ms (next.js: 10ms, application-code: 62ms)
+ GET /waiter 200 in 37ms (next.js: 9ms, application-code: 28ms)
+ POST /waiter 200 in 24ms (next.js: 11ms, application-code: 13ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /waiter 200 in 33ms (next.js: 8ms, application-code: 25ms)
+  └─ ƒ getSessionUser() in 14ms src/actions/auth.ts
+ POST /waiter 200 in 32ms (next.js: 7ms, application-code: 25ms)
+  └─ ƒ getRestaurants() in 14ms src/actions/definitions.ts
+ POST /waiter 200 in 26ms (next.js: 8ms, application-code: 17ms)
+  └─ ƒ getSessionUser() in 8ms src/actions/auth.ts
+ POST /waiter 200 in 32ms (next.js: 6ms, application-code: 26ms)
+  └─ ƒ getRestaurants() in 14ms src/actions/definitions.ts
+ POST /waiter 200 in 71ms (next.js: 9ms, application-code: 62ms)
+  └─ ƒ selectRestaurantAction("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 25ms src/actions/auth.ts
+ POST /waiter 200 in 25ms (next.js: 7ms, application-code: 18ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 5ms src/actions/definitions.ts
+ POST /waiter 200 in 42ms (next.js: 8ms, application-code: 34ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 23ms src/actions/definitions.ts
+ POST /waiter 200 in 29ms (next.js: 11ms, application-code: 18ms)
+  └─ ƒ getSessionUser() in 1ms src/actions/auth.ts
+ POST /waiter 200 in 28ms (next.js: 8ms, application-code: 21ms)
+  └─ ƒ getMyOrdersToday() in 12ms src/actions/orders.ts
+ POST /waiter 200 in 23ms (next.js: 8ms, application-code: 15ms)
+  └─ ƒ getMyOrdersToday() in 6ms src/actions/orders.ts
+ POST /waiter 200 in 61ms (next.js: 9ms, application-code: 52ms)
+  └─ ƒ cancelOrder({"notifyKitchen":true,"orderId":"01134b91-48fc-4a00-91ab-897179d5a95c","reason":"Misafir vazgeçti"}) in 23ms src/actions/orders.ts
+ POST /waiter 200 in 34ms (next.js: 9ms, application-code: 25ms)
+  └─ ƒ getMyOrdersToday() in 8ms src/actions/orders.ts
+ POST /waiter 200 in 34ms (next.js: 12ms, application-code: 22ms)
+  └─ ƒ getTables("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 12ms src/actions/definitions.ts
+ POST /waiter 200 in 30ms (next.js: 6ms, application-code: 24ms)
+  └─ ƒ getCategoriesTree("95a80bec-aa11-4736-9f3f-35ccb60b4985") in 14ms src/actions/definitions.ts
+ GET /login 200 in 99ms (next.js: 13ms, application-code: 86ms)
+ POST /login 200 in 38ms (next.js: 16ms, application-code: 22ms)
+  └─ ƒ getSessionUser() in 2ms src/actions/auth.ts
+ POST /login 200 in 43ms (next.js: 13ms, application-code: 30ms)
+  └─ ƒ getSessionUser() in 11ms src/actions/auth.ts
+ GET /login 200 in 56ms (next.js: 11ms, application-code: 45ms)
+ POST /login 200 in 155ms (next.js: 16ms, application-code: 139ms)
+  └─ ƒ getSessionUser() in 13ms src/actions/auth.ts
+ POST /login 200 in 40ms (next.js: 12ms, application-code: 28ms)
+  └─ ƒ getSessionUser() in 12ms src/actions/auth.ts

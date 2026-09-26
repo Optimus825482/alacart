@@ -28,7 +28,33 @@ npx prisma generate || { echo "HATA: Prisma generate başarısız oldu!"; exit 1
 echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
 npx prisma db push --skip-generate || { echo "HATA: Prisma db push başarısız oldu!"; exit 1; }
 
-# 4. Başlangıç Tohum (Seed) Verileri
+# 4. Mevcut Şifreleri Hash'le (düz metin -> bcrypt migrasyon)
+echo ">> Şifre güvenlik migrasyonu kontrol ediliyor..."
+node -e "
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+const prisma = new PrismaClient();
+async function migratePasswords() {
+  const users = await prisma.user.findMany({ select: { id: true, password: true } });
+  let migrated = 0;
+  for (const user of users) {
+    // bcrypt hash'leri \\\$2a\\\$ veya \\\$2b\\\$ ile başlar
+    if (user.password && !user.password.startsWith('\$2a\$') && !user.password.startsWith('\$2b\$')) {
+      const hashed = await bcrypt.hash(user.password, 12);
+      await prisma.user.update({ where: { id: user.id }, data: { password: hashed } });
+      migrated++;
+    }
+  }
+  if (migrated > 0) {
+    console.log('>> ' + migrated + ' kullanıcının şifresi bcrypt ile hash\\'lendi.');
+  } else {
+    console.log('>> Tüm şifreler zaten güvenli (bcrypt hash\\'li).');
+  }
+}
+migratePasswords().finally(() => prisma.\$disconnect());
+" || echo "Şifre migrasyonu tamamlandı veya atlandı."
+
+# 5. Başlangıç Tohum (Seed) Verileri
 echo ">> Başlangıç verileri kontrol ediliyor..."
 node -e "
 const { PrismaClient } = require('@prisma/client');

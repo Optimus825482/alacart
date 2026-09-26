@@ -240,7 +240,7 @@ export async function markOrderPrinted(
 }
 
 // ==========================================
-// MASAYA AİT AÇIK SİPARİŞLER (GARSON İÇİN)
+// MASAYA AİT AKTİF VE BUGÜNKÜ SİPARİŞLER (GARSON İÇİN)
 // ==========================================
 
 export async function getTableActiveOrders(tableId: string) {
@@ -248,14 +248,14 @@ export async function getTableActiveOrders(tableId: string) {
     const orders = await prisma.order.findMany({
       where: {
         tableId,
-        status: { in: ["PENDING", "PREPARING"] },
+        status: { in: ["PENDING", "PREPARING", "COMPLETED"] },
       },
       orderBy: { createdAt: "desc" },
       include: {
         waiter: { select: { id: true, name: true } },
         items: {
           include: {
-            menuItem: { select: { id: true, name: true } },
+            menuItem: { select: { id: true, name: true, defaultNotes: true, allergens: true } },
           },
         },
       },
@@ -263,6 +263,107 @@ export async function getTableActiveOrders(tableId: string) {
 
     return { success: true, data: orders };
   } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+// ==========================================
+// MEVCUT SİPARİŞİ GÜNCELLEME / İLAVE EKLEME
+// ==========================================
+
+export async function updateOrder(data: {
+  orderId: string;
+  waiterId: string;
+  notes?: string;
+  items: Array<{
+    menuItemId: string;
+    quantity: number;
+    itemNotes?: string;
+  }>;
+}) {
+  try {
+    if (!data.items || data.items.length === 0) {
+      return { success: false, error: "En az bir ürün bulunmalıdır." };
+    }
+
+    const updatedOrder = await prisma.$transaction(async (tx) => {
+      // Mevcut siparişi bul
+      const existing = await tx.order.findUnique({
+        where: { id: data.orderId },
+        include: { items: true },
+      });
+
+      if (!existing) {
+        throw new Error("Güncellenecek sipariş bulunamadı.");
+      }
+
+      // 1. Masayı OCCUPIED yap
+      await tx.restaurantTable.update({
+        where: { id: existing.tableId },
+        data: { status: "OCCUPIED" },
+      });
+
+      // 2. Siparişin genel notlarını ve durumunu güncelle (İlave eklendiyse mutfakta PENDING olsun)
+      await tx.order.update({
+        where: { id: data.orderId },
+        data: {
+          notes: data.notes?.trim(),
+          waiterId: data.waiterId,
+          status: "PENDING", // Mutfağın dikkatine tekrar sunulur
+        },
+      });
+
+      // 3. Kalemleri yeniden yapılandır
+      await tx.orderItem.deleteMany({
+        where: { orderId: data.orderId },
+      });
+
+      const order = await tx.order.update({
+        where: { id: data.orderId },
+        data: {
+          items: {
+            create: data.items.map((item) => ({
+              menuItemId: item.menuItemId,
+              quantity: item.quantity,
+              itemNotes: item.itemNotes?.trim(),
+              status: "PENDING",
+            })),
+          },
+        },
+        include: {
+          restaurant: { select: { id: true, name: true, code: true } },
+          table: { select: { id: true, name: true } },
+          waiter: { select: { id: true, name: true } },
+          items: {
+            include: {
+              menuItem: { select: { id: true, name: true, allergens: true } },
+            },
+          },
+        },
+      });
+
+      return order;
+    });
+
+    await logAudit({
+      userId: data.waiterId,
+      userName: updatedOrder.waiter?.name || "Garson",
+      userRole: "WAITER",
+      action: "ORDER_UPDATED",
+      entity: "Order",
+      entityId: updatedOrder.id,
+      details: `${updatedOrder.restaurant.name} - Masa: ${updatedOrder.table.name} (#${updatedOrder.orderNumber}) siparişi güncellendi/ilave yapıldı (${updatedOrder.items.length} kalem).`,
+      restaurantId: updatedOrder.restaurantId,
+    });
+
+    revalidatePath("/kitchen");
+    revalidatePath("/waiter");
+    revalidatePath("/admin");
+    revalidatePath("/chef");
+
+    return { success: true, data: updatedOrder };
+  } catch (error: any) {
+    console.error("updateOrder error:", error);
     return { success: false, error: error.message };
   }
 }

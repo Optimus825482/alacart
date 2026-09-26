@@ -19,7 +19,7 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 import { getTables, getCategoriesTree, getRestaurants } from "@/actions/definitions";
-import { createOrder, getTableActiveOrders } from "@/actions/orders";
+import { createOrder, updateOrder, getTableActiveOrders } from "@/actions/orders";
 import { getSessionUser, selectRestaurantAction, logoutAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
 import { getRestaurantTheme, RESTAURANT_THEMES } from "@/lib/themes";
 import clsx from "clsx";
@@ -51,9 +51,10 @@ export default function WaiterTerminalPage() {
   const [selectedSubCatId, setSelectedSubCatId] = useState<string>("");
   const [selectedSubSubCatId, setSelectedSubSubCatId] = useState<string>("");
 
-  // Arama & Sepet
+  // Arama & Sepet & Düzenleme Modu
   const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [editingOrderId, setEditingOrderId] = useState<string | null>(null);
   const [generalOrderNotes, setGeneralOrderNotes] = useState("");
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
@@ -319,28 +320,71 @@ export default function WaiterTerminalPage() {
     setEditingItemNote(null);
   };
 
-  // Mutfağa Gönder
+  // Mevcut Siparişi Düzenleme Moduna Al
+  const handleEditExistingOrder = (order: any) => {
+    setEditingOrderId(order.id);
+    const orderCart: CartItem[] = (order.items || []).map((it: any) => ({
+      menuItemId: it.menuItemId,
+      name: it.menuItem?.name || "Ürün",
+      quantity: it.quantity,
+      itemNotes: it.itemNotes || "",
+      imageUrl: it.menuItem?.imageUrl || null,
+    }));
+    setCart(orderCart);
+    setGeneralOrderNotes(order.notes || "");
+    setIsTableModalOpen(false);
+  };
+
+  // Yeni Sipariş Başlat (Ayrı Adisyon)
+  const handleStartNewOrder = () => {
+    setEditingOrderId(null);
+    setCart([]);
+    setGeneralOrderNotes("");
+    setIsTableModalOpen(false);
+  };
+
+  // Mutfağa Gönder / Mevcut Siparişi Güncelle
   const handleSendOrder = async () => {
     if (!selectedTable || cart.length === 0 || !session?.id || !session.activeRestaurantId) return;
 
     setSubmitting(true);
-    const res = await createOrder({
-      restaurantId: session.activeRestaurantId,
-      tableId: selectedTable.id,
-      waiterId: session.id,
-      notes: generalOrderNotes,
-      items: cart.map((c) => ({
-        menuItemId: c.menuItemId,
-        quantity: c.quantity,
-        itemNotes: c.itemNotes,
-      })),
-    });
+    let res;
+
+    if (editingOrderId) {
+      res = await updateOrder({
+        orderId: editingOrderId,
+        waiterId: session.id,
+        notes: generalOrderNotes,
+        items: cart.map((c) => ({
+          menuItemId: c.menuItemId,
+          quantity: c.quantity,
+          itemNotes: c.itemNotes,
+        })),
+      });
+    } else {
+      res = await createOrder({
+        restaurantId: session.activeRestaurantId,
+        tableId: selectedTable.id,
+        waiterId: session.id,
+        notes: generalOrderNotes,
+        items: cart.map((c) => ({
+          menuItemId: c.menuItemId,
+          quantity: c.quantity,
+          itemNotes: c.itemNotes,
+        })),
+      });
+    }
 
     setSubmitting(false);
 
     if (res.success) {
-      setSuccessMessage(`${selectedTable.name} siparişi başarıyla mutfağa iletildi!`);
+      setSuccessMessage(
+        editingOrderId
+          ? `${selectedTable.name} siparişi başarıyla güncellendi ve mutfağa iletildi!`
+          : `${selectedTable.name} yeni siparişi başarıyla mutfağa iletildi!`
+      );
       setCart([]);
+      setEditingOrderId(null);
       setGeneralOrderNotes("");
       setIsConfirmModalOpen(false);
 
@@ -496,7 +540,7 @@ export default function WaiterTerminalPage() {
               Boş: <strong className="text-emerald-200 font-bold">{emptyCount}</strong>
             </span>
             <span className="px-3 py-1.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 font-medium">
-              Siparişli: <strong className="text-amber-200 font-bold">{occupiedCount}</strong>
+              Sipariş Alınan: <strong className="text-amber-200 font-bold">{occupiedCount}</strong>
             </span>
           </div>
         </div>
@@ -547,7 +591,7 @@ export default function WaiterTerminalPage() {
                 tableStatusFilter === "OCCUPIED" ? "bg-amber-500 text-zinc-950 shadow" : "text-amber-400 hover:text-amber-300"
               )}
             >
-              Siparişli ({occupiedCount})
+              Sipariş Alınan ({occupiedCount})
             </button>
           </div>
         </div>
@@ -610,10 +654,18 @@ export default function WaiterTerminalPage() {
               return (
                 <button
                   key={t.id}
-                  onClick={() => {
+                  onClick={async () => {
                     setSelectedTable(t);
                     setCart([]);
                     setGeneralOrderNotes("");
+                    setEditingOrderId(null);
+                    const res = await getTableActiveOrders(t.id);
+                    if (res.success && res.data) {
+                      setActiveTableOrders(res.data);
+                      if (res.data.length > 0) {
+                        setIsTableModalOpen(true);
+                      }
+                    }
                   }}
                   className={clsx(
                     "p-4 sm:p-5 rounded-3xl border text-left transition-all active:scale-[0.97] flex flex-col justify-between group relative overflow-hidden shadow-md hover:shadow-xl",
@@ -640,10 +692,10 @@ export default function WaiterTerminalPage() {
 
                   <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs">
                     <span className={clsx("text-[11px]", footerStatus)}>
-                      {hasOrders ? (activeOrders.length > 0 ? `${activeOrders.length} Sipariş` : "Siparişli") : "Sipariş Alınmadı"}
+                      {hasOrders ? (activeOrders.length > 0 ? `${activeOrders.length} Sipariş Alındı` : "Sipariş Alınan") : "Sipariş Alınmadı"}
                     </span>
                     <span className="text-amber-400 font-black group-hover:translate-x-1 transition-transform">
-                      Siparişe Git ➔
+                      {hasOrders ? "İncele / Sipariş Aç ➔" : "Siparişe Git ➔"}
                     </span>
                   </div>
                 </button>
@@ -669,6 +721,8 @@ export default function WaiterTerminalPage() {
               onClick={() => {
                 setSelectedTable(null);
                 setCart([]);
+                setEditingOrderId(null);
+                setGeneralOrderNotes("");
               }}
               title="Masa Listesine Geri Dön"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs sm:text-sm font-bold shadow-md active:scale-95 transition-all"
@@ -718,21 +772,61 @@ export default function WaiterTerminalPage() {
         </div>
       )}
 
-      {/* Masada Açık Sipariş Uyarısı */}
-      {selectedTable && activeTableOrders.length > 0 && (
-        <div className="mx-4 mt-3 p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs flex items-center justify-between text-amber-300">
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-amber-400" />
-            <span>Bu masanın mutfakta <strong>{activeTableOrders.length} aktif siparişi</strong> var.</span>
+      {/* Sipariş Modu Banner (Düzenleme / Yeni Sipariş) */}
+      {editingOrderId ? (
+        <div className="mx-4 mt-3 p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-amber-600/15 to-transparent border border-amber-500/50 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-200 animate-in fade-in shadow-lg">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/30 border border-amber-400/40 flex items-center justify-center text-amber-300 font-bold shrink-0">
+              ✏️
+            </div>
+            <div>
+              <p className="font-extrabold text-amber-300 text-sm flex items-center gap-2">
+                <span>Mevcut Sipariş Düzenleniyor</span>
+                <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-amber-500/30 text-amber-200 border border-amber-400/30">
+                  #{editingOrderId.slice(-6).toUpperCase()}
+                </span>
+              </p>
+              <p className="text-[11px] text-zinc-300">
+                Sipariş kalemlerinin adetlerini değiştirebilir, yeni ürün ekleyebilir veya çıkarabilirsiniz.
+              </p>
+            </div>
           </div>
-          <button
-            onClick={() => setIsTableModalOpen(true)}
-            className="text-[11px] underline font-bold"
-          >
-            Siparişleri İncele
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsTableModalOpen(true)}
+              className="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-amber-300 text-xs font-bold border border-amber-500/30 transition shadow-sm"
+            >
+              Masa Siparişleri ({activeTableOrders.length})
+            </button>
+            <button
+              type="button"
+              onClick={handleStartNewOrder}
+              className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition shadow-sm"
+            >
+              Yeni Sipariş Moduna Geç
+            </button>
+          </div>
         </div>
-      )}
+      ) : selectedTable && activeTableOrders.length > 0 ? (
+        <div className="mx-4 mt-3 p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-blue-200 animate-in fade-in">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-blue-400 shrink-0" />
+            <span>
+              Bu masanın mutfakta <strong>{activeTableOrders.length} aktif siparişi</strong> bulunuyor. Şu an <strong>Yeni Sipariş (Ayrı Adisyon)</strong> alıyorsunuz.
+            </span>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsTableModalOpen(true)}
+              className="px-3 py-1 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 text-blue-200 text-[11px] font-bold border border-blue-500/40 transition shadow-sm"
+            >
+              Siparişleri İncele / Düzenle
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {/* Hiyerarşik Kategori Navigasyonu */}
       {!searchQuery && (
@@ -936,10 +1030,15 @@ export default function WaiterTerminalPage() {
               </div>
               <div>
                 <span className="text-xs text-zinc-400 block">
-                  {selectedTable ? selectedTable.name : "Masa"} için Seçildi
+                  {selectedTable ? selectedTable.name : "Masa"} {editingOrderId ? "• Düzenlenen Sipariş" : "için Yeni Sipariş"}
                 </span>
-                <span className="text-sm font-bold text-white">
-                  {cart.length} Çeşit Sipariş Kalemi
+                <span className="text-sm font-bold text-white flex items-center gap-2">
+                  <span>{cart.length} Çeşit Sipariş Kalemi</span>
+                  {editingOrderId && (
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                      Düzenleme Modu
+                    </span>
+                  )}
                 </span>
               </div>
             </div>
@@ -949,7 +1048,7 @@ export default function WaiterTerminalPage() {
               className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-zinc-950 font-black text-xs sm:text-sm shadow-xl shadow-amber-500/25 active:scale-95 transition-all"
             >
               <Send className="w-4 h-4" />
-              <span>Siparişi İncele & Mutfağa Gönder</span>
+              <span>{editingOrderId ? "Siparişi Güncelle & Mutfağa İlet" : "Siparişi İncele & Mutfağa Gönder"}</span>
             </button>
           </div>
         </div>
@@ -966,7 +1065,7 @@ export default function WaiterTerminalPage() {
                     {session?.activeRestaurantName}
                   </span>
                   <h3 className="text-lg font-black text-white flex items-center gap-2">
-                    <span>Mutfak Siparişi Onayı</span>
+                    <span>{editingOrderId ? "Sipariş Güncelleme & İlave" : "Mutfak Siparişi Onayı"}</span>
                     <span className="px-2 py-0.5 rounded-lg bg-amber-400/20 text-amber-300 text-xs font-bold">
                       {selectedTable?.name}
                     </span>
@@ -1061,7 +1160,11 @@ export default function WaiterTerminalPage() {
                 onClick={handleSendOrder}
                 className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black text-xs sm:text-sm shadow-md"
               >
-                {submitting ? "Gönderiliyor..." : "MUTFAĞA GÖNDER"}
+                {submitting
+                  ? "İşleniyor..."
+                  : editingOrderId
+                  ? "SİPARİŞİ GÜNCELLE & MUTFAĞA BİLDİR"
+                  : "MUTFAĞA GÖNDER"}
               </button>
             </div>
           </div>
@@ -1100,8 +1203,23 @@ export default function WaiterTerminalPage() {
               </button>
             </div>
 
+            {/* Üst Eylem: Yeni Sipariş Başlat */}
+            <div className="p-3 bg-gradient-to-r from-amber-500/10 via-amber-600/5 to-transparent border border-amber-500/30 rounded-2xl flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold text-white">Yeni Bir Sipariş (Ayrı Adisyon) mi Alacaksınız?</p>
+                <p className="text-[11px] text-zinc-400">Mevcut siparişlerden bağımsız yeni bir sipariş fişi açar.</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleStartNewOrder}
+                className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black text-xs shrink-0 shadow-md transition active:scale-95"
+              >
+                + Yeni Sipariş Başlat
+              </button>
+            </div>
+
             {/* Sipariş Listesi */}
-            <div className="overflow-y-auto max-h-[55vh] space-y-3 pr-1">
+            <div className="overflow-y-auto max-h-[50vh] space-y-3 pr-1">
               {activeTableOrders.length === 0 ? (
                 <div className="p-8 text-center text-zinc-500">
                   Bu masanın şu anda mutfakta bekleyen veya hazırlanan bir siparişi bulunmuyor.
@@ -1183,6 +1301,32 @@ export default function WaiterTerminalPage() {
                           </div>
                         ))}
                       </div>
+
+                      {/* Eylem Butonu: Siparişi Düzenle / İlave Ekle */}
+                      <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between gap-2">
+                        {editingOrderId === order.id ? (
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
+                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                            <span>Şu an bu siparişi düzenliyorsunuz</span>
+                          </div>
+                        ) : (
+                          <span className="text-[11px] text-zinc-400">
+                            Bu siparişe ürün ilave etmek veya düzenlemek için:
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleEditExistingOrder(order)}
+                          className={clsx(
+                            "px-3.5 py-1.5 rounded-xl font-bold text-xs transition active:scale-95 shadow-sm",
+                            editingOrderId === order.id
+                              ? "bg-amber-500 text-zinc-950 font-black"
+                              : "bg-zinc-800 hover:bg-amber-500 hover:text-zinc-950 text-amber-300 border border-amber-500/40"
+                          )}
+                        >
+                          {editingOrderId === order.id ? "Düzenlemeye Devam Et" : "✏️ Bu Siparişi Düzenle / İlave Ekle"}
+                        </button>
+                      </div>
                     </div>
                   );
                 })
@@ -1191,15 +1335,19 @@ export default function WaiterTerminalPage() {
 
             {/* Alt Butonlar */}
             <div className="pt-3 border-t border-zinc-800 flex items-center justify-between gap-3">
-              <span className="text-xs text-zinc-400">
-                Bu masaya ek ürün eklemek için menüyü kullanabilirsiniz.
-              </span>
+              <button
+                type="button"
+                onClick={handleStartNewOrder}
+                className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs transition"
+              >
+                + Yeni Sipariş Modu (Ayrı Adisyon)
+              </button>
               <button
                 type="button"
                 onClick={() => setIsTableModalOpen(false)}
                 className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-md transition active:scale-95"
               >
-                Anladım, Kapat
+                Kapat & Menüye Dön
               </button>
             </div>
           </div>

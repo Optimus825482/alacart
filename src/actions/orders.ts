@@ -1,13 +1,16 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { todayRangeInTimeZone } from "@/lib/date-range";
 import { revalidatePath } from "next/cache";
 import { OrderStatus, TableStatus } from "@/lib/types";
 import { logAudit } from "@/lib/audit";
-import { authorize, KITCHEN_ROLES, WAITER_ROLES, ADMIN_ONLY } from "@/lib/auth-guard";
+import { authorize, KITCHEN_VIEW_ROLES, KITCHEN_STATUS_ROLES, KITCHEN_ROLES, ORDER_CANCEL_ROLES, ORDER_ENTRY_ROLES, WAITER_ROLES, ADMIN_ONLY } from "@/lib/auth-guard";
 
 // ==========================================
-// SİPARİŞ OLUŞTURMA (GARSON EKRANI)
+// SIPARIS OLUSTURMA (GARSON + SEF EKRANI)
+// Sefer, restoran secerek siparis girisi yapabilir. Siparis bir "tanım" degil,
+// canli operasyon kaydidir; bu yuzden Sistem Yonetecisi sinirina girmez.
 // ==========================================
 
 export async function createOrder(data: {
@@ -21,7 +24,7 @@ export async function createOrder(data: {
     itemNotes?: string;
   }>;
 }) {
-  const auth = await authorize(WAITER_ROLES);
+  const auth = await authorize(ORDER_ENTRY_ROLES);
   if (!auth.ok) {
     return { success: false, error: auth.error, data: null };
   }
@@ -115,7 +118,7 @@ export async function createOrder(data: {
 // ==========================================
 
 export async function getActiveKitchenOrders(restaurantId?: string) {
-  const auth = await authorize(KITCHEN_ROLES);
+  const auth = await authorize(KITCHEN_VIEW_ROLES);
   if (!auth.ok) {
     return { success: false, error: auth.error, data: null };
   }
@@ -128,6 +131,11 @@ export async function getActiveKitchenOrders(restaurantId?: string) {
           { status: { in: ["PENDING", "PREPARING"] } },
           {
             status: "COMPLETED",
+            createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+          },
+          {
+            // Garson tarafından iptal edilen siparişler de KDS'de listelenir (son 24 saat)
+            status: "CANCELLED",
             createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
           },
         ],
@@ -167,11 +175,24 @@ export async function updateOrderStatus(
   newStatus: OrderStatus,
   _legacyActor?: { id?: string; name?: string; role?: string }
 ) {
-  const auth = await authorize(KITCHEN_ROLES);
+  // Durum işaretleme yetkisi HEDEF DURUMA göre değişir:
+  //   - "Hazırlandı / Hazırlanıyor" ve "Tamamlandı" -> yalnızca MUTFAK (KITCHEN_STATUS_ROLES)
+  //   - "İptal" -> amir / şef denetimi (ORDER_CANCEL_ROLES)
+  // Böylece Şef canlı akışı izleyip sipariş girebilir, fakat mutfağın
+  // hazırlık ve tamamlama işaretlemesini yapamaz.
+  const requiredRoles =
+    newStatus === "CANCELLED" ? ORDER_CANCEL_ROLES : KITCHEN_STATUS_ROLES;
+  const auth = await authorize(requiredRoles);
   if (!auth.ok) {
-    return { success: false, error: auth.error, data: null };
+    return {
+      success: false,
+      error:
+        newStatus === "CANCELLED"
+          ? auth.error
+          : "Siparişin 'Hazırlandı' ve 'Tamamlandı' işaretlemesi yalnızca mutfak ekranından yapılabilir. Bu işlemi Şef panelinden gerçekleştiremezsiniz.",
+      data: null,
+    };
   }
-
   try {
     const updatedOrder = await prisma.$transaction(async (tx) => {
       const existing = await tx.order.findUnique({
@@ -261,7 +282,7 @@ export async function markOrderPrinted(
   orderId: string,
   _legacyActor?: { id?: string; name?: string; role?: string }
 ) {
-  const auth = await authorize(KITCHEN_ROLES);
+  const auth = await authorize(KITCHEN_VIEW_ROLES);
   if (!auth.ok) {
     return { success: false, error: auth.error, data: null };
   }
@@ -297,7 +318,7 @@ export async function markOrderPrinted(
 // ==========================================
 
 export async function getTableActiveOrders(tableId: string) {
-  const auth = await authorize(WAITER_ROLES);
+  const auth = await authorize(ORDER_ENTRY_ROLES);
   if (!auth.ok) {
     return { success: false, error: auth.error, data: null };
   }
@@ -326,6 +347,269 @@ export async function getTableActiveOrders(tableId: string) {
 }
 
 // ==========================================
+// ==========================================
+// GARSON: BUGÜNKÜ SİPARİŞLERİM ("SİPARİŞLERİM" SEKMESİ)
+// Garson yalnızca kendi girdiği ve bugüne ait siparişleri görür.
+// Mutfak durumları (PENDING / PREPARING / COMPLETED / CANCELLED) yanında döner.
+// ==========================================
+export async function getMyOrdersToday() {
+  const auth = await authorize(WAITER_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
+  try {
+    const { start, end } = todayRangeInTimeZone();
+    const orders = await prisma.order.findMany({
+      where: {
+        waiterId: auth.session.role === "WAITER" ? auth.session.id : undefined,
+        createdAt: { gte: start, lt: end },
+      },
+      orderBy: { createdAt: "desc" },
+      include: {
+        restaurant: { select: { id: true, name: true, code: true } },
+        table: { select: { id: true, name: true } },
+        waiter: { select: { id: true, name: true } },
+        items: {
+          include: {
+            menuItem: { select: { id: true, name: true, imageUrl: true, allergens: true } },
+          },
+        },
+      },
+    });
+
+    return { success: true, data: orders };
+  } catch (error: any) {
+    console.error("getMyOrdersToday error:", error);
+    return { success: false, error: error.message, data: null };
+  }
+}
+
+// ==========================================
+// GARSON: SİPARİŞ İPTALİ
+// İptal mutfak akışını derinden etkiler: garson iptal ederse sipariş
+// hazırlanmış olabilir. Bu yüzden garson "mutfağa bildirilsin mi?" sorusu
+// ile onay ister; onaylanırsa mutfak ekranında düşülmeyen bir uyarı
+// olarak belirir ve iptal fişi yazdırılır.
+// ==========================================
+export async function cancelOrder(params: {
+  orderId: string;
+  reason?: string;
+  notifyKitchen: boolean;
+}) {
+  const auth = await authorize(WAITER_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
+  try {
+    const order = await prisma.order.findUnique({
+      where: { id: params.orderId },
+      include: { restaurant: true, table: true, waiter: true, items: true },
+    });
+
+    if (!order) {
+      return { success: false, error: "Sipariş bulunamadı.", data: null };
+    }
+
+    // Garson yalnızca kendi siparişini iptal edebilir.
+    if (auth.session.role === "WAITER" && order.waiterId !== auth.session.id) {
+      return {
+        success: false,
+        error: "Yalnızca kendi girdiğiniz siparişi iptal edebilirsiniz.",
+        data: null,
+      };
+    }
+
+    if (order.status === "CANCELLED") {
+      return {
+        success: false,
+        error: "Bu sipariş zaten iptal edilmiş.",
+        data: null,
+      };
+    }
+
+    if (order.status === "COMPLETED") {
+      return {
+        success: false,
+        error: "Tamamlanmış sipariş iptal edilemez. Lütfen mutfakla görüşün.",
+        data: null,
+      };
+    }
+
+    const now = new Date();
+    const updated = await prisma.$transaction(async (tx) => {
+      await tx.order.update({
+        where: { id: order.id },
+        data: {
+          status: "CANCELLED",
+          cancelledAt: now,
+          cancellationReason: params.reason?.trim() || "Sebep belirtilmedi",
+          ...(params.notifyKitchen
+            ? { kitchenNotifiedAt: now, kitchenAckedAt: null }
+            : {}),
+        },
+      });
+
+      await tx.orderItem.updateMany({
+        where: { orderId: order.id },
+        data: { status: "CANCELLED" },
+      });
+
+      // Masanın durumu, iptal edilen siparişten sonra da başka aktif sipariş kalmadıysa boşa alınır.
+      const kalanAktif = await tx.order.count({
+        where: {
+          tableId: order.tableId,
+          id: { not: order.id },
+          status: { in: ["PENDING", "PREPARING", "COMPLETED"] },
+        },
+      });
+      if (kalanAktif === 0) {
+        await tx.restaurantTable.update({
+          where: { id: order.tableId },
+          data: { status: "EMPTY" },
+        });
+      }
+
+      return tx.order.findUniqueOrThrow({
+        where: { id: order.id },
+        include: { restaurant: true, table: true, waiter: true, items: { include: { menuItem: true } } },
+      });
+    });
+
+    await logAudit({
+      userId: auth.session.id,
+      userName: auth.session.name,
+      userRole: auth.session.role,
+      action: "ORDER_CANCELLED",
+      entity: "Order",
+      entityId: updated.id,
+      details: `${updated.restaurant.name} - Masa ${updated.table.name} (#${updated.orderNumber}) iptal edildi. Sebep: ${updated.cancellationReason}. Mutfağa bildirim: ${params.notifyKitchen ? "GÖNDERİLDİ" : "gönderilmedi"}.`,
+      restaurantId: updated.restaurantId,
+    });
+
+    revalidatePath("/kitchen");
+    revalidatePath("/waiter");
+    revalidatePath("/chef");
+
+    return { success: true, data: updated };
+  } catch (error: any) {
+    console.error("cancelOrder error:", error);
+    return { success: false, error: error.message, data: null };
+  }
+}
+
+// ==========================================
+// MUTFAK: DÜŞÜLMEDEN İPTAL BİLDİRİMLERİ
+// Bildirimi gönderilmiş ama mutfak tarafından henüz onaylanmamış iptaller.
+// Mutfak ekranı bu listeyi periyodik olarak çeker ve onaylayana kadar uyarıda tutar.
+// ==========================================
+export async function getKitchenCancellationAlerts(restaurantId?: string) {
+  const auth = await authorize(KITCHEN_VIEW_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
+  try {
+    const alerts = await prisma.order.findMany({
+      where: {
+        status: "CANCELLED",
+        kitchenNotifiedAt: { not: null },
+        kitchenAckedAt: null,
+        ...(restaurantId && restaurantId !== "ALL" ? { restaurantId } : {}),
+      },
+      orderBy: { cancelledAt: "desc" },
+      include: {
+        restaurant: { select: { id: true, name: true, code: true } },
+        table: { select: { id: true, name: true } },
+        waiter: { select: { id: true, name: true } },
+        items: { include: { menuItem: { select: { id: true, name: true } } } },
+      },
+    });
+
+    return { success: true, data: alerts };
+  } catch (error: any) {
+    console.error("getKitchenCancellationAlerts error:", error);
+    return { success: false, error: error.message, data: null };
+  }
+}
+
+// ==========================================
+// MUTFAK: İPTAL BİLDİRİMİNİ ONAYLA
+// Onaylanan bildirim tekrar gösterilmez; denetim izine de yazılır.
+// ==========================================
+export async function acknowledgeKitchenCancellation(orderId: string) {
+  const auth = await authorize(KITCHEN_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
+  try {
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: { restaurant: true, table: true },
+    });
+    if (!order) {
+      return { success: false, error: "Sipariş bulunamadı.", data: null };
+    }
+
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { kitchenAckedAt: new Date() },
+    });
+
+    await logAudit({
+      userId: auth.session.id,
+      userName: auth.session.name,
+      userRole: auth.session.role,
+      action: "ORDER_CANCEL_ACKED",
+      entity: "Order",
+      entityId: orderId,
+      details: `${order.restaurant.name} - Masa ${order.table.name} (#${order.orderNumber}) iptal bildirimi mutfak tarafından onaylandı.`,
+      restaurantId: order.restaurantId,
+    });
+
+    revalidatePath("/kitchen");
+    return { success: true, data: true };
+  } catch (error: any) {
+    console.error("acknowledgeKitchenCancellation error:", error);
+    return { success: false, error: error.message, data: null };
+  }
+}
+
+// SİPARİŞ GİRİŞİ YAPACAKLAR (ŞEF İÇİN GARSON SEÇİMİ)
+// Şef siparişi garson adına girer; Order.waiterId zorunlu olduğu için
+// siparişi alan garson açıkça seçilmelidir. Böylece "Garson Sipariş
+// Dağılımı" raporu da gerçek veriyi gösterir.
+// ==========================================
+export async function getRestaurantWaiters(restaurantId: string) {
+  const auth = await authorize(ORDER_ENTRY_ROLES);
+  if (!auth.ok) {
+    return { success: false, error: auth.error, data: null };
+  }
+
+  try {
+    const waiters = await prisma.user.findMany({
+      where: {
+        role: "WAITER",
+        active: true,
+        OR: [
+          { assignedTo: { some: { restaurantId } } },
+          { assignedTo: { none: {} } }, // Restoran ataması olmayan garsonlar tüm alakartlarda çalışabilir
+        ],
+      },
+      select: { id: true, name: true, username: true },
+      orderBy: { name: "asc" },
+    });
+
+    return { success: true, data: waiters };
+  } catch (error: any) {
+    console.error("getRestaurantWaiters error:", error);
+    return { success: false, error: error.message, data: null };
+  }
+}
+
+// ==========================================
 // MEVCUT SİPARİŞİ GÜNCELLEME / İLAVE EKLEME
 // ==========================================
 
@@ -339,7 +623,7 @@ export async function updateOrder(data: {
     itemNotes?: string;
   }>;
 }) {
-  const auth = await authorize(WAITER_ROLES);
+  const auth = await authorize(ORDER_ENTRY_ROLES);
   if (!auth.ok) {
     return { success: false, error: auth.error, data: null };
   }

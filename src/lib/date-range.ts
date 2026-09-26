@@ -117,6 +117,7 @@ export function resolveDateRange(
     Math.round(
       (zonedBoundaryToUtc(endStr, timeZone, "start").getTime() -
         zonedBoundaryToUtc(startStr, timeZone, "start").getTime()) /
+
         (24 * 60 * 60 * 1000)
     ) + 1;
 
@@ -130,6 +131,22 @@ export function todayInTimeZone(timeZone: string = getBusinessTimezone()): strin
     month: "2-digit",
     day: "2-digit",
   }).format(new Date());
+}
+
+/**
+ * Isletme saat dilimine gore "bugunun" UTC araligi.
+ * "Siparislerim" gibi bugunun kayitlarini listeleyen ekranlar bunu kullanir;
+ * sunucu UTC calisa bile gece yarisi siparisleri dogru gunde tutar.
+ */
+export function todayRangeInTimeZone(
+  timeZone: string = getBusinessTimezone()
+): { start: Date; end: Date; date: string } {
+  const date = todayInTimeZone(timeZone);
+  return {
+    date,
+    start: zonedBoundaryToUtc(date, timeZone, "start"),
+    end: zonedBoundaryToUtc(date, timeZone, "end"),
+  };
 }
 
 export function formatInTimeZone(

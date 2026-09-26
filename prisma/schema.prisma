@@ -157,6 +157,12 @@ model Order {
   // Detaylı Zaman Damgaları (Zaman/Süre Raporları ve Audit için)
   preparingStartedAt DateTime?         // Mutfakta "Hazırlanıyor" dendiği an
   printedAt          DateTime?         // Termal fiş basılma anı
+
+  // İPTAL BİLGİLERİ (Garson tarafından iptal edilen siparişler)
+  cancelledAt         DateTime?   // İptal edildiği an
+  cancellationReason  String?     // İptal sebebi (örn: "Müşteri vazgeçti")
+  kitchenNotifiedAt   DateTime?   // Mutfağa iptal bildirimi gönderildi
+  kitchenAckedAt      DateTime?   // Mutfak bildirimi gördü / onayladı
   completedAt        DateTime?         // Mutfakta "Tamamlandı" dendiği an
   createdAt          DateTime          @default(now()) // Garsonun siparişi mutfağa fırlattığı an
   updatedAt          DateTime          @updatedAt

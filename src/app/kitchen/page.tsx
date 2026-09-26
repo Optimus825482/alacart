@@ -16,9 +16,11 @@ import {
   Utensils,
   X,
   Eye,
+  BellRing,
 } from "lucide-react";
 import { getSessionUser, selectRestaurantAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
 import { getRestaurants } from "@/actions/definitions";
+import { getKitchenCancellationAlerts, acknowledgeKitchenCancellation } from "@/actions/orders";
 import { playKitchenChime } from "@/lib/sound";
 import { getRestaurantTheme, RESTAURANT_THEMES } from "@/lib/themes";
 import clsx from "clsx";
@@ -32,6 +34,10 @@ export default function KitchenKDSPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("ACTIVE");
   const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // Garson tarafından iptal edilen siparişler için MUTFAK İPTAL BİLDİRİMİ
+  const [cancelAlerts, setCancelAlerts] = useState<any[]>([]);
+  const [cancelPrint, setCancelPrint] = useState<any | null>(null);
   const [autoPrintEnabled, setAutoPrintEnabled] = useState(false);
   const [printingOrder, setPrintingOrder] = useState<any | null>(null);
   const [previewOrder, setPreviewOrder] = useState<any | null>(null);
@@ -214,6 +220,44 @@ export default function KitchenKDSPage() {
     }
   };
 
+
+  // ==========================================================
+  // GARSON İPTAL BİLDİRİMLERİ (Mutfakta düşen iptal uyarıları)
+  // ==========================================================
+  const fetchCancelAlerts = async () => {
+    if (!session?.activeRestaurantId) return;
+    try {
+      const res = await getKitchenCancellationAlerts(session.activeRestaurantId);
+      if (res.success && res.data) setCancelAlerts(res.data);
+    } catch (err) {
+      console.error("fetchCancelAlerts error:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (!session?.activeRestaurantId) return;
+    fetchCancelAlerts();
+    const cancelInterval = setInterval(fetchCancelAlerts, 4000);
+    return () => clearInterval(cancelInterval);
+  }, [session?.activeRestaurantId]);
+
+  // İptal bildirimini gördü / onayla
+  const handleAckCancelAlert = async (orderId: string) => {
+    const res = await acknowledgeKitchenCancellation(orderId);
+    if (res.success) {
+      setCancelAlerts((prev) => prev.filter((a) => a.id !== orderId));
+      fetchOrders();
+    }
+  };
+
+  // 80mm termal yazıcıdan iptal fişini bas
+  const handlePrintCancelReceipt = (order: any) => {
+    setCancelPrint(order);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setCancelPrint(null), 800);
+    }, 400);
+  };
   useEffect(() => {
     if (session?.activeRestaurantId) {
       fetchOrders();
@@ -475,7 +519,6 @@ export default function KitchenKDSPage() {
             >
               <RefreshCw className="w-4 h-4" />
             </button>
-
           </div>
         </div>
 
@@ -511,6 +554,86 @@ export default function KitchenKDSPage() {
         </div>
       </div>
 
+
+      {/* ==========================================================
+          GARSON İPTAL SİPARİŞ BİLDİRİMİ (Düşülmeyen Kırmızı Uyarı)
+          ========================================================== */}
+      {cancelAlerts.length > 0 && (
+        <div className="mb-5 rounded-3xl border-2 border-rose-500/70 bg-[#2a0a10] shadow-2xl shadow-rose-900/40 overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-rose-600 to-rose-700 text-white">
+            <span className="relative flex h-3 w-3 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+            </span>
+            <BellRing className="w-5 h-5 shrink-0" />
+            <div className="min-w-0">
+              <h3 className="text-sm font-black tracking-wide">
+                GARSON İPTAL SİPARİŞ BİLDİRİMİ ({cancelAlerts.length})
+              </h3>
+              <p className="text-[11px] text-rose-100">
+                Aşağıdaki siparişler garson tarafından iptal edildi. Mutfakta
+                hazırlanmış olabilir, lütfen kontrol edin.
+              </p>
+            </div>
+          </div>
+
+          <div className="divide-y divide-rose-900/40">
+            {cancelAlerts.map((a: any) => (
+              <div key={a.id} className="px-4 py-3 flex flex-wrap items-center gap-3 justify-between">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-2 py-0.5 rounded-lg bg-rose-500 text-white text-xs font-black">
+                      #{a.orderNumber}
+                    </span>
+                    <span className="text-sm font-black text-white">{a.table?.name || "Masa ?"}</span>
+                    <span className="text-[11px] text-rose-200/80">
+                      Garson: {a.waiter?.name || "-"}
+                      {a.cancelledAt && (
+                        <>
+                          {" \u2022 "}
+                          {new Date(a.cancelledAt).toLocaleTimeString("tr-TR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  {a.cancellationReason && (
+                    <p className="text-[11px] text-rose-100/90 mt-1">
+                      <span className="font-bold">Sebep:</span> {a.cancellationReason}
+                    </p>
+                  )}
+                  <p className="text-[11px] text-rose-300/80 mt-0.5">
+                    {(a.items || [])
+                      .map((i: any) => `${i.quantity}x ${i.menuItem?.name}`)
+                      .join(", ") || "Ürün yok"}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => handlePrintCancelReceipt(a)}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-100 font-bold text-[11px] transition"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    İptal Fişini Bas
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleAckCancelAlert(a.id)}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] transition"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    Bildirimi Aldım
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {/* Sipariş Kartları */}
       {filteredOrders.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center p-12 rounded-3xl bg-zinc-900/30 border border-zinc-800/60 text-center">
@@ -989,6 +1112,99 @@ export default function KitchenKDSPage() {
                 </div>
               </div>
             )}
+        </div>
+      )}
+
+
+      {/* 80mm Termal Garson İptal Fişi Şablonuı Sablonu */}
+      {cancelPrint && (
+        <div id="printable-kitchen-cancel" className="hidden">
+          <div
+            style={{
+              textAlign: "center",
+              borderBottom: "2px solid #000",
+              paddingBottom: "6px",
+              marginBottom: "8px",
+            }}
+          >
+            <h2 style={{ fontSize: "16px", fontWeight: "bold", margin: "0 0 2px 0" }}>MERİT HOTELS &amp; RESORTS</h2>
+            <div style={{ fontSize: "13px", fontWeight: "bold" }}>{cancelPrint.restaurant?.name}</div>
+            <div
+              style={{
+                margin: "6px 0 2px",
+                border: "2px solid #000",
+                padding: "5px 4px",
+              }}
+            >
+              <div style={{ fontSize: "14px", fontWeight: "bold", letterSpacing: "1px" }}>
+                !!! SİPARİŞ İPTAL EDİLDİ !!!
+              </div>
+              <div style={{ fontSize: "10px", fontWeight: "bold" }}>
+                GARSON TARAFINDAN İPTAL EDİLDİ - HAZIRLAMAYI DURDURUN
+              </div>
+            </div>
+          </div>
+
+          <div style={{ borderBottom: "1px dashed #000", paddingBottom: "6px", marginBottom: "8px", fontSize: "12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "18px", fontWeight: "bold" }}>
+              <span>MASA: {cancelPrint.table?.name}</span>
+              <span>#{cancelPrint.orderNumber}</span>
+            </div>
+            <div>Garson: {cancelPrint.waiter?.name || "-"}</div>
+            <div>
+              Siparis Saati:{" "}
+              {new Date(cancelPrint.createdAt).toLocaleTimeString("tr-TR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
+            {cancelPrint.cancelledAt && (
+              <div style={{ fontWeight: "bold" }}>
+                İPTAL SAATİ:{" "}
+                {new Date(cancelPrint.cancelledAt).toLocaleTimeString("tr-TR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
+            )}
+            {cancelPrint.cancellationReason && (
+              <div style={{ marginTop: "4px", fontWeight: "bold", border: "1px solid #000", padding: "2px 4px" }}>
+                İPTAL SEBEBİ: {cancelPrint.cancellationReason}
+              </div>
+            )}
+          </div>
+
+          <div style={{ borderBottom: "1px dashed #000", paddingBottom: "8px", marginBottom: "8px" }}>
+            <div
+              style={{
+                fontSize: "11px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+                borderBottom: "1px solid #000",
+                paddingBottom: "2px",
+              }}
+            >
+              İPTAL EDİLEN SİPARİŞ KALEMLERİ ({(cancelPrint.items || []).length} ÇEŞİT):
+            </div>
+            {(cancelPrint.items || []).map((it: any, idx: number) => (
+              <div key={idx} style={{ marginBottom: "6px" }}>
+                <div style={{ fontSize: "14px", fontWeight: "bold" }}>
+                  {it.quantity}x {it.menuItem?.name}
+                </div>
+                {it.itemNotes && (
+                  <div style={{ fontSize: "12px", fontWeight: "bold", paddingLeft: "10px" }}>
+                    &gt;&gt; ÖZEL: {it.itemNotes}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: "center", fontSize: "10px", fontWeight: "bold" }}>
+            <div style={{ border: "1px dashed #000", padding: "3px" }}>
+              * BU SİPARİŞ İPTAL EDİLMİŞTİR - SİPARİŞ HAZIRLAMAYINIZ *
+            </div>
+          </div>
         </div>
       )}
     </div>

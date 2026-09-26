@@ -39,11 +39,14 @@ body {
   }
   
   #printable-kitchen-ticket,
-  #printable-kitchen-ticket * {
+  #printable-kitchen-ticket *,
+  #printable-kitchen-cancel,
+  #printable-kitchen-cancel * {
     visibility: visible;
   }
 
-  #printable-kitchen-ticket {
+  #printable-kitchen-ticket,
+  #printable-kitchen-cancel {
     display: block !important;
     position: absolute;
     left: 0;
@@ -75,6 +78,16 @@ body {
   /* Uygulama navigasyon çubuğu ekran çıktısına karışmasın */
   /* Koyu tema yazdirilabilir sayfada devre disi kalmali; boylece PDF'in
      ust/alt bosluklari koyu bir bant olarak gorunmez, tam beyaz kalir. */
+  /* Garson iptal fisi: yalnizca yazdirildiginda gorunur */
+  html[data-cancel-print] body > *:not(#garson-iptal-fisi) {
+    display: none !important;
+  }
+  html[data-cancel-print] #garson-iptal-fisi {
+    display: block !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
   html[data-chef-print],
   html[data-chef-print] body,
   html[data-chef-print] #__next,

@@ -17,9 +17,11 @@ import {
   LogOut,
   AlertCircle,
   Image as ImageIcon,
+  Receipt,
 } from "lucide-react";
 import { getTables, getCategoriesTree, getRestaurants } from "@/actions/definitions";
 import { createOrder, updateOrder, getTableActiveOrders } from "@/actions/orders";
+import MyOrdersPanel from "./my-orders-panel";
 import { getSessionUser, selectRestaurantAction, logoutAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
 import { getRestaurantTheme, RESTAURANT_THEMES } from "@/lib/themes";
 import clsx from "clsx";
@@ -43,6 +45,7 @@ export default function WaiterTerminalPage() {
   const [tables, setTables] = useState<any[]>([]);
   const [selectedTable, setSelectedTable] = useState<any | null>(null);
   const [tableSearchQuery, setTableSearchQuery] = useState("");
+  const [panel, setPanel] = useState<"terminal" | "myOrders">("terminal");
   const [tableStatusFilter, setTableStatusFilter] = useState<"ALL" | "EMPTY" | "OCCUPIED">("ALL");
 
   // Hiyerarşik Kategori Navigasyonu
@@ -556,6 +559,59 @@ export default function WaiterTerminalPage() {
   }
 
   // ===========================================================================
+  // GARSON MODÜLÜ SEKMELERİ (SİPARİŞ GİRİŞİ / SİPARİŞLERİM)
+  // ===========================================================================
+  const renderTabBar = () => (
+    <div className="px-3 pt-3 shrink-0">
+      <div className="flex items-center gap-2 p-1 rounded-2xl bg-[#0d1220] border border-zinc-800 shadow-inner">
+        <button
+          type="button"
+          onClick={() => setPanel("terminal")}
+          className={clsx(
+            "flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-black transition",
+            panel === "terminal"
+              ? "bg-amber-500 text-zinc-950 shadow-lg"
+              : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/70"
+          )}
+        >
+          <ShoppingBag className="w-4 h-4" />
+          Sipariş Girişi
+        </button>
+        <button
+          type="button"
+          onClick={() => setPanel("myOrders")}
+          className={clsx(
+            "flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-black transition",
+            panel === "myOrders"
+              ? "bg-amber-500 text-zinc-950 shadow-lg"
+              : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/70"
+          )}
+        >
+          <Receipt className="w-4 h-4" />
+          Siparişlerim
+        </button>
+      </div>
+    </div>
+  );
+
+  // ===========================================================================
+  // DURUM 1.5: GARSON "SİPARİŞLERİM" SEKMESİ (GÜNÜN SİPARİŞLERİ + İPTAL AKIŞI)
+  // ===========================================================================
+  if (panel === "myOrders") {
+    return (
+      <div className={clsx("flex-1 flex flex-col w-full", currentTheme.bgDark)}>
+        {renderTabBar()}
+        <MyOrdersPanel
+          theme={currentTheme}
+          onCancelled={() => {
+            if (session?.activeRestaurantId) loadRestaurant(session.activeRestaurantId);
+          }}
+        />
+      </div>
+    );
+  }
+
+  // ===========================================================================
   // MASANIN AKTİF SİPARİŞLERİNİ İNCELEME VE DÜZENLEME MODALI (ORTAK BİLEŞEN)
   // ===========================================================================
   const renderTableOrdersModal = () => {
@@ -790,6 +846,7 @@ export default function WaiterTerminalPage() {
 
     return (
       <div className={clsx("flex-1 flex flex-col max-w-5xl mx-auto w-full p-4 sm:p-6 pb-20", currentTheme.bgDark)}>
+        {renderTabBar()}
         {/* Başarı Bildirimi (Örn: Sipariş mutfağa iletildikten sonra masa listesine dönüldüğünde) */}
         {successMessage && (
           <div className="mb-6 p-4 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs sm:text-sm flex items-center justify-between animate-in fade-in shadow-lg">
@@ -995,6 +1052,7 @@ export default function WaiterTerminalPage() {
   // ===========================================================================
   return (
     <div className={clsx("flex-1 flex flex-col max-w-5xl mx-auto w-full pb-28", currentTheme.bgDark)}>
+        {renderTabBar()}
       {/* Masa ve Menü Navigasyon Başlığı */}
       <div className={clsx("sticky top-14 z-40 border-b p-3 sm:p-3.5 backdrop-blur-md shadow-sm", currentTheme.border, currentTheme.bgDark)}>
         <div className="flex flex-wrap items-center justify-between gap-3">

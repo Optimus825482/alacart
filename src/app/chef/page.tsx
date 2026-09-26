@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useMemo, useTransition } from "react";
 import {
   ChefHat,
   Clock,
@@ -18,10 +18,16 @@ import {
   Search,
   ExternalLink,
   Users,
+  Plus,
+  Minus,
+  Trash2,
+  ShoppingCart,
+  Send,
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import clsx from "clsx";
-import { getRestaurants } from "@/actions/definitions";
+import { getRestaurants, getTables, getCategoriesTree } from "@/actions/definitions";
+import { createOrder, getRestaurantWaiters, updateOrderStatus, markOrderPrinted } from "@/actions/orders";
 import {
   getChefMasterKds,
   getChefAnalyticsAndReport,
@@ -30,14 +36,13 @@ import {
   getLiveServiceSnapshot,
 } from "@/actions/chef";
 import { todayInTimeZone, describeDateRange, formatInTimeZone } from "@/lib/date-range";
-import { updateOrderStatus, markOrderPrinted } from "@/actions/orders";
 import { getSessionUser } from "@/actions/auth";
 import { RESTAURANT_THEMES } from "@/lib/themes";
 import { ChefAnalyticsPrintReport, ChefAuditPrintReport } from "./chef-print-report";
 
 export default function ChefModulePage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<"kds" | "waiters" | "analytics" | "audit">("kds");
+  const [activeTab, setActiveTab] = useState<"kds" | "orderEntry" | "waiters" | "analytics" | "audit">("kds");
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string>("ALL");
 
@@ -65,6 +70,167 @@ export default function ChefModulePage() {
   const [loadingAudit, setLoadingAudit] = useState(false);
 
   const [isPending, startTransition] = useTransition();
+
+  // ================= SİPARİŞ GİRİŞİ (ŞEF) =================
+  // Şef, restoran seçerek sipariş girer. Garson mutfağa bağlanır;
+  // siparişi alan garson açıkça seçilir (Order.waiterId zorunludur).
+  type SepetKalemi = { menuItemId: string; name: string; quantity: number; itemNotes: string };
+  const [entryRestaurantId, setEntryRestaurantId] = useState<string>("");
+  const [entryTables, setEntryTables] = useState<any[]>([]);
+  const [entryWaiters, setEntryWaiters] = useState<any[]>([]);
+  const [entryTableId, setEntryTableId] = useState<string>("");
+  const [entryWaiterId, setEntryWaiterId] = useState<string>("");
+  const [entryCategories, setEntryCategories] = useState<any[]>([]);
+  const [entrySearch, setEntrySearch] = useState("");
+  const [entryCart, setEntryCart] = useState<SepetKalemi[]>([]);
+  const [entryNotes, setEntryNotes] = useState("");
+  const [entrySubmitting, setEntrySubmitting] = useState(false);
+  const [entryMessage, setEntryMessage] = useState<{ tip: "ok" | "hata"; metin: string } | null>(null);
+
+  const loadEntryData = async (restaurantId: string) => {
+    if (!restaurantId) return;
+    const [tablesRes, catsRes, waitersRes] = await Promise.all([
+      getTables(restaurantId),
+      getCategoriesTree(restaurantId),
+      getRestaurantWaiters(restaurantId),
+    ]);
+    if (tablesRes.success && tablesRes.data) setEntryTables(tablesRes.data);
+    if (catsRes.success && catsRes.data) setEntryCategories(catsRes.data);
+    if (waitersRes.success && waitersRes.data) {
+      setEntryWaiters(waitersRes.data);
+      setEntryWaiterId((prev) =>
+        prev && waitersRes.data.some((w: any) => w.id === prev)
+          ? prev
+          : waitersRes.data[0]?.id || ""
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab !== "orderEntry") return;
+    if (!entryRestaurantId && restaurants.length > 0) {
+      setEntryRestaurantId(restaurants[0].id);
+    }
+  }, [activeTab, restaurants, entryRestaurantId]);
+
+  useEffect(() => {
+    if (activeTab !== "orderEntry") return;
+    setEntryCart([]);
+    setEntryTableId("");
+    setEntryMessage(null);
+    loadEntryData(entryRestaurantId);
+  }, [activeTab, entryRestaurantId]);
+
+  // Kategori agacindan duz urun listesi (alt klasorlar dahil)
+  const entryUrunler = useMemo(() => {
+    const urunler: any[] = [];
+    const gez = (nodes: any[]) => {
+      for (const n of nodes || []) {
+        if (Array.isArray(n.items) && n.items.length > 0) urunler.push(...n.items);
+        if (n.children) gez(n.children);
+      }
+    };
+    gez(entryCategories);
+    return urunler;
+  }, [entryCategories]);
+
+  const entryGorunenUrunler = useMemo(() => {
+    const q = entrySearch.trim().toLocaleLowerCase("tr-TR");
+    if (!q) return entryUrunler;
+    return entryUrunler.filter((
+      u: any
+    ) =>
+      (u.name || "").toLocaleLowerCase("tr-TR").includes(q) ||
+      (u.allergens || "").toLocaleLowerCase("tr-TR").includes(q)
+    );
+  }, [entryUrunler, entrySearch]);
+
+  const entrySepetToplam = entryCart.reduce((t, k) => t + k.quantity, 0);
+
+  const entryEkle = (item: any) => {
+    setEntryCart((oncekiler) => {
+      const varOlan = oncekiler.find((k) => k.menuItemId === item.id);
+      if (varOlan) {
+        return oncekiler.map((k) =>
+          k.menuItemId === item.id ? { ...k, quantity: k.quantity + 1 } : k
+        );
+      }
+      return [
+        ...oncekiler,
+        {
+          menuItemId: item.id,
+          name: item.name,
+          quantity: 1,
+          itemNotes: "",
+        },
+      ];
+    });
+  };
+
+  const entryAdetDegistir = (menuItemId: string, delta: number) => {
+    setEntryCart((oncekiler) =>
+      oncekiler
+        .map((k) =>
+          k.menuItemId === menuItemId
+            ? { ...k, quantity: k.quantity + delta }
+            : k
+        )
+        .filter((k) => k.quantity > 0)
+    );
+  };
+
+  const entryNotDegistir = (menuItemId: string, not: string) => {
+    setEntryCart((oncekiler) =>
+      oncekiler.map((k) =>
+        k.menuItemId === menuItemId ? { ...k, itemNotes: not } : k
+      ),
+    );
+  };
+
+  const entryKaldir = (menuItemId: string) => {
+    setEntryCart((oncekiler) => oncekiler.filter((k) => k.menuItemId !== menuItemId));
+  };
+
+  const entrySiparisVer = async () => {
+    if (!entryRestaurantId || !entryTableId || !entryWaiterId) {
+      setEntryMessage({
+        tip: "hata",
+        metin: "Restoran, masa ve garson seçimi zorunludur.",
+      });
+      return;
+    }
+    if (entryCart.length === 0) {
+      setEntryMessage({ tip: "hata", metin: "Sepete en az bir ürün ekleyin." });
+      return;
+    }
+    setEntrySubmitting(true);
+    setEntryMessage(null);
+    const res = await createOrder({
+      restaurantId: entryRestaurantId,
+      tableId: entryTableId,
+      waiterId: entryWaiterId,
+      notes: entryNotes.trim() || undefined,
+      items: entryCart.map((k) => ({
+        menuItemId: k.menuItemId,
+        quantity: k.quantity,
+        itemNotes: k.itemNotes.trim() || undefined,
+      })),
+    });
+    setEntrySubmitting(false);
+    if (!res.success) {
+      setEntryMessage({ tip: "hata", metin: res.error || "Sipariş oluşturulamadı." });
+      return;
+    }
+    const no = res.data?.orderNumber;
+    setEntryMessage({
+      tip: "ok",
+      metin: `Sipariş #${no} mutfağa iletildi. Durumu yalnızca mutfak ekranından güncellenebilir.`,
+    });
+    setEntryCart([]);
+    setEntryNotes("");
+    loadKds();
+    loadLive();
+  };
 
   // Load Initial User & Restaurants
   useEffect(() => {
@@ -329,7 +495,7 @@ export default function ChefModulePage() {
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
-              Baş Aşçı / Koordinatör Şef Portalı
+              Chef Paneli
             </h1>
           </div>
         </div>
@@ -358,6 +524,7 @@ export default function ChefModulePage() {
           <button
             onClick={() => {
               if (activeTab === "kds") { loadKds(); loadLive(); }
+              if (activeTab === "orderEntry") loadEntryData(entryRestaurantId);
               if (activeTab === "waiters") loadWaiters();
               if (activeTab === "analytics") loadReport();
               if (activeTab === "audit") loadAudit();
@@ -388,6 +555,24 @@ export default function ChefModulePage() {
           </span>
         </button>
 
+
+        <button
+          onClick={() => setActiveTab("orderEntry")}
+          className={clsx(
+            "flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-sm",
+            activeTab === "orderEntry"
+              ? "bg-amber-500 text-zinc-950 shadow-amber-500/20"
+              : "bg-[#0f1422] text-zinc-400 hover:text-white hover:bg-zinc-800 border border-zinc-800"
+          )}
+        >
+          <ShoppingCart className="w-4 h-4" />
+          <span>Sipariş Girişi</span>
+          {entryCart.length > 0 && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-zinc-950/40 text-current ml-1">
+              {entrySepetToplam}
+            </span>
+          )}
+        </button>
         <button
           onClick={() => setActiveTab("waiters")}
           className={clsx(
@@ -636,20 +821,21 @@ export default function ChefModulePage() {
                       </button>
 
                       <div className="flex items-center gap-2">
-                        {order.status === "PENDING" && (
+                        {order.status !== "COMPLETED" && order.status !== "CANCELLED" && (
                           <button
-                            onClick={() => handleStatusChange(order.id, "PREPARING")}
-                            className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-md shadow-amber-500/20"
+                            onClick={() => handleStatusChange(order.id, "CANCELLED")}
+                            className="px-3.5 py-2 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-white font-bold text-xs shadow-md shadow-rose-600/20"
+                            title="Siparişi iptal et"
                           >
-                            Hazırlanıyor
+                            İptal Et
                           </button>
                         )}
-                        <button
-                          onClick={() => handleStatusChange(order.id, "COMPLETED")}
-                          className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20"
+                        <span
+                          className="px-3.5 py-2 rounded-xl bg-zinc-800/80 text-zinc-500 text-[11px] font-bold border border-zinc-700/70"
+                          title="Hazırlanıyor ve Tamamlandı işaretlemesi yalnızca mutfak ekranından yapılabilir."
                         >
-                          Tamamlandı
-                        </button>
+                          🔒 Mutfak: Hazırlandı / Tamamlandı
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -657,6 +843,270 @@ export default function ChefModulePage() {
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* TAB 2: SİPARİŞ GİRİŞİ (ŞEF) */}
+      {/* Şef restoran seçer, masa + garson seçer, ürünleri sepete ekler ve */}
+      {/* siparişi mutfağa iletir. Hazırlandı/Tamamlandı mutfağın işidir. */}
+      {/* ======================================================== */}
+      {activeTab === "orderEntry" && (
+        <div className="space-y-4">
+          {/* Uyari / basari mesaji */}
+          {entryMessage && (
+            <div
+              className={clsx(
+                "flex items-start gap-2.5 p-4 rounded-2xl border text-xs font-semibold",
+                entryMessage.tip === "ok"
+                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                  : "bg-rose-500/10 border-rose-500/30 text-rose-300"
+              )}
+            >
+              {entryMessage.tip === "ok" ? (
+                <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+              ) : (
+                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+              )}
+              <span>{entryMessage.metin}</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            {/* ---------------- SOL: Secimler + Urunler ---------------- */}
+            <div className="lg:col-span-8 space-y-4">
+              {/* Restoran / Masa / Garson */}
+              <div className="p-4 sm:p-5 rounded-3xl bg-[#0f1422] border border-zinc-800 shadow-lg space-y-3">
+                <h3 className="text-xs font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+                  <Utensils className="w-3.5 h-3.5 text-amber-400" />
+                  Sipariş Bilgileri
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <label className="block">
+                    <span className="text-[11px] font-bold text-zinc-400 block mb-1">Restoran *</span>
+                    <select
+                      value={entryRestaurantId}
+                      onChange={(e) => setEntryRestaurantId(e.target.value)}
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-amber-500"
+                    >
+                      <option value="">Restoran seçiniz...</option>
+                      {restaurants.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="block">
+                    <span className="text-[11px] font-bold text-zinc-400 block mb-1">Masa *</span>
+                    <select
+                      value={entryTableId}
+                      onChange={(e) => setEntryTableId(e.target.value)}
+                      disabled={!entryRestaurantId}
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-amber-500 disabled:opacity-50"
+                    >
+                      <option value="">Masa seçiniz...</option>
+                      {entryTables.map((t: any) => (
+                        <option key={t.id} value={t.id}>
+                          {t.name} ({t.status === "EMPTY" ? "Boş" : "Dolu"})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="block">
+                    <span className="text-[11px] font-bold text-zinc-400 block mb-1">
+                      Garson (siparişi alan) *
+                    </span>
+                    <select
+                      value={entryWaiterId}
+                      onChange={(e) => setEntryWaiterId(e.target.value)}
+                      disabled={!entryRestaurantId}
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-amber-500 disabled:opacity-50"
+                    >
+                      <option value="">Garson seçiniz...</option>
+                      {entryWaiters.map((w: any) => (
+                        <option key={w.id} value={w.id}>
+                          {w.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                {entryWaiters.length === 0 && entryRestaurantId && (
+                  <p className="text-[11px] text-amber-400 font-semibold">
+                    Bu restoran için aktif garson tanımı bulunamadı. Sistem Yöneticisi'nden garson
+                    tanımı yapılmalıdır.
+                  </p>
+                )}
+              </div>
+
+              {/* Urun listesi */}
+              <div className="p-4 sm:p-5 rounded-3xl bg-[#0f1422] border border-zinc-800 shadow-lg">
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+                    <ChefHat className="w-3.5 h-3.5 text-amber-400" />
+                    Menü Ürünleri
+                  </h3>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+                    <input
+                      type="text"
+                      value={entrySearch}
+                      onChange={(e) => setEntrySearch(e.target.value)}
+                      placeholder="Ürün ara..."
+                      className="w-full sm:w-64 bg-zinc-900 border border-zinc-700 rounded-xl pl-9 pr-3 py-2 text-xs font-semibold text-white placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
+                </div>
+
+                {entryGorunenUrunler.length === 0 ? (
+                  <div className="py-10 text-center">
+                    <ChefHat className="w-10 h-10 text-zinc-700 mx-auto mb-2" />
+                    <p className="text-xs font-semibold text-zinc-500">
+                      {entryRestaurantId
+                        ? "Bu restoran için aktif menü ürünü bulunamadı."
+                        : "Önce bir restoran seçiniz."}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-[460px] overflow-y-auto pr-1">
+                    {entryGorunenUrunler.map((u: any) => (
+                      <button
+                        key={u.id}
+                        onClick={() => entryEkle(u)}
+                        className="text-left p-2.5 rounded-2xl bg-zinc-900/70 border border-zinc-800 hover:border-amber-500/60 hover:bg-zinc-800/70 transition-all"
+                      >
+                        {u.imageUrl && (
+                          <img
+                            src={u.imageUrl}
+                            alt={u.name}
+                            className="w-full h-16 object-cover rounded-xl mb-2 border border-zinc-800"
+                          />
+                        )}
+                        <div className="text-[11px] font-bold text-white leading-tight line-clamp-2">
+                          {u.name}
+                        </div>
+                        {u.allergens && (
+                          <div className="text-[9px] text-amber-400/80 mt-1 line-clamp-1">
+                            {u.allergens}
+                          </div>
+                        )}
+                        <div className="mt-1.5 flex items-center gap-1 text-[10px] font-black text-amber-400">
+                          <Plus className="w-3 h-3" /> Sepete Ekle
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ---------------- SAG: Sepet ---------------- */}
+            <div className="lg:col-span-4">
+              <div className="p-4 sm:p-5 rounded-3xl bg-[#0f1422] border border-zinc-800 shadow-lg sticky top-4">
+                <h3 className="text-xs font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2 mb-4">
+                  <ShoppingCart className="w-3.5 h-3.5 text-amber-400" />
+                  Sipariş Sepeti
+                  <span className="ml-auto px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-400">
+                    {entrySepetToplam} ürün
+                  </span>
+                </h3>
+
+                {entryCart.length === 0 ? (
+                  <div className="py-10 text-center">
+                    <ShoppingCart className="w-10 h-10 text-zinc-700 mx-auto mb-2" />
+                    <p className="text-xs font-semibold text-zinc-500">
+                      Sepet boş. Soldaki listeden ürün ekleyin.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                    {entryCart.map((k) => (
+                      <div
+                        key={k.menuItemId}
+                        className="p-2.5 rounded-2xl bg-zinc-900/70 border border-zinc-800"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[11px] font-bold text-white leading-tight">
+                              {k.name}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => entryKaldir(k.menuItemId)}
+                            className="p-1 rounded-lg bg-zinc-800 hover:bg-rose-600/80 text-zinc-400 hover:text-white transition-colors"
+                            title="Sepetten çıkar"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        <input
+                          type="text"
+                          value={k.itemNotes}
+                          onChange={(e) => entryNotDegistir(k.menuItemId, e.target.value)}
+                          placeholder="Ürün notu (örn: Az pişmiş)"
+                          className="mt-2 w-full bg-zinc-950/60 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold text-white placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+                        />
+
+                        <div className="mt-2 flex items-center justify-between">
+                          <button
+                            onClick={() => entryAdetDegistir(k.menuItemId, -1)}
+                            className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="text-xs font-black text-white">
+                            {k.quantity}
+                          </span>
+                          <button
+                            onClick={() => entryAdetDegistir(k.menuItemId, 1)}
+                            className="p-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 transition-colors"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <label className="block mt-4">
+                  <span className="text-[11px] font-bold text-zinc-400 block mb-1">
+                    Sipariş Genel Notu
+                  </span>
+                  <textarea
+                    value={entryNotes}
+                    onChange={(e) => setEntryNotes(e.target.value)}
+                    rows={2}
+                    placeholder="Örn: Müşteri özel istek, şef notu..."
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-xs font-semibold text-white placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+                  />
+                </label>
+
+                <button
+                  onClick={entrySiparisVer}
+                  disabled={entrySubmitting || entryCart.length === 0}
+                  className="mt-4 w-full px-4 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-950 font-black text-xs shadow-lg shadow-amber-500/20 transition-colors flex items-center justify-center gap-2"
+                >
+                  {entrySubmitting ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  {entrySubmitting ? "Gönderiliyor..." : "Siparişi Mutfağa İlet"}
+                </button>
+
+                <p className="mt-2.5 text-[10px] text-zinc-500 leading-relaxed">
+                  Sipariş gönderildikten sonra "Hazırlandı" ve "Tamamlandı" işaretlemesi yalnızca
+                  mutfak ekranından yapılabilir.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

@@ -260,7 +260,7 @@ export async function getTableActiveOrders(tableId: string) {
         waiter: { select: { id: true, name: true } },
         items: {
           include: {
-            menuItem: { select: { id: true, name: true, defaultNotes: true, allergens: true } },
+            menuItem: { select: { id: true, name: true, defaultNotes: true, imageUrl: true } },
           },
         },
       },

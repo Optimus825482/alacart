@@ -48,9 +48,17 @@ export async function loginAction(formData: FormData) {
     }
 
     const assignedIds = user.assignedTo.map((a) => a.restaurantId);
-    // Garson ve Mutfak kullanıcıları sisteme giriş yaptığında her zaman önce alakart seçimi yapacak
-    const defaultRestaurantId: string | null = null;
-    const defaultRestaurantName: string | null = null;
+    // Alakart otomatik atanır:
+    //  - Kullanıcı tam olarak 1 alakarta atanmışsa (ör. "ahmet" -> The Roof Garden,
+    //    "mutfak.roof" -> The Roof Garden) giriş sonrası seçim ekranı GÖSTERİLMEZ.
+    //  - Birden fazla alakarta atanmışsa (ör. admin, sef) seçim ekranı açılır.
+    const primaryAssignment = user.assignedTo.length === 1 ? user.assignedTo[0] : null;
+    const defaultRestaurantId: string | null = primaryAssignment
+      ? primaryAssignment.restaurantId
+      : null;
+    const defaultRestaurantName: string | null = primaryAssignment
+      ? primaryAssignment.restaurant.name
+      : null;
 
     const session: SessionUser = {
       id: user.id,

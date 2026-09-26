@@ -17,19 +17,18 @@ import {
   X,
   Eye,
   BellRing,
+  Ban,
 } from "lucide-react";
-import { getSessionUser, selectRestaurantAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
-import { getRestaurants } from "@/actions/definitions";
+import { getSessionUser, SessionUser } from "@/actions/auth";
 import { getKitchenCancellationAlerts, acknowledgeKitchenCancellation } from "@/actions/orders";
 import { playKitchenChime } from "@/lib/sound";
-import { getRestaurantTheme, RESTAURANT_THEMES } from "@/lib/themes";
+import { getRestaurantTheme } from "@/lib/themes";
 import clsx from "clsx";
 
 export default function KitchenKDSPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<SessionUser | null>(null);
-  const [availableRestaurants, setAvailableRestaurants] = useState<any[]>([]);
 
   const [orders, setOrders] = useState<any[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("ACTIVE");
@@ -51,15 +50,7 @@ export default function KitchenKDSPage() {
     async function init() {
       setLoading(true);
       try {
-        const [user, restsRes] = await Promise.all([
-          getSessionUser(),
-          getRestaurants(),
-        ]);
-
-        if (restsRes?.success && restsRes.data) {
-          setAvailableRestaurants(restsRes.data);
-        }
-
+        const user = await getSessionUser();
         if (!user) {
           router.push("/login");
           return;
@@ -73,47 +64,6 @@ export default function KitchenKDSPage() {
     }
     init();
   }, []);
-
-  // Restoran Seçilmemişse (Birden fazla yetkisi olan mutfak kullanıcısı veya admin/şef)
-  const handleSelectKitchenRestaurant = async (restaurantIdOrCode: string) => {
-    setLoading(true);
-    try {
-      const res = await selectRestaurantAction(restaurantIdOrCode);
-      if (res.success && res.restaurant) {
-        setSession((prev) => ({
-          ...(prev || {
-            id: "kitchen",
-            name: "Mutfak",
-            username: "mutfak",
-            role: "KITCHEN",
-          }),
-          activeRestaurantId: res.restaurant.id,
-          activeRestaurantName: res.restaurant.name,
-        }));
-      } else {
-        alert("Restoran seçilemedi: " + (res.error || "Bilinmeyen hata"));
-      }
-    } catch (err: any) {
-      console.error("handleSelectKitchenRestaurant error:", err);
-      alert("Hata oluştu: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Restoran Değiştir
-  const handleSwitchRestaurant = async () => {
-    setLoading(true);
-    try {
-      await clearActiveRestaurantAction();
-      setSession((prev) => prev ? { ...prev, activeRestaurantId: null, activeRestaurantName: null } : null);
-      setOrders([]);
-    } catch (err) {
-      console.error("handleSwitchRestaurant error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Otomatik yazdırılan sipariş ID'lerini takip et (aynı sipariş 2 kez basılmasın)
   const autoPrintedIdsRef = useRef<Set<string>>(new Set());
@@ -342,86 +292,21 @@ export default function KitchenKDSPage() {
   // ===========================================================================
   // DURUM 1: MUTFAK KULLANICISI HENÜZ RESTORAN SEÇMEDİYSE
   // ===========================================================================
+  // Alakart otomatik atanır (loginAction): her alakartın kendi mutfak kullanıcısı
+  // vardır (mutfak.roofgarden, mutfak.steakhouse, ...). Giriş sonrası seçim ekranı
+  // gösterilmez. Yalnızca ataması olmayan kullanıcılar bu ekranı görür.
   if (!session?.activeRestaurantId) {
     return (
-      <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-4xl mx-auto w-full justify-center">
-        {/* Üst Bar: Kullanıcı Bilgisi */}
-        <div className="flex items-center pb-4 mb-6 border-b border-zinc-800">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-              <ChefHat className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-zinc-500 block">MUTFAK TERMİNALİ</span>
-              <span className="text-xs text-zinc-300">
-                Giriş Yapan: <strong className="text-white">{session?.name}</strong>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center mb-8">
-          <span className="text-xs uppercase tracking-widest text-emerald-400 font-bold block mb-1">
-            MUTFAK İSTASYONU SEÇİMİ
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-white">
-            Sayın {session?.name}, Hangi Alakartın Mutfağını Açmak İstiyorsunuz?
-          </h2>
-          <p className="text-zinc-400 text-xs sm:text-sm mt-1">
-            Her alakart restoranın mutfak ekranı ve termal adisyon yazıcısı tamamen bağımsızdır. Lütfen görevli olduğunuz alakartı seçin.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {(availableRestaurants.length > 0
-            ? availableRestaurants.map((r) => ({
-                id: r.id,
-                code: r.code,
-                name: r.name,
-                description: r.description,
-                theme: getRestaurantTheme(r.code || r.name),
-              }))
-            : Object.values(RESTAURANT_THEMES).map((t) => ({
-                id: t.code,
-                code: t.code,
-                name: t.name,
-                description: t.subtitle,
-                theme: t,
-              }))
-          ).map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleSelectKitchenRestaurant(item.id)}
-              className={clsx(
-                "p-5 rounded-3xl border text-left transition-all active:scale-[0.98] group flex flex-col justify-between",
-                item.theme.bgDark,
-                item.theme.border,
-                item.theme.glow,
-                "hover:ring-2 hover:ring-emerald-400/50"
-              )}
-            >
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl">{item.theme.iconEmoji}</span>
-                  <span className={clsx("text-[10px] font-bold px-2 py-0.5 rounded-full border", item.theme.badge)}>
-                    {item.code}
-                  </span>
-                </div>
-                <h3 className="text-lg font-black text-white group-hover:text-emerald-300 transition-colors">
-                  {item.name} Mutfağı (KDS)
-                </h3>
-                <p className="text-zinc-400 text-xs mt-1 leading-relaxed">
-                  {item.description || item.theme.subtitle}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-zinc-800/80 mt-4 flex items-center justify-between text-xs font-bold text-emerald-400">
-                <span>Mutfak Ekranını Başlat</span>
-                <span>➔</span>
-              </div>
-            </button>
-          ))}
-        </div>
+      <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-lg mx-auto w-full justify-center text-center">
+        <ChefHat className="w-14 h-14 text-zinc-700 mb-4 mx-auto" />
+        <h2 className="text-xl font-black text-white mb-2">Mutfak Alakartı Atanmamış</h2>
+        <p className="text-zinc-400 text-sm">
+          Hesabınız henüz bir alakarta bağlanmamış. Lütfen sistem yöneticisinden
+          alakart ataması isteyin.
+        </p>
+        <p className="text-zinc-500 text-xs mt-4">
+          Giriş yapan kullanıcı: {session?.name}
+        </p>
       </div>
     );
   }
@@ -439,6 +324,7 @@ export default function KitchenKDSPage() {
       if (statusFilter === "UPDATED") return (o.isUpdated || (o.revision && o.revision > 1)) && (o.status === "PENDING" || o.status === "PREPARING");
       if (statusFilter === "PREPARING") return o.status === "PREPARING";
       if (statusFilter === "COMPLETED") return o.status === "COMPLETED";
+      if (statusFilter === "CANCELLED") return o.status === "CANCELLED";
       return true;
     })
     .sort((a, b) => {
@@ -533,6 +419,7 @@ export default function KitchenKDSPage() {
             { key: "UPDATED", label: "⚠️ Güncellenenler (Revizyon)", count: orders.filter((o) => (o.isUpdated || (o.revision && o.revision > 1)) && (o.status === "PENDING" || o.status === "PREPARING")).length },
             { key: "PREPARING", label: "Hazırlanıyor", count: orders.filter((o) => o.status === "PREPARING").length },
             { key: "COMPLETED", label: "✓ Tamamlananlar", count: orders.filter((o) => o.status === "COMPLETED").length },
+            { key: "CANCELLED", label: "🚫 İptal Edilenler", count: orders.filter((o) => o.status === "CANCELLED").length },
             { key: "ALL", label: "Tümü", count: orders.length },
           ].map((tab) => (
             <button
@@ -637,12 +524,14 @@ export default function KitchenKDSPage() {
       {/* Sipariş Kartları */}
       {filteredOrders.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center p-12 rounded-3xl bg-zinc-900/30 border border-zinc-800/60 text-center">
-          <ChefHat className="w-12 h-12 text-zinc-600 mb-3" />
+          {statusFilter === "CANCELLED" ? <Ban className="w-12 h-12 text-rose-500/50 mb-3" /> : <ChefHat className="w-12 h-12 text-zinc-600 mb-3" />}
           <h3 className="text-base font-bold text-white mb-1">
             {session.activeRestaurantName} İçin Bu Filtrede Sipariş Bulunmuyor
           </h3>
           <p className="text-zinc-500 text-xs max-w-sm">
-            Garson masadan yeni veya güncellenmiş bir sipariş gönderdiğinde sesli otel zili çalacak ve bu ekrana düşecektir.
+            {statusFilter === "CANCELLED"
+              ? "Son 24 saatte garson tarafından iptal edilen siparişler burada listelenir. Şu anda iptal edilmiş bir sipariş yok."
+              : "Garson masadan yeni veya güncellenmiş bir sipariş gönderdiğinde sesli otel zili çalacak ve bu ekrana düşecektir."}
           </p>
         </div>
       ) : (
@@ -652,39 +541,42 @@ export default function KitchenKDSPage() {
             const isUrgent = elapsed >= 12;
             const isPreparing = order.status === "PREPARING";
             const isCompleted = order.status === "COMPLETED";
+            const isCancelled = order.status === "CANCELLED";
             const isOrderUpdated = Boolean(order.isUpdated || (order.revision && order.revision > 1));
             const updateElapsed = order.lastModifiedAt ? getElapsedMinutes(order.lastModifiedAt) : null;
 
             return (
               <div
                 key={order.id}
-                className={clsx(
-                  "rounded-3xl border transition-all flex flex-col justify-between overflow-hidden shadow-xl",
-                  isCompleted
-                    ? "bg-[#0a1a14]/70 border-emerald-500/50 shadow-emerald-500/5"
-                    : isOrderUpdated
-                    ? "bg-[#18140a] border-amber-400 ring-2 ring-amber-400/50 shadow-2xl shadow-amber-500/10"
-                    : isPreparing
-                    ? "bg-[#0b1424] border-blue-500/40"
-                    : isUrgent
-                    ? "bg-[#1f0f12] border-rose-500/60 ring-1 ring-rose-500/40"
-                    : "bg-[#111726] border-amber-500/30"
-                )}
+                  className={clsx(
+                    "rounded-3xl border transition-all flex flex-col justify-between overflow-hidden shadow-xl",
+                    isCancelled
+                      ? "bg-[#1a0a0d] border-rose-500/40 opacity-95"
+                      : isCompleted
+                      ? "bg-[#0a1a14]/70 border-emerald-500/50 shadow-emerald-500/5"
+                      : isOrderUpdated
+                      ? "bg-[#18140a] border-amber-400 ring-2 ring-amber-400/50 shadow-2xl shadow-amber-500/10"
+                      : isPreparing
+                      ? "bg-[#0b1424] border-blue-500/40"
+                      : isUrgent
+                      ? "bg-[#1f0f12] border-rose-500/60 ring-1 ring-rose-500/40"
+                      : "bg-[#111726] border-amber-500/30"
+                  )}
               >
                 {/* Durum Rozeti */}
-                {isCompleted ? (
-                  <div className="bg-emerald-500/20 border-b border-emerald-500/40 text-emerald-300 px-3.5 py-1.5 font-bold text-xs flex items-center justify-between">
+                {isCancelled ? (
+                  <div className="bg-rose-500/20 border-b border-rose-500/40 text-rose-300 px-3.5 py-1.5 font-bold text-xs flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span>MUTFAK TAMAMLADI • SERVİSE HAZIR</span>
+                      <Ban className="w-4 h-4 text-rose-400" />
+                      <span>SİPARİŞ İPTAL EDİLDİ • HAZIRLAMAYIN</span>
                     </div>
-                    {order.completedAt && (
-                      <span className="font-mono text-[11px] text-emerald-400/80">
-                        {new Date(order.completedAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
+                    {order.cancelledAt && (
+                      <span className="font-mono text-[11px] text-rose-400/80">
+                        {new Date(order.cancelledAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}
                       </span>
                     )}
                   </div>
-                ) : isOrderUpdated ? (
+                ) : isCompleted ? (
                   <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-zinc-950 px-3.5 py-1.5 font-black text-xs flex items-center justify-between shadow-md">
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm">⚠️</span>
@@ -811,38 +703,53 @@ export default function KitchenKDSPage() {
                   </button>
 
                   <div className="flex items-center gap-2">
-                    {order.status === "PENDING" && (
-                      <button
-                        onClick={() => handleUpdateStatus(order.id, "PREPARING")}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all active:scale-95"
-                      >
-                        <Flame className="w-3.5 h-3.5" />
-                        <span>Hazırlanıyor</span>
-                      </button>
-                    )}
-
-                    {!isCompleted ? (
-                      <button
-                        onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-black transition-all active:scale-95 shadow-md shadow-emerald-500/20"
-                      >
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>Tamamlandı</span>
-                      </button>
-                    ) : (
+                    {isCancelled ? (
                       <div className="flex items-center gap-2">
-                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
-                          <Check className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>Tamamlandı</span>
+                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold">
+                          <Ban className="w-3.5 h-3.5 text-rose-400" />
+                          <span>İptal Edildi</span>
                         </span>
-                        <button
-                          onClick={() => handleUpdateStatus(order.id, "PREPARING")}
-                          className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-medium border border-zinc-700 transition"
-                          title="Gerekirse tekrar hazırlanıyor durumuna al"
-                        >
-                          Geri Al (Ocak)
-                        </button>
+                        {order.cancellationReason && (
+                          <span className="text-[11px] text-rose-300/80 font-medium italic max-w-[220px] truncate" title={order.cancellationReason}>
+                            Sebep: {order.cancellationReason}
+                          </span>
+                        )}
                       </div>
+                    ) : (
+                      <>
+                        {order.status === "PENDING" && (
+                          <button
+                            onClick={() => handleUpdateStatus(order.id, "PREPARING")}
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all active:scale-95"
+                          >
+                            <Flame className="w-3.5 h-3.5" />
+                            <span>Hazırlanıyor</span>
+                          </button>
+                        )}
+                        {!isCompleted ? (
+                          <button
+                            onClick={() => handleUpdateStatus(order.id, "COMPLETED")}
+                            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-black transition-all active:scale-95 shadow-md shadow-emerald-500/20"
+                          >
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>Tamamlandı</span>
+                          </button>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
+                              <Check className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>Tamamlandı</span>
+                            </span>
+                            <button
+                              onClick={() => handleUpdateStatus(order.id, "PREPARING")}
+                              className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-medium border border-zinc-700 transition"
+                              title="Gerekirse tekrar hazırlanıyor durumuna al"
+                            >
+                              Geri Al (Ocak)
+                            </button>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>

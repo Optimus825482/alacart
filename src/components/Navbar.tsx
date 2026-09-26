@@ -22,11 +22,20 @@ export function Navbar() {
   const [session, setSession] = useState<SessionUser | null>(null);
 
   useEffect(() => {
+    let iptal = false;
     async function loadSession() {
+      if (iptal) return;
       const user = await getSessionUser();
-      setSession(user);
+      if (!iptal) setSession(user);
     }
     loadSession();
+    // Alakart secildiginde navbar gostergesini aninda yenile
+    const yenile = () => { loadSession(); };
+    window.addEventListener("alacarte:session", yenile);
+    return () => {
+      iptal = true;
+      window.removeEventListener("alacarte:session", yenile);
+    };
   }, [pathname]);
 
   // Login sayfasında navbar gizlensin veya sade görünsün

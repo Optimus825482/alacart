@@ -18,12 +18,13 @@ import {
   AlertCircle,
   Image as ImageIcon,
   Receipt,
+  ChefHat,
 } from "lucide-react";
 import { getTables, getCategoriesTree, getRestaurants } from "@/actions/definitions";
 import { createOrder, updateOrder, getTableActiveOrders } from "@/actions/orders";
 import MyOrdersPanel from "./my-orders-panel";
-import { getSessionUser, selectRestaurantAction, logoutAction, clearActiveRestaurantAction, SessionUser } from "@/actions/auth";
-import { getRestaurantTheme, RESTAURANT_THEMES } from "@/lib/themes";
+import { getSessionUser, selectRestaurantAction, SessionUser } from "@/actions/auth";
+import { getRestaurantTheme } from "@/lib/themes";
 import clsx from "clsx";
 
 interface CartItem {
@@ -40,8 +41,8 @@ export default function WaiterTerminalPage() {
   const [session, setSession] = useState<SessionUser | null>(null);
 
   // Restoran & Masa Bilgileri
-  const [availableRestaurants, setAvailableRestaurants] = useState<any[]>([]);
   const [currentRestaurant, setCurrentRestaurant] = useState<any | null>(null);
+  const [availableRestaurants, setAvailableRestaurants] = useState<any[]>([]);
   const [tables, setTables] = useState<any[]>([]);
   const [selectedTable, setSelectedTable] = useState<any | null>(null);
   const [tableSearchQuery, setTableSearchQuery] = useState("");
@@ -115,16 +116,19 @@ export default function WaiterTerminalPage() {
           getSessionUser(),
           getRestaurants(),
         ]);
-
-        if (restsRes?.success && restsRes.data) {
-          setAvailableRestaurants(restsRes.data);
-        }
-
         if (!user) {
           router.push("/login");
           return;
         }
         setSession(user);
+
+        // Garson yalnizca kendisine atanmis alakartlari gorebilir/secebilir.
+        if (restsRes?.success && restsRes.data) {
+          const allowed = new Set(user.assignedRestaurantIds || []);
+          setAvailableRestaurants(
+            allowed.size > 0 ? restsRes.data.filter((r: any) => allowed.has(r.id)) : []
+          );
+        }
 
         if (user.activeRestaurantId) {
           await loadRestaurant(user.activeRestaurantId);
@@ -168,7 +172,7 @@ export default function WaiterTerminalPage() {
     }
   };
 
-  // Restoran Seçimi Yapıldığında (Kilitleme)
+  // Alakart Seçimi Yapıldığında (Kilitleme)
   const handleSelectRestaurant = async (restaurantIdOrCode: string) => {
     setLoading(true);
     try {
@@ -186,8 +190,10 @@ export default function WaiterTerminalPage() {
           activeRestaurantName: res.restaurant.name,
         }));
         await loadRestaurant(res.restaurant.id);
+        // Navbar'daki "Seçilen Alakart" göstergesini anında güncelle
+        try { window.dispatchEvent(new Event("alacarte:session")); } catch {}
       } else {
-        alert("Restoran seçilemedi: " + (res.error || "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin."));
+        alert("Alakart seçilemedi: " + (res.error || "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin."));
       }
     } catch (err: any) {
       console.error("handleSelectRestaurant error:", err);
@@ -486,79 +492,88 @@ export default function WaiterTerminalPage() {
     );
   }
 
+  // DURUM 1: GARSON HENÜZ ALAKART SEÇMEDİYSE (ALAKART SEÇİM EKRANI)
   // ===========================================================================
-  // DURUM 1: GARSON HENÜZ ALAKART RESTORAN SEÇMEDİYSE (RESTORAN SEÇİM EKRANI)
-  // ===========================================================================
+  // Birden fazla alakarta atanmış garson giriş sonrası bu ekranı görür ve
+  // seçilen alakart session cookie'sine kilitlenir. Tek alakart atanmış
+  // kullanıcılarda loginAction otomatik atar, bu ekran hiç gösterilmez.
   if (!session?.activeRestaurantId) {
+    const selectable = availableRestaurants.filter((r) => r.active !== false);
+
+    if (selectable.length === 0) {
+      return (
+        <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-lg mx-auto w-full justify-center text-center">
+          <ChefHat className="w-14 h-14 text-zinc-700 mb-4 mx-auto" />
+          <h2 className="text-xl font-black text-white mb-2">Alakart Atanmamış</h2>
+          <p className="text-zinc-400 text-sm">
+            Hesabınıza atanmış bir alakart bulunmuyor. Lütfen sistem yöneticisinden
+            alakart ataması isteyin.
+          </p>
+          <p className="text-zinc-500 text-xs mt-4">
+            Giriş yapan kullanıcı: {session?.name}
+          </p>
+        </div>
+      );
+    }
+
     return (
-      <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-4xl mx-auto w-full justify-center">
+      <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-4xl mx-auto w-full justify-center overflow-y-auto">
         <div className="text-center mb-8">
           <span className="text-xs uppercase tracking-widest text-amber-400 font-bold block mb-1">
-            GÖREV YERİ SEÇİMİ
+            ALAKART SEÇİMİ
           </span>
           <h2 className="text-2xl sm:text-3xl font-black text-white">
             Sayın {session?.name}, Hangi Alakartta Görevlisiniz?
           </h2>
           <p className="text-zinc-400 text-xs sm:text-sm mt-1">
-            Görevli olduğunuz alakartı seçin. Seçiminiz kilitlenecek ve karışıklığı önlemek için özel renk teması uygulanacaktır.
+            Size atanmış {selectable.length} alakart bulundu. Görevli olduğunuz alakartı seçin;
+            seçiminiz kilitlenecek ve karışıklığı önlemek için özel renk teması uygulanacaktır.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {(availableRestaurants.length > 0
-            ? availableRestaurants.map((r) => ({
-                id: r.id,
-                code: r.code,
-                name: r.name,
-                description: r.description,
-                theme: getRestaurantTheme(r.code || r.name),
-              }))
-            : Object.values(RESTAURANT_THEMES).map((t) => ({
-                id: t.code,
-                code: t.code,
-                name: t.name,
-                description: t.subtitle,
-                theme: t,
-              }))
-          ).map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleSelectRestaurant(item.id)}
-              className={clsx(
-                "p-5 rounded-3xl border text-left transition-all active:scale-[0.98] group flex flex-col justify-between",
-                item.theme.bgDark,
-                item.theme.border,
-                item.theme.glow,
-                "hover:ring-2 hover:ring-amber-400/50"
-              )}
-            >
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl">{item.theme.iconEmoji}</span>
-                  <span className={clsx("text-[10px] font-bold px-2 py-0.5 rounded-full border", item.theme.badge)}>
-                    {item.code}
-                  </span>
+          {selectable.map((r) => {
+            const theme = getRestaurantTheme(r.code || r.name);
+            return (
+              <button
+                key={r.id}
+                onClick={() => handleSelectRestaurant(r.id)}
+                className={clsx(
+                  "p-5 rounded-3xl border text-left transition-all active:scale-[0.98] group flex flex-col justify-between",
+                  theme.bgDark,
+                  theme.border,
+                  theme.glow,
+                  "hover:ring-2 hover:ring-amber-400/50"
+                )}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-3xl">{theme.iconEmoji}</span>
+                    <span className={clsx("text-[10px] font-bold px-2 py-0.5 rounded-full border", theme.badge)}>
+                      {r.code}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-black text-white group-hover:text-amber-300 transition-colors">
+                    {r.name}
+                  </h3>
+                  <p className="text-zinc-400 text-xs mt-1 leading-relaxed">
+                    {r.description || theme.subtitle}
+                  </p>
                 </div>
-                <h3 className="text-lg font-black text-white group-hover:text-amber-300 transition-colors">
-                  {item.name}
-                </h3>
-                <p className="text-zinc-400 text-xs mt-1 leading-relaxed">
-                  {item.description || item.theme.subtitle}
-                </p>
-              </div>
 
-              <div className="pt-4 border-t border-zinc-800/80 mt-4 flex items-center justify-between text-xs font-bold text-amber-400">
-                <span>Giriş Yap & Kilitle</span>
-                <span>➔</span>
-              </div>
-            </button>
-          ))}
+                <div className="pt-4 border-t border-zinc-800/80 mt-4 flex items-center justify-between text-xs font-bold text-amber-400">
+                  <span>Giriş Yap &amp; Kilitle</span>
+                  <span>&#10148;</span>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
     );
   }
 
-  // ===========================================================================
+  // ===========================================================================  // ===========================================================================
   // GARSON MODÜLÜ SEKMELERİ (SİPARİŞ GİRİŞİ / SİPARİŞLERİM)
   // ===========================================================================
   const renderTabBar = () => (

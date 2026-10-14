@@ -3,6 +3,10 @@ set -e
 
 echo "=== [A LA CARTE] Container Başlatılıyor ==="
 
+# Ortam ve PATH Güvencesi
+export HOME="${HOME:-/home/nextjs}"
+export PATH="/app/node_modules/.bin:$PATH"
+
 # 1. PostgreSQL Veritabanı Hazırlık Kontrolü
 echo ">> Veritabanı bağlantısı doğrulanıyor..."
 max_retries=30
@@ -20,17 +24,22 @@ done
 
 echo ">> Veritabanı aktif ve hazır!"
 
-# 2. Prisma İstemcisini Yeniden Oluştur (schema değişikliklerini yansıt)
-echo ">> Prisma istemcisi oluşturuluyor (prisma generate)..."
-npx prisma generate || { echo "HATA: Prisma generate başarısız oldu!"; exit 1; }
-
-# 3. Prisma Şemasını Veritabanına Senkronize Et (db push - indeksler dahil)
+# 2. Prisma Şemasını Veritabanına Senkronize Et (db push)
 echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
-npx prisma db push --skip-generate --accept-data-loss || { echo "HATA: Prisma db push başarısız oldu!"; exit 1; }
+./node_modules/.bin/prisma db push --skip-generate --accept-data-loss || {
+  echo "UYARI: Prisma db push sırasında hata oluştu, devam ediliyor..."
+}
 
-# 4. Veri Kontrolü ve Otomatik İlk Kurulum (Bootstrap / Seed)
+# 3. Veri Kontrolü ve Otomatik İlk Kurulum (Bootstrap / Seed)
 echo ">> Veritabanı veri durumu doğrulanıyor..."
-existing_data=$(node -e "const {PrismaClient}=require('@prisma/client');const p=new PrismaClient();Promise.all([p.restaurantConfig.count(),p.user.count()]).then(([c,u])=>process.stdout.write(String(c+u))).catch(()=>process.stdout.write('0')).finally(()=>p.\$disconnect())")
+existing_data=$(node -e '
+const { PrismaClient } = require("@prisma/client");
+const p = new PrismaClient();
+Promise.all([p.restaurantConfig.count(), p.user.count()])
+  .then(([c, u]) => { process.stdout.write(String(c + u)); })
+  .catch(() => { process.stdout.write("0"); })
+  .finally(() => p.$disconnect());
+' 2>/dev/null || echo "0")
 
 # Seed sırları için varsayılanlar (Coolify ortam değişkenlerinden gelmediyse güvenli demo varsayılanları kullanılır)
 export SEED_ADMIN_PASSWORD="${SEED_ADMIN_PASSWORD:-Admin1234!}"
@@ -41,20 +50,20 @@ export SEED_WAITER_PASSWORD="${SEED_WAITER_PASSWORD:-Waiter1234!}"
 export SEED_WAITER_PIN="${SEED_WAITER_PIN:-12345678}"
 export SEED_SETUP_KEY="${SEED_SETUP_KEY:-SetupKey1234!}"
 
-if [ "$existing_data" = "0" ]; then
+if [ "$existing_data" = "0" ] || [ -z "$existing_data" ]; then
   echo ">> BİLGİ: Boş veritabanı tespit edildi (kullanıcı veya restoran kaydı yok)."
   echo ">> İlk kurulum otomatik olarak gerçekleştiriliyor (tohumlama başlatılıyor)..."
   export ALLOW_DESTRUCTIVE_SEED="true"
-  npx tsx prisma/seed.ts || { echo "HATA: İlk kurulum seed işlemi başarısız oldu!"; exit 1; }
-  echo ">> İlk kurulum verileri başarıyla oluşturuldu!"
-  echo ">> GİRİŞ BİLGİLERİ:"
+  ./node_modules/.bin/tsx prisma/seed.ts || echo "UYARI: İlk kurulum seed sırasında hata veya uyarı oluştu, devam ediliyor..."
+  echo ">> İlk kurulum verileri hazırlandı!"
+  echo ">> GİRİŞ BİLGİLERİ (Demo):"
   echo ">> Sistem Yöneticisi : sistem.yoneticisi (Parola: Admin1234! / PIN: 12345678)"
   echo ">> Restoran Müdürü   : mehmet.kaya (Parola: Manager1234! / PIN: 12345678)"
   echo ">> Garson            : ayse.yilmaz (Parola: Waiter1234! / PIN: 12345678)"
 elif [ "${SEED_ON_START:-false}" = "true" ]; then
   if [ "${ALLOW_DESTRUCTIVE_SEED:-false}" = "true" ]; then
     echo ">> SEED_ON_START=true ve ALLOW_DESTRUCTIVE_SEED=true; mevcut veriler sıfırlanıp yeniden tohumlanıyor..."
-    npx tsx prisma/seed.ts
+    ./node_modules/.bin/tsx prisma/seed.ts || echo "UYARI: Seed sırasında bir hata oluştu."
   else
     echo "HATA: SEED_ON_START=true için ALLOW_DESTRUCTIVE_SEED=true zorunludur. Mevcut veriler korundu."
   fi

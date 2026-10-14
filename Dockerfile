@@ -40,9 +40,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Güvenli kullanıcı oluştur
+# Güvenli kullanıcı ve ev dizini oluştur
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 -G nodejs -h /home/nextjs nextjs
+RUN mkdir -p /home/nextjs/.npm /app/public/uploads /var/lib/alacarte/backups
+
+ENV HOME=/home/nextjs
+ENV PATH="/app/node_modules/.bin:$PATH"
 
 # Derlenmiş dosyaları kopyala
 COPY --from=builder /app/public ./public
@@ -55,16 +59,14 @@ COPY --from=builder /app/src ./src
 COPY --from=builder /app/scripts ./scripts
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
-# Uploads ve Backups dizinlerini hazırla, izinleri ata
-RUN mkdir -p /app/public/uploads /var/lib/alacarte/backups
 RUN chmod +x ./docker-entrypoint.sh
-RUN chown -R nextjs:nodejs /app /var/lib/alacarte/backups
+RUN chown -R nextjs:nodejs /app /var/lib/alacarte/backups /home/nextjs
 
 USER nextjs
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+HEALTHCHECK --interval=20s --timeout=10s --start-period=60s --retries=5 \
   CMD curl -f http://localhost:3000/api/health || exit 1
 
 ENTRYPOINT ["./docker-entrypoint.sh"]

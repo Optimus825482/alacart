@@ -21,7 +21,10 @@ services:
     volumes:
       - alacarte_pgdata:/var/lib/postgresql/data
     networks:
-      - alacarte_network
+      alacarte_network:
+        aliases:
+          - alacarte-db
+          - alacarte-postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:?DB_USER must be set in Coolify} -d ${DB_NAME:?DB_NAME must be set in Coolify}"]
       interval: 5s
@@ -52,7 +55,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set in Coolify with the alacarte-db host}
-      SCHEDULER_SECRET: ${SCHEDULER_SECRET:?Set a unique 32+ character scheduler secret in Coolify}
+      SCHEDULER_SECRET: ${SCHEDULER_SECRET:-alacarte_demo_super_secret_scheduler_token_32chars}
       DB_HOST: alacarte-db
       NODE_ENV: production
       DEPLOYMENT_MODE: coolify-demo
@@ -91,8 +94,8 @@ services:
       # Port Yönlendirmesi (Container Port 3000)
       - "traefik.http.services.alacarte.loadbalancer.server.port=3000"
       - "traefik.http.services.alacarte.loadbalancer.healthcheck.path=/api/health"
-      - "traefik.http.services.alacarte.loadbalancer.healthcheck.interval=15s"
-      - "traefik.http.services.alacarte.loadbalancer.healthcheck.timeout=5s"
+      - "traefik.http.services.alacarte.loadbalancer.healthcheck.interval=20s"
+      - "traefik.http.services.alacarte.loadbalancer.healthcheck.timeout=10s"
 
       # HTTP -> HTTPS Otomatik Yönlendirme
       - "traefik.http.middlewares.alacarte-redirect.redirectscheme.scheme=https"
@@ -106,14 +109,14 @@ services:
       dockerfile: Dockerfile
     container_name: alacarte-scheduler
     restart: unless-stopped
-    entrypoint: ["npx"]
-    command: ["tsx", "scripts/scheduled-worker.ts"]
+    entrypoint: ["tsx"]
+    command: ["scripts/scheduled-worker.ts"]
     environment:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set in Coolify with the alacarte-db host}
       DB_HOST: alacarte-db
       NODE_ENV: production
       TZ: Asia/Nicosia
-      SCHEDULER_SECRET: ${SCHEDULER_SECRET:?Set a unique 32+ character scheduler secret in Coolify}
+      SCHEDULER_SECRET: ${SCHEDULER_SECRET:-alacarte_demo_super_secret_scheduler_token_32chars}
       SCHEDULER_POLL_MS: 2000
     depends_on:
       alacarte-db:

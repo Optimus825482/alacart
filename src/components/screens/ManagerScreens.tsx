@@ -437,7 +437,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
     );
   }, [sessions, selectedSessionId, openSessions]);
 
-  // Blockers for SCR-08 session completion (§5.15)
+  // Blockers for session completion
   const sessionBlockers = useMemo(() => {
     if (!currentDetailSession) return [];
     const blockers: Array<{
@@ -2029,10 +2029,10 @@ export function ManagerScreensView(props: ManagerScreensProps) {
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-[#9aaead]">Engel Durumu:</span>
+            <span className="text-[#9aaead]">Masa Durumu:</span>
             {sessionBlockers.length === 0 ? (
               <span className="rounded-full border border-[#3c6058] bg-[#243d39] px-2.5 py-1 text-[10px] font-bold text-[#bdf0e4]">
-                ✓ Servis Tamamlamaya Engel Yok
+                ✓ Masayı Boşaltmaya Hazır
               </span>
             ) : (
               <button
@@ -2040,22 +2040,22 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                 onClick={() => setCompletionBlockersModal(true)}
                 className="rounded-full border border-[#684442] bg-[#3e2c2b] px-2.5 py-1 text-[10px] font-bold text-[#ffc0b5]"
               >
-                ▲ {sessionBlockers.length} Açık Engel Var (Çözmek İçin Tıklayın)
+                ▲ {sessionBlockers.length} Bekleyen İşlem Var (İncele)
               </button>
             )}
           </div>
         </div>
 
-        {/* Blocker Resolution Panel (§5.15) */}
+        {/* Blocker Resolution Panel */}
         {(sessionBlockers.length > 0 || completionBlockersModal) && (
           <div className="rounded-xl border-2 border-[#744947] bg-[#2d1e1e] p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <b className="text-xs font-extrabold uppercase tracking-wider text-[#ffc4bc]">
-                  ▲ SERVİS TAMAMLAMA ENGEL ÇÖZÜM PANELİ ({sessionBlockers.length} ENGEL)
+                  ▲ SERVİSİ TAMAMLAMADAN ÖNCE BEKLEYEN İŞLEMLER ({sessionBlockers.length})
                 </b>
                 <p className="mt-0.5 text-[11px] text-[#f3d2ce]">
-                  Aşağıdaki taslak, zamanlı/bekletilen iş, bekleyen iptal kararı veya belirsiz baskı kayıtları çözülmeden masa boşaltılamaz:
+                  Masayı kapatmadan önce aşağıdaki taslak veya bekleyen işlemler tamamlanmalıdır:
                 </p>
               </div>
               {completionBlockersModal && (

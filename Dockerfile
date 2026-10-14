@@ -2,7 +2,7 @@
 # 1. Base Image
 # ==========================================
 FROM node:24-alpine AS base
-RUN apk add --no-cache libc6-compat openssl curl netcat-openbsd tzdata
+RUN apk add --no-cache libc6-compat openssl curl netcat-openbsd tzdata postgresql-client
 ENV TZ=Asia/Nicosia
 WORKDIR /app
 
@@ -61,6 +61,7 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
 RUN chmod +x ./docker-entrypoint.sh
+RUN chmod -R +x /app/node_modules/.bin /app/node_modules/@prisma/engines 2>/dev/null || true
 RUN chown -R nextjs:nodejs /app /var/lib/alacarte/backups /home/nextjs
 
 USER nextjs

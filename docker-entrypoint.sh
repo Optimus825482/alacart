@@ -33,14 +33,26 @@ esac
 export DATABASE_URL
 
 # 2. Scheduler Worker Ayırıcı Kontrolü
-# Eğer konteyner scheduler için başlatıldıysa migrate/seed yapmadan doğrudan çalıştır
+# Eğer konteyner scheduler için başlatıldıysa migrate/seed yapmadan önce tabloların ve ilk kurulumun hazır olmasını bekle
 if echo "$*" | grep -q "scheduled-worker"; then
   echo "=== [A LA CARTE] Scheduler Worker Başlatılıyor ==="
   echo ">> Veritabanı bekleniyor (${DB_HOST:-alacarte-db}:5432)..."
   until nc -z -v -w3 ${DB_HOST:-alacarte-db} 5432 2>/dev/null; do
     sleep 2
   done
-  echo ">> Veritabanı hazır, zamanlayıcı başlatılıyor..."
+  echo ">> Veritabanı bağlantısı açık. Restoran yapılandırması ve tabloların hazır olması bekleniyor..."
+  until node -e '
+    const { PrismaClient } = require("@prisma/client");
+    const p = new PrismaClient();
+    p.restaurantConfig.findFirst()
+      .then((cfg) => { process.exit(cfg ? 0 : 1); })
+      .catch(() => { process.exit(1); })
+      .finally(() => p.$disconnect());
+  ' 2>/dev/null; do
+    echo ">> Tabloların ve ilk kurulumun tamamlanması bekleniyor..."
+    sleep 3
+  done
+  echo ">> Veritabanı ve restoran yapılandırması hazır, zamanlayıcı başlatılıyor..."
   exec "$@"
 fi
 
@@ -61,11 +73,37 @@ done
 
 echo ">> Veritabanı aktif ve hazır!"
 
-# 4. Prisma Şemasını Veritabanına Senkronize Et (db push)
+# 4. Prisma Şemasını Veritabanına Senkronize Et (db push + schema.sql güvencesi)
 echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
-./node_modules/.bin/prisma db push --schema=prisma/schema.prisma --accept-data-loss || {
-  echo "UYARI: Prisma db push sırasında hata oluştu, devam ediliyor..."
+./node_modules/.bin/prisma db push --schema=prisma/schema.prisma --accept-data-loss --skip-generate || {
+  echo "UYARI: Prisma db push sırasında uyarı oluştu, doğrudan şema doğrulaması devreye giriyor..."
 }
+
+# Şema tablolarının varlığını doğrula ve gerekirse prisma/schema.sql doğrudan uygula
+echo ">> Veritabanı tablo varlığı kontrol ediliyor..."
+table_exists=$(node -e '
+  const { PrismaClient } = require("@prisma/client");
+  const p = new PrismaClient();
+  p.$queryRawUnsafe("SELECT 1 FROM information_schema.tables WHERE table_schema = \x27public\x27 AND table_name = \x27RestaurantConfig\x27 LIMIT 1")
+    .then((r) => { process.stdout.write(Array.isArray(r) && r.length > 0 ? "1" : "0"); })
+    .catch(() => { process.stdout.write("0"); })
+    .finally(() => p.$disconnect());
+' 2>/dev/null || echo "0")
+
+if [ "$table_exists" != "1" ]; then
+  echo ">> BİLGİ: RestaurantConfig tablosu henüz mevcut değil, prisma/schema.sql doğrudan uygulanıyor..."
+  if command -v psql >/dev/null 2>&1; then
+    psql "$DATABASE_URL" -f /app/prisma/schema.sql 2>&1 || {
+      echo ">> psql tamamlandı veya uyarı verdi, Node yedeği çalıştırılıyor..."
+      node scripts/apply-schema.js
+    }
+  else
+    node scripts/apply-schema.js
+  fi
+  echo ">> Tablo kurulumu tamamlandı."
+else
+  echo ">> Tablolar mevcut ve hazır."
+fi
 
 # 5. Veri Kontrolü ve Otomatik İlk Kurulum (Bootstrap / Seed)
 echo ">> Veritabanı veri durumu doğrulanıyor..."

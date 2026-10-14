@@ -367,6 +367,12 @@ export function AlacarteWorkspace({
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap justify-end">
+            {/* Yanıp Sönen Demo Rozeti */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-950/90 border border-red-500/80 text-red-200 text-xs font-black tracking-wider uppercase demo-blinking-badge shrink-0 shadow-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping inline-block" />
+              <span>DEMO MODU</span>
+            </div>
+
             {/* Learning Mode status indicator */}
             {initialData.config?.learningModeEnabled && (
               <span
@@ -591,6 +597,11 @@ export function AlacarteWorkspace({
           </button>
         </div>
       )}
+      {/* Ekranlarda sabit parıldayan / yanıp sönen DEMO filigranı */}
+      <div className="fixed top-20 right-4 z-40 pointer-events-none select-none hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/90 border border-red-500/80 text-red-200 text-xs font-black tracking-widest shadow-2xl backdrop-blur demo-blinking-badge no-print">
+        <span className="w-2 h-2 rounded-full bg-red-400 animate-ping inline-block" />
+        <span>DEMO MODU</span>
+      </div>
     </div>
   );
 }

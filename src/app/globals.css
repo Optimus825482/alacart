@@ -105,3 +105,22 @@ textarea:focus-visible {
     white-space: pre-wrap !important;
   }
 }
+
+/* Yanıp Sönen Demo Rozeti Animasyonu */
+@keyframes demo-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.96);
+    box-shadow: 0 0 2px rgba(239, 68, 68, 0.2);
+  }
+}
+
+.demo-blinking-badge {
+  animation: demo-glow 1.6s infinite ease-in-out;
+}
+

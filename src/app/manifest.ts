@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "ALACARTE · Garson Mobil El Terminali & POS",
     short_name: "Alacarte POS",
     description:
-      "Kapalı Yerel Ağ (LAN) Garson Mobil Sipariş, Masa Planı ve Restoran Operasyon Terminali (Fiyatsız / İnternetsiz)",
+      "Garson Mobil Sipariş, Masa Planı ve Restoran Operasyon Terminali",
     start_url: "/?pwa=1&mode=waiter",
     scope: "/",
     display: "standalone",

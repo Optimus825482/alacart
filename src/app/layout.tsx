@@ -2,10 +2,10 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ALACARTE · Garson Mobil PWA & Yerel Restoran POS (SCR-01..19)",
+  title: "ALACARTE · Restoran POS Sistemi",
   applicationName: "Alacarte POS",
   description:
-    "Her alakart restoranın kendi kapalı yerel ağında çalışan, MICROS Simphony TSR referanslı, fiyatsız ve internetsiz Garson Mobil PWA & Restoran Operasyon Sistemi.",
+    "MICROS Simphony TSR standartlarında Restoran Operasyon ve Sipariş Yönetim Sistemi.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,

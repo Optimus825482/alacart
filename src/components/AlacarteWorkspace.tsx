@@ -236,7 +236,7 @@ export function AlacarteWorkspace({
                 ALACARTE
               </div>
               <div className="text-[11px] text-[#9aaead]">
-                Kapalı LAN Restoran POS
+                Restoran POS Sistemi
               </div>
             </div>
           </div>
@@ -251,14 +251,14 @@ export function AlacarteWorkspace({
 
         <div className="border border-[#344647] bg-[#172323] rounded-xl p-2.5">
           <div className="text-[10px] font-bold tracking-widest text-[#9aaead] uppercase">
-            YEREL RESTORAN KURULUMU
+            RESTORAN
           </div>
           <div className="font-bold text-xs text-[#f0f5f3] mt-1 truncate">
             {initialData.config?.name || "Merit Garden · A La Carte"}
           </div>
           <div className="flex items-center justify-between mt-1.5 text-[11px] text-[#73d8c6]">
-            <span>● Kapalı LAN · Menü v{initialData.config?.menuVersion ?? 1}</span>
             <span>{initialData.tables.length} Masa</span>
+            <span>{initialData.areas?.length || 0} Alan</span>
           </div>
         </div>
 

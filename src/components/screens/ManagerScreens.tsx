@@ -288,7 +288,7 @@ function getPrintJobTypeLabel(jobType: string) {
     case "KITCHEN_VOID":
       return "Mutfak İptal / VOID Bildirimi";
     case "PRICELESS_CHECK":
-      return "Fiyatsız Adisyon / Servis Özeti";
+      return "Adisyon / Servis Özeti";
     case "TEST_PRINT":
       return "Test / Tanılama Fişi";
     case "REPORT_PRINT":
@@ -617,7 +617,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
         onRefresh();
       } else {
         notify(
-          `${currentDetailSession.referenceCode} servisi tamamlandı ve masa boşaltıldı (Ödeme/tahsilat işlemi yapılmaz).`,
+          `${currentDetailSession.referenceCode} servisi tamamlandı ve masa boşaltıldı.`,
           "teal"
         );
         setCompletionBlockersModal(false);
@@ -754,7 +754,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
 
   async function handlePrintPricelessCheck() {
     if (!checkSessionId) {
-      notify("Lütfen fiyatsız adisyon için bir servis oturumu seçin.", "gold");
+      notify("Lütfen adisyon için bir servis oturumu seçin.", "gold");
       return;
     }
     setBusyAction("print-priceless-check");
@@ -765,13 +765,13 @@ export function ManagerScreensView(props: ManagerScreensProps) {
         roundScope: checkRoundScope,
       });
       if (res && res.ok === false) {
-        notify(res.error || "Fiyatsız adisyon yazdırılamadı.", "red");
+        notify(res.error || "Adisyon yazdırılamadı.", "red");
       } else {
-        notify("Fiyatsız adisyon işi oluşturuldu; Coolify demosunda fiziksel yazıcıya teslim edilmedi.", "gold");
+        notify("Adisyon yazdırma işi kuyruğa eklendi.", "teal");
         onRefresh();
       }
     } catch (err: any) {
-      notify(err?.message || "Fiyatsız adisyon yazdırma hatası.", "red");
+      notify(err?.message || "Adisyon yazdırma hatası.", "red");
     } finally {
       setBusyAction(null);
     }
@@ -1366,7 +1366,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
         });
         const def = REPORT_CATALOG.find((r) => r.code === selectedReportCode);
         notify(
-          `${def?.title ?? selectedReportCode} raporu kaynak verilerden üretildi (Fiyat/ödeme alanı içermez).`,
+          `${def?.title ?? selectedReportCode} raporu başarıyla üretildi.`,
           "teal"
         );
       }
@@ -1387,7 +1387,6 @@ export function ManagerScreensView(props: ManagerScreensProps) {
       `# ALACARTE YEREL OPERASYON RAPORU - ${def?.title ?? selectedReportCode}`,
       `# Restoran: ${config?.name ?? "Merit Garden · A La Carte"}`,
       `# Üretim Zamanı: ${formatDateTimeTR(new Date(), true)}`,
-      `# Kapsam Notu: Fiyat, ara toplam, vergi, ödeme/tahsilat veya PMS alanı içermez.`,
       "",
     ];
 
@@ -1447,7 +1446,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
               onClick={() => onNavigate("SCR-11")}
               className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-2 text-xs font-bold text-[#f0f5f3] hover:brightness-110"
             >
-              ⎙ Fiyatsız Adisyon (SCR-11)
+              ⎙ Adisyon Yazdır (SCR-11)
             </button>
             <button
               type="button"
@@ -1533,14 +1532,14 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#344647] px-4 py-3">
               <div>
                 <b className="text-xs text-[#f0f5f3]">
-                  4 Işıklı Canlı Bağlantı ve Sağlık Göstergesi (§5.12 & §5.18)
+                  Canlı Donanım ve Bağlantı Durumu
                 </b>
                 <small className="block text-[10px] text-[#9aaead]">
-                  Göstergelere tıklayarak Sistem Yöneticisi için SCR-19 Tanılama ekranına geçebilir veya operasyonel ayrıntıyı görebilirsiniz.
+                  Cihaz ve servislerin anlık çalışma durumunu izleyin.
                 </small>
               </div>
               <span className="rounded-full border border-[#3c6058] bg-[#243d39] px-2.5 py-1 text-[10px] font-bold text-[#bdf0e4]">
-                ● Kapalı LAN · WAN/PMS Yok
+                ● Sistem Çevrimiçi
               </span>
             </div>
 
@@ -1974,7 +1973,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
               }}
               className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-2 text-xs font-bold text-[#f0f5f3] hover:brightness-110"
             >
-              ⎙ Fiyatsız Adisyon Önizle (SCR-11)
+              ⎙ Adisyon Önizle (SCR-11)
             </button>
             {currentDetailSession?.status === "OPEN" && (
               <>
@@ -2156,8 +2155,8 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                 ? "Açık Servis"
                 : "Tamamlandı"}
             </strong>
-            <small className="text-[10px] text-[#efc97b]">
-              Fiyat, vergi veya ödeme işlemi yoktur
+            <small className="text-[10px] text-[#73d8c6]">
+              {rounds.length} Tur Kayıtlı
             </small>
           </div>
         </div>
@@ -2883,7 +2882,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
               {receiptQueue?.deviceModel ?? "Epson TM-T20III (011)"}
             </strong>
             <small className="mt-1 block text-[10px] text-[#9aaead]">
-              Doğrudan Sunucu-Kasa USB · Fiyatsız Servis Özeti
+              Doğrudan Sunucu-Kasa USB · Servis Özeti
             </small>
           </div>
 
@@ -2930,7 +2929,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
               <option value="ALL">Tüm Çıktı Türleri</option>
               <option value="KITCHEN_ORDER">Mutfak Siparişi (KITCHEN_ORDER)</option>
               <option value="KITCHEN_VOID">Mutfak VOID Bildirimi (KITCHEN_VOID)</option>
-              <option value="PRICELESS_CHECK">Fiyatsız Adisyon (PRICELESS_CHECK)</option>
+              <option value="PRICELESS_CHECK">Adisyon / Servis Özeti (PRICELESS_CHECK)</option>
               <option value="TEST_PRINT">Test / Tanılama Fişi (TEST_PRINT)</option>
             </select>
 
@@ -3114,10 +3113,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                 </pre>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                <span className="text-[10px] text-[#9aaead]">
-                  Fiyat, vergi, ödeme veya PMS alanı yer almaz.
-                </span>
+              <div className="flex flex-wrap items-center justify-end gap-2 pt-1">
                 <div className="flex gap-2">
                   {(inspectedPrintJob.status === "UNCERTAIN" ||
                     inspectedPrintJob.status === "ERROR") && (
@@ -3225,13 +3221,13 @@ export function ManagerScreensView(props: ManagerScreensProps) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#73d8c6]">
-              SCR-11 · FİYATSIZ ADİSYON / SERVİS ÖZETİ ÖNİZLEME VE YAZDIRMA
+              SCR-11 · ADİSYON / SERVİS ÖZETİ ÖNİZLEME VE YAZDIRMA
             </div>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#f0f5f3]">
-              80mm Fiyatsız Servis Özeti Önizlemesi
+              80mm Servis Özeti (Adisyon) Önizlemesi
             </h1>
             <p className="mt-1 max-w-3xl text-xs text-[#9aaead]">
-              Adisyon çıktısı mutfak siparişinden ayrı bir servis özeti belgesidir. Üzerinde <b className="text-[#f0f5f3]">FİYATSIZ — TAHSİLAT BELGESİ DEĞİLDİR</b> ibaresi yer alır; fiyat, vergi, ödeme veya PMS alanı içermez.
+              Adisyon çıktısı mutfak siparişinden ayrı bir servis özeti belgesidir. Masanın servis akışını ve sipariş detaylarını özetler.
             </p>
           </div>
 
@@ -3271,7 +3267,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                 80mm Termal Kâğıt Önizlemesi ({selectedCheckSession?.referenceCode ?? "—"})
               </b>
               <span className="rounded-full border border-[#3c6058] bg-[#243d39] px-2.5 py-0.5 text-[10px] font-bold text-[#bdf0e4]">
-                FİYATSIZ SERVİS ÖZETİ
+                SERVİS ÖZETİ
               </span>
             </div>
 
@@ -3344,11 +3340,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                 </div>
 
                 <div className="rounded-lg border border-[#3c6259] bg-[#1c3531] p-3 text-[11px] leading-relaxed text-[#c0eee5]">
-                  ● Bu işlem mutfağa yeni sipariş göndermez, masayı kapatmaz ve ödeme/tahsilat kaydı oluşturmaz. İptal edilen (VOID) kalemler şeffaflık için ayrı <b>İPTAL EDİLEN KALEMLER</b> bölümünde gösterilir ve etkin kalem adedine katılmaz.
-                </div>
-
-                <div className="rounded-lg border border-[#744947] bg-[#3d2929] p-3 text-[11px] leading-relaxed text-[#ffc4bc]">
-                  ● <b>Kesin Kapsam Sınırı (§5.9.1):</b> Çıktıda fiyat, ara toplam, genel toplam, vergi, bahşiş, ödeme yöntemi, tahsilat veya otel PMS / oda numarası alanı kesinlikle bulunmaz.
+                  ● Bu işlem masanın servis dökümünü yazdırır; mutfağa yeni sipariş göndermez veya masayı kapatmaz. İptal edilen (VOID) kalemler şeffaflık için ayrı <b>İPTAL EDİLEN KALEMLER</b> bölümünde gösterilir.
                 </div>
               </div>
             </div>
@@ -3432,7 +3424,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             10 Operasyonel Rapor Kategorisi
           </b>
           <small className="text-[10px] text-[#9aaead]">
-            MICROS Simphony TSR operasyonel rapor akışlarından uyarlanmıştır · Fiyat/ciro içermez
+            MICROS Simphony TSR operasyonel rapor akışları
           </small>
         </div>
 
@@ -3680,7 +3672,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             <strong className="mt-1 block font-mono text-xl font-extrabold text-[#f0f5f3]">
               {computedReportView.rows.length}
             </strong>
-            <small className="text-[10px] text-[#efc97b]">Fiyat/ödeme alanı yok</small>
+            <small className="text-[10px] text-[#73d8c6]">Aktif veriler</small>
           </div>
         </div>
 

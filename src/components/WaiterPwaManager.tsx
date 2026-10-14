@@ -111,7 +111,7 @@ export function WaiterPwaManager({
     const handleOnline = () => {
       setIsOnline(true);
       notify(
-        "Restoran Kapalı LAN (Archer AX23 Wi-Fi) bağlantısı yeniden sağlandı.",
+        "Restoran yerel ağına yeniden bağlanıldı.",
         "teal"
       );
     };
@@ -283,7 +283,7 @@ export function WaiterPwaManager({
       reg.active?.postMessage({
         type: "SHOW_WAITER_NOTIFICATION",
         title: `ALACARTE · ${selectedTable?.name || "Masa 08"}`,
-        body: `Garson ${currentUser?.name || "Personel"}: Kapalı LAN PWA bildirimi ve titreşim testi başarılı.`,
+        body: `Garson ${currentUser?.name || "Personel"}: Mobil PWA bildirimi ve titreşim testi başarılı.`,
         url: "/?pwa=1&mode=waiter",
       });
       notify("Mobil PWA test bildirimi gönderildi.", "teal");
@@ -306,10 +306,7 @@ export function WaiterPwaManager({
           <div className="flex items-center gap-2">
             <span className="text-base">📡</span>
             <span>
-              <b>Kapalı LAN Wi-Fi Bağlantısı Kesildi:</b> Sunucu-Kasa (Tiwox
-              TP-8610) ile iletişim kurulamıyor. Uygulama kabuğu PWA önbelleğinden
-              çalışıyor; sipariş göndermek için <b>Archer AX23 Wi-Fi</b> kapsama
-              alanına dönün.
+              <b>Ağ Bağlantısı Kesildi:</b> Sunucu ile iletişim kurulamıyor. Sipariş göndermek için lütfen restoran Wi-Fi kapsama alanında olduğunuzdan emin olun.
             </span>
           </div>
           <button
@@ -488,7 +485,7 @@ export function WaiterPwaManager({
                     Garson Mobil El Terminali (PWA)
                   </h3>
                   <p className="text-xs text-[#9aaead]">
-                    Kapalı Yerel Ağ (Archer AX23 Wi-Fi) · İnternetsiz Mobil POS
+                    Restoran Yerel Ağı · Mobil El Terminali
                   </p>
                 </div>
               </div>
@@ -525,7 +522,7 @@ export function WaiterPwaManager({
 
               <div className="p-3 rounded-xl bg-[#1d2b2c] border border-[#344647]">
                 <div className="text-[11px] text-[#9aaead]">
-                  Kapalı LAN Sunucu Gecikmesi
+                  Sunucu Yanıt Süresi
                 </div>
                 <div className="font-bold text-xs mt-1 text-[#f0f5f3]">
                   {isOnline
@@ -627,9 +624,7 @@ export function WaiterPwaManager({
                     {isIOS && " (iOS cihaz algılandı)"}
                   </li>
                   <li>
-                    <b>Kapalı LAN Notu:</b> Garson telefonları yalnız restoranın{" "}
-                    <b>TP-Link Archer AX23</b> Wi-Fi ağına bağlanır; internet
-                    paketi gerekmez.
+                    <b>Ağ Notu:</b> Garson telefonları restoran yerel Wi-Fi ağına bağlı olmalıdır.
                   </li>
                 </ul>
               )}

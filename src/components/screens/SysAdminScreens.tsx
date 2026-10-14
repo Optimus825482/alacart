@@ -435,8 +435,8 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
       {
         id: "chk-1",
         stepOrder: 1,
-        component: "Next.js Yerel Sunucu & Kapalı LAN",
-        title: "Kapalı LAN Bağlantısı ve WAN İzolasyon Kontrolü",
+        component: "Yerel Sunucu & Ağ Bağlantısı",
+        title: "Ağ Bağlantısı ve Güvenlik İzolasyon Kontrolü",
         status: "UNKNOWN",
         durationMs: 0,
         eventCode: "NOT_RUN",
@@ -739,7 +739,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
         return;
       }
       notify(
-        `Fiyatsız menü kalemi "${itemName}" (${itemStationCode}) kaydedildi.`,
+        `Menü kalemi "${itemName}" (${itemStationCode}) kaydedildi.`,
         "teal"
       );
       setEditingItemId(null);
@@ -2075,20 +2075,20 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="text-[10px] font-extrabold tracking-[0.16em] text-[#73d8c6] uppercase">
-              SCR-15 · MENÜ YÖNETİMİ (FİYAT ALANI YOK)
+              SCR-15 · MENÜ YÖNETİMİ
             </div>
             <h1 className="mt-1 text-2xl font-bold tracking-tight">
               Kategoriler, Ürünler, İstasyonlar ve Seçenekler
             </h1>
             <p className="mt-1 max-w-3xl text-xs text-[#9aaead]">
-              Fiyatsız menü ağacını, fiş adını, mutfak istasyonunu (SICAK,
+              Menü ağacını, fiş adını, mutfak istasyonunu (SICAK,
               IZGARA, SOGUK, TATLI), koltuk/paylaşım kurallarını ve menü
               sürümünü yönetin.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <StatusBadge tone="gold" icon="⊘">
-              Fiyat Alanı Yok (Fiyatsız Operasyon)
+            <StatusBadge tone="teal" icon="✓">
+              Aktif Menü
             </StatusBadge>
             <button
               type="button"
@@ -2225,7 +2225,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
                 <b className="text-xs">
                   {editingItemId
                     ? "Ürün Tanımını Düzenle"
-                    : "Ürün Tanımı (Fiyat Alanı Yok)"}
+                    : "Ürün Tanımı"}
                 </b>
                 <StatusBadge tone="teal" icon="v">
                   Menü Sürümü v{currentMenuVer}
@@ -2362,7 +2362,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
                 {/* Modifier Group Checkboxes */}
                 <div>
                   <label className="block text-[10px] font-bold text-[#aab9b6] uppercase">
-                    MODIFIER GRUPLARI (Hazırlama / Pişme Seçenekleri — Fiyatsız)
+                    MODIFIER GRUPLARI (Hazırlama / Pişme Seçenekleri)
                   </label>
                   <div className="mt-1.5 grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {(modifierGroups.length > 0
@@ -2600,7 +2600,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
                 Modifier Grupları ve Zorunlu Hazırlama Seçenekleri ({modifierGroups.length})
               </b>
               <p className="text-[11px] text-[#9aaead]">
-                Mutfak hazırlık kuralları, pişme dereceleri, soslar ve garnitürler (Fiyatsız operasyonel seçenekler)
+                Mutfak hazırlık kuralları, pişme dereceleri, soslar ve garnitürler
               </p>
             </div>
             {editingModGroupId && (
@@ -3414,7 +3414,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
                         KITCHEN (Mutfak Siparişi & VOID İptal Fişi)
                       </option>
                       <option value="RECEIPT">
-                        RECEIPT (80mm Fiyatsız Adisyon / Servis Özeti)
+                        RECEIPT (80mm Adisyon / Servis Özeti)
                       </option>
                     </select>
                   </div>
@@ -3505,7 +3505,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
             </span>
             <span className="text-[#73d8c6]">→ Wi-Fi →</span>
             <span className="rounded-lg border border-[#3c6058] bg-[#243d39] px-2.5 py-1.5">
-              🛜 TP-Link Archer AX23 Router (Kapalı LAN)
+              🛜 TP-Link Archer AX23 Router (Yerel Ağ)
             </span>
             <span className="text-[#73d8c6]">→</span>
             <span className="rounded-lg border border-[#3c6058] bg-[#243d39] px-2.5 py-1.5">
@@ -3690,7 +3690,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
                 className="mt-0.5 accent-[#73d8c6]"
               />
               <span>
-                <b>Kapalı LAN & Elektrik Kesintisi Kurtarma:</b> WAN portu boş
+                <b>Yerel Ağ & Elektrik Kesintisi Kurtarma:</b> WAN portu boş
                 bırakıldı; güç kesintisi sonrası sunucu, print server ve
                 Client/Bridge AP otomatik yeniden bağlandı.
               </span>

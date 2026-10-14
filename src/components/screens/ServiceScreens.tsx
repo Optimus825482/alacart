@@ -141,9 +141,9 @@ const LEARNING_GUIDE_STEPS = [
   },
   {
     step: 7,
-    title: "Fiyatsız Adisyon ve İptal Kuralları",
+    title: "Adisyon ve İptal Kuralları",
     detail:
-      "Mutfağa gönderilmiş kalemler doğrudan silinemez; gerekirse 'İPTAL TALEBİ (SCR-09)' açılır. Servis özeti için 'FİYATSIZ ADİSYON (SCR-11)' kullanılır; ekranda ve çıktıda fiyat/ödeme yer almaz.",
+      "Mutfağa gönderilmiş kalemler doğrudan silinemez; gerekirse 'İPTAL TALEBİ (SCR-09)' açılır. Servis özeti için 'ADİSYON YAZDIR (SCR-11)' kullanılır.",
   },
 ];
 
@@ -1600,7 +1600,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
         username: "mehmet.kaya",
         label: "Mehmet Kaya",
         roleBadge: "RESTAURANT_MANAGER",
-        desc: "Operasyon panosu, iptal kararı, fiyatsız adisyon, raporlar",
+        desc: "Operasyon panosu, iptal kararı, adisyon, raporlar",
       },
       {
         username: "ayse.yilmaz",
@@ -1633,7 +1633,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
             </div>
           </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-[#3c6058] bg-[#243d39] px-3 py-1 text-xs font-semibold text-[#bdf0e4]">
-            <span>●</span> Kapalı LAN · Sunucu: Europe/Istanbul
+            <span>●</span> Çevrimiçi · Europe/Istanbul
           </span>
         </div>
 
@@ -1728,18 +1728,6 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                 </button>
               </div>
             </form>
-
-            {/* Closed LAN / No Internet / No PMS Security Notice */}
-            <div className="mt-5 rounded-xl border border-[#3c6259] bg-[#1c3531] p-3.5 text-xs leading-relaxed text-[#c0eee5]">
-              <div className="font-bold text-[#73d8c6]">
-                ● Güvenli Yerel Ağ (Kapalı LAN) Çalışma Garantisi
-              </div>
-              <p className="mt-1 text-[11px]">
-                İnternet, bulut, otel PMS/oda hesabı, fiyatlandırma, vergi veya ödeme
-                bağlantısı kullanılmaz. Başarısız giriş denemeleri hesabı geçici olarak
-                kilitler ve denetim günlüğüne (SCR-13) kaydedilir.
-              </p>
-            </div>
           </div>
 
           {/* Quick Demo Account Switcher Card */}
@@ -1820,7 +1808,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
           >
             <div className="w-full max-w-md rounded-2xl border border-[#344647] bg-[#192526] p-6 shadow-2xl">
               <div className="text-[10px] font-extrabold tracking-widest text-[#efc97b] uppercase">
-                KAPALI AĞ PAROLA SIFIRLAMA PROSEDÜRÜ
+                PAROLA SIFIRLAMA PROSEDÜRÜ
               </div>
               <h3
                 id="reset-help-modal-title"
@@ -1830,9 +1818,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
               </h3>
               <div className="mt-3 space-y-2.5 text-xs leading-relaxed text-[#c4cfcd]">
                 <p>
-                  1. Bu sistem <strong>tamamen kapalı yerel ağda (LAN)</strong>{" "}
-                  çalıştığından e-posta veya SMS ile parola sıfırlama bağlantısı
-                  gönderilmez.
+                  1. Güvenlik gereği e-posta veya SMS ile dış bağlantı üzerinden parola sıfırlanmaz.
                 </p>
                 <p>
                   2. Garson veya restoran yöneticisi parolasını unuttuğunda{" "}
@@ -1884,7 +1870,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
       {
         num: 4,
         title: "Menü ve Kategoriler Özeti",
-        subtitle: "Fiyatsız ürün ağacı ve istasyonlar",
+        subtitle: "Ürün ağacı ve istasyonlar",
       },
       {
         num: 5,
@@ -1906,8 +1892,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
               Restoranı Yapılandır ve Devreye Al
             </h1>
             <p className="mt-1 text-xs text-[#9aaead]">
-              Kurulum yerel sunucu-kasada (Tiwox TP-8610) internet veya PMS bağlantısı
-              olmadan tamamlanır.
+              İlk yapılandırma adımlarını tamamlayarak sistemi kullanıma hazır hale getirin.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -1968,7 +1953,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
             </div>
 
             <div className="mt-4 rounded-xl border border-[#3c6259] bg-[#1c3531] p-3 text-[11px] text-[#c0eee5]">
-              <strong>Kapalı LAN Kurulum Kuralı:</strong> Kurulum tamamlandıktan sonra
+              <strong>Kurulum Güvenlik Kuralı:</strong> Kurulum tamamlandıktan sonra
               tek kullanımlık kurulum anahtarı geçersiz kılınır; yeniden kurulum yalnız
               Sistem Yöneticisi doğrulamasıyla yapılabilir.
             </div>
@@ -2152,14 +2137,13 @@ export function ServiceScreensView(props: ServiceScreensProps) {
             {wizardStep === 4 && (
               <div className="space-y-4">
                 <div className="text-[10px] font-extrabold tracking-widest text-[#73d8c6] uppercase">
-                  ADIM 4 · MENÜ VE KATEGORİLER ÖZETİ (FİYATSIZ)
+                  ADIM 4 · MENÜ VE KATEGORİLER ÖZETİ
                 </div>
                 <h2 className="text-lg font-bold text-[#f0f5f3]">
                   Menü Ağacı, Mutfak İstasyonları ve Modifier Grupları
                 </h2>
                 <p className="text-xs text-[#9aaead]">
-                  Sistemde fiyat, vergi veya ödeme alanı yoktur. Her ürün bir mutfak
-                  istasyonuna (SICAK MUTFAK, SOĞUK / MEZE, IZGARA, TATLI / BAR)
+                  Her ürün bir mutfak istasyonuna (SICAK MUTFAK, SOĞUK / MEZE, IZGARA, TATLI / BAR)
                   yönlendirilir.
                 </p>
 
@@ -2239,7 +2223,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div className="rounded-xl border border-[#344647] bg-[#141f20] p-3.5">
                     <label className="mb-1 block text-[10px] font-extrabold text-[#73d8c6] uppercase">
-                      FİYATSIZ ADİSYON KUYRUĞU (USB)
+                      ADİSYON YAZICI KUYRUĞU (USB)
                     </label>
                     <input
                       type="text"
@@ -2883,10 +2867,6 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                 </div>
               )}
             </div>
-
-            <div className="border-t border-[#344647] bg-[#141f20] px-4 py-3 text-[11px] text-[#9aaead]">
-              Fiyat, ara toplam, ödeme veya PMS alanı gösterilmez.
-            </div>
           </div>
         </div>
         {renderMicrosModals()}
@@ -3054,11 +3034,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
             </div>
             {!guidePaused && (
               <p className="mt-2 text-xs leading-relaxed text-[#d9e5e3]">
-                {currentGuideStep.detail}{" "}
-                <span className="text-[11px] text-[#efc97b]">
-                  (Rehber öğretici moddur; garson adına otomatik sipariş verisi
-                  değiştirmez.)
-                </span>
+                {currentGuideStep.detail}
               </p>
             )}
           </div>
@@ -3362,9 +3338,6 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                   <span>Yeni Tur (Gönderilecek Taslak)</span>
                   <b className="text-[#73d8c6]">{draftCount}</b>
                 </div>
-                <div className="mt-2 rounded-lg border border-[#665637] bg-[#2e281b] px-2.5 py-1.5 text-center text-[10px] font-bold text-[#efc97b]">
-                  Bu ekranda fiyat, toplam veya ödeme alanı gösterilmez
-                </div>
               </div>
             </div>
 
@@ -3622,7 +3595,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
               >
                 <span className="text-[9px] font-bold text-[#8dc4e9]">SCR-11</span>
                 <span className="text-xs font-extrabold text-[#f0f5f3]">
-                  FİYATSIZ ADİSYON
+                  ADİSYON YAZDIR
                 </span>
                 <small className="mt-0.5 text-[9px] text-[#9aaead]">
                   80mm Servis Özeti
@@ -3750,7 +3723,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                   {activeTable?.name || "Masa"} · Açık Oturum Kalemleri
                 </b>
                 <small className="text-[10px] text-[#73d8c6]">
-                  Fiyat alanı yoktur
+                  {allSessionItems.length} Kalem
                 </small>
               </div>
 
@@ -3992,8 +3965,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                     Hazırlama Seçenekleri (Modifier Grupları)
                   </b>
                   <p className="text-[10px] text-[#9aaead]">
-                    Zorunlu veya isteğe bağlı mutfak hazırlama nitelikleri (Fiyat
-                    eklemez)
+                    Zorunlu veya isteğe bağlı mutfak hazırlama nitelikleri
                   </p>
                 </div>
                 <span className="rounded-full border border-[#3c6058] bg-[#243d39] px-2.5 py-0.5 text-[10px] font-bold text-[#bdf0e4]">

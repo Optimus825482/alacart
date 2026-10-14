@@ -4,8 +4,6 @@ import React, { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   SCREEN_CATALOG,
-  HARDWARE_BOM_PACKAGE,
-  HARDWARE_PACKAGE_TOTAL_TL,
   type ScreenId,
 } from "@/lib/types";
 import { ServiceScreensView } from "@/components/screens/ServiceScreens";
@@ -52,7 +50,6 @@ export function AlacarteWorkspace({
     return t8?.id || initialData.tables[0]?.id || null;
   });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [phonePreviewMode, setPhonePreviewMode] = useState(false);
   const [serverClock, setServerClock] = useState<string>("");
   const [lastSyncTime, setLastSyncTime] = useState<string>("");
   const [menuStaleWarning, setMenuStaleWarning] = useState(false);
@@ -135,9 +132,10 @@ export function AlacarteWorkspace({
       try {
         const res = await heartbeatAction({
           userId: currentUser.id,
-          deviceLabel: phonePreviewMode
-            ? "Garson Mobil El Terminali (WLAN)"
-            : "Dokunmatik Sunucu-Kasa (Tiwox TP-8610)",
+          deviceLabel:
+            typeof window !== "undefined" && window.innerWidth < 1024
+              ? "Garson Mobil El Terminali (WLAN)"
+              : "Dokunmatik Sunucu-Kasa (Tiwox TP-8610)",
           clientMenuVersion: initialData.config?.menuVersion ?? 1,
         });
         if (res?.ok) {
@@ -158,7 +156,7 @@ export function AlacarteWorkspace({
       }
     }, 25000);
     return () => clearInterval(hb);
-  }, [currentUser?.id, phonePreviewMode, initialData.config?.menuVersion]);
+  }, [currentUser?.id, businessTz, initialData.config?.menuVersion]);
 
   const handleRefresh = () => {
     startTransition(() => {
@@ -198,10 +196,17 @@ export function AlacarteWorkspace({
     router.refresh();
   };
 
-  const activeScreenDef =
-    SCREEN_CATALOG.find((s) => s.id === activeScreen) ?? SCREEN_CATALOG[2];
+  const visibleScreens = SCREEN_CATALOG.filter((s) => canAccessScreen(s.id));
+  const groups = Array.from(new Set(visibleScreens.map((s) => s.group)));
 
-  const groups = Array.from(new Set(SCREEN_CATALOG.map((s) => s.group)));
+  useEffect(() => {
+    if (visibleScreens.length > 0 && !visibleScreens.some((s) => s.id === activeScreen)) {
+      setActiveScreen(visibleScreens[0].id);
+    }
+  }, [visibleScreens, activeScreen]);
+
+  const activeScreenDef =
+    visibleScreens.find((s) => s.id === activeScreen) ?? visibleScreens[0] ?? SCREEN_CATALOG[2];
 
   const roleBadgeLabel =
     currentUser?.role === "SYSTEM_ADMIN"
@@ -217,7 +222,7 @@ export function AlacarteWorkspace({
         className={`fixed lg:sticky top-0 left-0 z-40 h-dvh w-[272px] bg-[#131f20] border-r border-[#344647] p-4 flex flex-col gap-3.5 overflow-y-auto transition-transform duration-200 no-print ${
           mobileNavOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
-        aria-label="Alacarte 19 Ekran Kataloğu"
+        aria-label="Alacarte Ekran Kataloğu"
       >
         <div className="flex items-center justify-between gap-2.5 px-1.5">
           <div className="flex items-center gap-2.5">
@@ -255,68 +260,50 @@ export function AlacarteWorkspace({
           </div>
         </div>
 
-        {/* Navigation Groups */}
+        {/* Navigation Groups - Only authorized screens */}
         <nav className="flex-1 flex flex-col gap-3">
-          {groups.map((grp) => (
-            <div key={grp} className="flex flex-col gap-1">
-              <div className="px-2 text-[10px] font-extrabold tracking-widest text-[#718584] uppercase">
-                {grp}
-              </div>
-              {SCREEN_CATALOG.filter((s) => s.group === grp).map((scr) => {
-                const isActive = scr.id === activeScreen;
-                const allowed = canAccessScreen(scr.id);
-                return (
-                  <button
-                    key={scr.id}
-                    type="button"
-                    onClick={() => handleNavigate(scr.id)}
-                    title={
-                      allowed
-                        ? `${scr.id}: ${scr.description}`
-                        : `Bu ekran için yetkiniz yok (${scr.allowedRoles.join(", ")})`
-                    }
-                    className={`w-full flex items-center gap-2.5 text-left px-2.5 py-2 rounded-lg text-xs transition ${
-                      isActive
-                        ? "bg-[#244440] border border-[#386e65] text-[#f4fffc] font-semibold"
-                        : allowed
-                        ? "border border-transparent text-[#b9c6c4] hover:bg-[#1d2b2c]"
-                        : "border border-transparent text-[#647574] opacity-65 hover:bg-[#182324]"
-                    }`}
-                  >
-                    <span
-                      className={`w-6 h-5 rounded text-[10px] font-extrabold grid place-items-center shrink-0 ${
+          {groups.map((grp) => {
+            const grpScreens = visibleScreens.filter((s) => s.group === grp);
+            if (grpScreens.length === 0) return null;
+            return (
+              <div key={grp} className="flex flex-col gap-1">
+                <div className="px-2 text-[10px] font-extrabold tracking-widest text-[#718584] uppercase">
+                  {grp}
+                </div>
+                {grpScreens.map((scr) => {
+                  const isActive = scr.id === activeScreen;
+                  return (
+                    <button
+                      key={scr.id}
+                      type="button"
+                      onClick={() => handleNavigate(scr.id)}
+                      title={`${scr.id}: ${scr.description}`}
+                      className={`w-full flex items-center gap-2.5 text-left px-2.5 py-2 rounded-lg text-xs transition ${
                         isActive
-                          ? "bg-[#73d8c6] text-[#15221f]"
-                          : "bg-[#283838] text-[#9aadaa]"
+                          ? "bg-[#244440] border border-[#386e65] text-[#f4fffc] font-semibold"
+                          : "border border-transparent text-[#b9c6c4] hover:bg-[#1d2b2c]"
                       }`}
                     >
-                      {scr.number}
-                    </span>
-                    <span className="flex-1 truncate">{scr.title}</span>
-                    {!allowed && (
-                      <span className="text-[10px] text-[#efc97b]" aria-label="Yetki Kısıtlı">
-                        🔒
+                      <span
+                        className={`w-6 h-5 rounded text-[10px] font-extrabold grid place-items-center shrink-0 ${
+                          isActive
+                            ? "bg-[#73d8c6] text-[#15221f]"
+                            : "bg-[#283838] text-[#9aadaa]"
+                        }`}
+                      >
+                        {scr.number}
                       </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
+                      <span className="flex-1 truncate">{scr.title}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })}
         </nav>
 
-        {/* Bottom Hardware & User Identity Card */}
+        {/* Bottom User Identity Card */}
         <div className="mt-auto flex flex-col gap-2 pt-2 border-t border-[#344647]">
-          <div className="border border-[#286259] bg-[#183630] text-[#bcebe1] p-2.5 rounded-xl text-[11px] leading-snug">
-            <div className="font-bold text-xs mb-0.5">
-              {initialData.deploymentMode === "coolify-demo" ? "◐ Coolify Demo · Fiziksel donanım bağlı değil" : "● Yerel restoran ağı"}
-            </div>
-            <div>
-              Fiyat, ödeme ve PMS iş akışları kapsam dışı · Paket:{" "}
-              <b>{HARDWARE_PACKAGE_TOTAL_TL.toLocaleString("tr-TR")} TL</b>
-            </div>
-          </div>
-
           <div className="flex items-center gap-2.5 px-1 py-1">
             <div className="w-8 h-8 rounded-full bg-[#394f50] text-[#c4f1e8] font-extrabold text-xs grid place-items-center shrink-0">
               {currentUser?.name
@@ -394,20 +381,6 @@ export function AlacarteWorkspace({
               </span>
             </div>
 
-            {/* Device Viewport Toggle: Kasa (18.5") vs Garson Telefonu */}
-            <button
-              type="button"
-              onClick={() => setPhonePreviewMode((v) => !v)}
-              className={`px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition shrink-0 whitespace-nowrap ${
-                phonePreviewMode
-                  ? "border-[#58b7a6] bg-[#73d8c6] text-[#10221f]"
-                  : "border-[#344647] bg-[#202f30] text-[#f0f5f3] hover:bg-[#263738]"
-              }`}
-              title="Dokunmatik Kasa (18.5 inç) ve Garson El Terminali (Telefon) görünümü arasında geçiş yap"
-            >
-              {phonePreviewMode ? "📱 Telefon" : "🖥️ Kasa"}
-            </button>
-
             <button
               type="button"
               onClick={handleRefresh}
@@ -435,8 +408,6 @@ export function AlacarteWorkspace({
           currentUser={currentUser}
           selectedTable={selectedTable}
           draftItemCount={draftItemCount}
-          phonePreviewMode={phonePreviewMode}
-          onTogglePhonePreview={() => setPhonePreviewMode((v) => !v)}
           onNavigate={handleNavigate}
           onRefresh={handleRefresh}
           notify={notify}
@@ -459,13 +430,7 @@ export function AlacarteWorkspace({
         )}
 
         {/* CONTENT AREA */}
-        <main
-          className={`flex-1 p-4 pb-24 lg:p-6 mx-auto w-full transition-all ${
-            phonePreviewMode
-              ? "max-w-[420px] my-4 pb-24 border-[6px] border-[#344647] rounded-[28px] bg-[#131d1e] shadow-2xl"
-              : "max-w-[1600px]"
-          }`}
-        >
+        <main className="flex-1 p-4 pb-24 lg:p-6 mx-auto w-full max-w-[1600px]">
           {["SCR-01", "SCR-02", "SCR-03", "SCR-04", "SCR-05", "SCR-06"].includes(
             activeScreen
           ) && (

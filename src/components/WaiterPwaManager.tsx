@@ -17,8 +17,8 @@ export interface WaiterPwaManagerProps {
   currentUser: any;
   selectedTable: any | null;
   draftItemCount: number;
-  phonePreviewMode: boolean;
-  onTogglePhonePreview: () => void;
+  phonePreviewMode?: boolean;
+  onTogglePhonePreview?: () => void;
   onNavigate: (screen: ScreenId) => void;
   onRefresh: () => void;
   notify: (msg: string, tone?: "teal" | "gold" | "red") => void;
@@ -29,7 +29,7 @@ export function WaiterPwaManager({
   currentUser,
   selectedTable,
   draftItemCount,
-  phonePreviewMode,
+  phonePreviewMode = false,
   onTogglePhonePreview,
   onNavigate,
   onRefresh,
@@ -323,8 +323,8 @@ export function WaiterPwaManager({
       )}
 
       {/* 2. PWA INSTALL & WAKE LOCK COMPACT BAR FOR MOBILE / WAITER MODE */}
-      {!installBannerDismissed && (!isStandalone || phonePreviewMode) && (
-        <div className="bg-gradient-to-r from-[#17332f] via-[#1b3935] to-[#16292a] border-b border-[#34635c] px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs text-[#d6fbf2] no-print">
+      {!installBannerDismissed && !isStandalone && (
+        <div className="bg-gradient-to-r from-[#17332f] via-[#1b3935] to-[#16292a] border-b border-[#34635c] px-4 py-2 flex lg:hidden flex-wrap items-center justify-between gap-2 text-xs text-[#d6fbf2] no-print">
           <div className="flex items-center gap-2 min-w-0">
             <span className="px-2 py-0.5 rounded-md bg-[#73d8c6] text-[#10221f] font-black text-[10px] tracking-wider uppercase shrink-0">
               MOBİL PWA
@@ -372,9 +372,7 @@ export function WaiterPwaManager({
       {/* 3. FIXED MOBILE BOTTOM NAVIGATION BAR (Waiter Thumb Ergonomics) */}
       <nav
         aria-label="Garson Mobil Hızlı Gezinme Çubuğu"
-        className={`${
-          phonePreviewMode ? "flex" : "flex lg:hidden"
-        } fixed bottom-0 left-0 right-0 z-40 bg-[#121d1e]/95 backdrop-blur-md border-t border-[#344647] px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] items-center justify-around gap-1 shadow-[0_-10px_30px_rgba(0,0,0,0.45)] no-print`}
+        className="flex lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#121d1e]/95 backdrop-blur-md border-t border-[#344647] px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] items-center justify-around gap-1 shadow-[0_-10px_30px_rgba(0,0,0,0.45)] no-print"
       >
         <button
           type="button"
@@ -595,28 +593,6 @@ export function WaiterPwaManager({
                   }`}
                 >
                   {hapticEnabled ? "AÇIK" : "KAPALI"}
-                </button>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-[#1d2b2c] border border-[#344647] flex items-center justify-between gap-3">
-                <div>
-                  <div className="font-bold text-xs">
-                    📱 Garson El Terminali Görünüm Simülatörü (390px)
-                  </div>
-                  <div className="text-[11px] text-[#9aaead] mt-0.5">
-                    Kasa ekranında garson mobil PWA arayüzünü test edin.
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={onTogglePhonePreview}
-                  className={`px-3 py-2 rounded-xl font-extrabold text-xs shrink-0 border transition ${
-                    phonePreviewMode
-                      ? "bg-[#73d8c6] text-[#10201e] border-[#73d8c6]"
-                      : "bg-[#263738] text-[#f0f5f3] border-[#344647]"
-                  }`}
-                >
-                  {phonePreviewMode ? "MOBİL AKTİF" : "TAM EKRAN"}
                 </button>
               </div>
             </div>

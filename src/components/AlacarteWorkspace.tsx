@@ -196,7 +196,9 @@ export function AlacarteWorkspace({
     router.refresh();
   };
 
-  const visibleScreens = SCREEN_CATALOG.filter((s) => canAccessScreen(s.id));
+  const visibleScreens = SCREEN_CATALOG.filter(
+    (s) => s.id !== "SCR-01" && canAccessScreen(s.id)
+  );
   const groups = Array.from(new Set(visibleScreens.map((s) => s.group)));
 
   useEffect(() => {

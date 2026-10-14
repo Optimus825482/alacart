@@ -4,10 +4,10 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { cookies, headers } from "next/headers";
-import { prisma } from "@/lib/prisma";
-import { recordAuditEvent } from "@/lib/audit";
-import { requireRole } from "@/lib/auth-guard";
-import { formatKitchenOrderChit } from "@/lib/receipt-templates";
+import { prisma } from "../lib/prisma";
+import { recordAuditEvent } from "../lib/audit";
+import { requireRole } from "../lib/auth-guard";
+import { formatKitchenOrderChit } from "../lib/receipt-templates";
 import type {
   ItemStatus,
   PrintJobStatus,

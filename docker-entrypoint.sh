@@ -73,45 +73,37 @@ done
 
 echo ">> Veritabanı aktif ve hazır!"
 
-# 4. Prisma Şemasını Veritabanına Senkronize Et (db push + schema.sql güvencesi)
+# 4. Prisma Şemasını Veritabanına Senkronize Et (db push + fallback güvencesi)
 echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
-./node_modules/.bin/prisma db push --schema=prisma/schema.prisma --accept-data-loss --skip-generate || {
-  echo "UYARI: Prisma db push sırasında uyarı oluştu, doğrudan şema doğrulaması devreye giriyor..."
-}
-
-# Şema tablolarının varlığını doğrula ve gerekirse prisma/schema.sql doğrudan uygula
-echo ">> Veritabanı tablo varlığı kontrol ediliyor..."
-table_exists=$(node -e '
-  const { PrismaClient } = require("@prisma/client");
-  const p = new PrismaClient();
-  p.$queryRawUnsafe("SELECT 1 FROM information_schema.tables WHERE table_schema = \x27public\x27 AND table_name = \x27RestaurantConfig\x27 LIMIT 1")
-    .then((r) => { process.stdout.write(Array.isArray(r) && r.length > 0 ? "1" : "0"); })
-    .catch(() => { process.stdout.write("0"); })
-    .finally(() => p.$disconnect());
-' 2>/dev/null || echo "0")
-
-if [ "$table_exists" != "1" ]; then
-  echo ">> BİLGİ: RestaurantConfig tablosu henüz mevcut değil, prisma/schema.sql doğrudan uygulanıyor..."
-  if command -v psql >/dev/null 2>&1; then
-    psql "$DATABASE_URL" -f /app/prisma/schema.sql 2>&1 || {
-      echo ">> psql tamamlandı veya uyarı verdi, Node yedeği çalıştırılıyor..."
-      node scripts/apply-schema.js
-    }
-  else
-    node scripts/apply-schema.js
+if ! ./node_modules/.bin/prisma db push --schema=prisma/schema.prisma --accept-data-loss --skip-generate; then
+  echo ">> UYARI: Normal db push başarısız oldu (eski/uyumsuz prototip tabloları tespit edildi). --force-reset uygulanıyor..."
+  if ! ./node_modules/.bin/prisma db push --schema=prisma/schema.prisma --force-reset --accept-data-loss --skip-generate; then
+    echo ">> UYARI: Prisma db push --force-reset başarısız oldu, doğrudan Node şema sıfırlama devreye giriyor..."
+    node scripts/apply-schema.js --force-reset
   fi
-  echo ">> Tablo kurulumu tamamlandı."
-else
-  echo ">> Tablolar mevcut ve hazır."
 fi
+
+# Şema tablolarının ve modern sütunların varlığını doğrula (eksik sütun varsa giderir)
+echo ">> Veritabanı tablo ve sütun sağlığı kontrol ediliyor..."
+node scripts/apply-schema.js
 
 # 5. Veri Kontrolü ve Otomatik İlk Kurulum (Bootstrap / Seed)
 echo ">> Veritabanı veri durumu doğrulanıyor..."
 existing_data=$(node -e '
 const { PrismaClient } = require("@prisma/client");
 const p = new PrismaClient();
-Promise.all([p.restaurantConfig.count(), p.user.count()])
-  .then(([c, u]) => { process.stdout.write(String(c + u)); })
+Promise.all([
+  p.restaurantConfig.findFirst().catch(() => null),
+  p.user.findFirst({ where: { role: "SYSTEM_ADMIN" } }).catch(() => null),
+  p.user.count().catch(() => 0)
+])
+  .then(([cfg, admin, count]) => {
+    if (cfg && admin && count > 0) {
+      process.stdout.write(String(count));
+    } else {
+      process.stdout.write("0");
+    }
+  })
   .catch(() => { process.stdout.write("0"); })
   .finally(() => p.$disconnect());
 ' 2>/dev/null || echo "0")
@@ -126,7 +118,7 @@ export SEED_WAITER_PIN="${SEED_WAITER_PIN:-12345678}"
 export SEED_SETUP_KEY="${SEED_SETUP_KEY:-SetupKey1234!}"
 
 if [ "$existing_data" = "0" ] || [ -z "$existing_data" ]; then
-  echo ">> BİLGİ: Boş veritabanı tespit edildi (kullanıcı veya restoran kaydı yok)."
+  echo ">> BİLGİ: Boş veya tamamlanmamış veritabanı tespit edildi (kullanıcı veya restoran kaydı yok)."
   echo ">> İlk kurulum otomatik olarak gerçekleştiriliyor (tohumlama başlatılıyor)..."
   export ALLOW_DESTRUCTIVE_SEED="true"
   ./node_modules/.bin/tsx prisma/seed.ts || echo "UYARI: İlk kurulum seed sırasında hata veya uyarı oluştu, devam ediliyor..."

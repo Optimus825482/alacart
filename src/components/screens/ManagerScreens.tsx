@@ -543,7 +543,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
       if (res && res.ok === false) {
         notify(
           res.error ||
-            "Yetki reddedildi: Garson Öğrenme Modu yalnız Restoran Yöneticisi tarafından değiştirilebilir (§5.17).",
+            "Yetki reddedildi: Garson Öğrenme Modu yalnız Restoran Yöneticisi tarafından değiştirilebilir.",
           "red"
         );
       } else {
@@ -556,7 +556,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
     } catch (err: any) {
       notify(
         err?.message ||
-          "Yetki reddedildi: Garson Öğrenme Modu yalnız Restoran Yöneticisi tarafından değiştirilebilir (§5.17).",
+          "Yetki reddedildi: Garson Öğrenme Modu yalnız Restoran Yöneticisi tarafından değiştirilebilir.",
         "red"
       );
       onRefresh();
@@ -611,7 +611,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
         notify(
           `Servisi tamamlamak için önce ${
             res?.blockers?.length ?? sessionBlockers.length
-          } açık engeli çözmelisiniz (§5.15).`,
+          } açık engeli çözmelisiniz.`,
           "red"
         );
         onRefresh();
@@ -1617,7 +1617,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             <div className="border-b border-[#344647] px-4 py-3">
               <div className="flex items-center justify-between gap-2">
                 <b className="text-xs text-[#f0f5f3]">
-                  Garson Öğrenme Modu Anahtarı (§5.17)
+                  Garson Öğrenme Modu
                 </b>
                 <span
                   className={`rounded-full border px-2.5 py-0.5 text-[10px] font-extrabold ${
@@ -1635,12 +1635,12 @@ export function ManagerScreensView(props: ManagerScreensProps) {
 
             <div className="space-y-3 p-4">
               <p className="text-[11px] leading-relaxed text-[#9aaead]">
-                Açık olduğunda garson ekranlarında (SCR-03..06) bağlamsal <b className="text-[#f0f5f3]">“Bu ekranda ne yapılır?”</b> kartı, gönderim öncesi doğrulama özeti ve terim açıklamaları gösterilir.
+                Açık olduğunda garson ekranlarında bağlamsal <b className="text-[#f0f5f3]">“Nasıl Kullanılır?”</b> rehberi, gönderim öncesi doğrulama özeti ve terim açıklamaları gösterilir.
               </p>
 
               <div className="rounded-lg border border-[#705e37] bg-[#393321] p-2.5 text-[10px] leading-relaxed text-[#f1db9f]">
-                <b>Görev Ayrılığı (§5.17):</b> Bu anahtarı yalnızca{" "}
-                <b>Restoran Yöneticisi (RESTAURANT_MANAGER)</b> değiştirebilir.{" "}
+                <b>Görev Ayrılığı:</b> Bu ayarı yalnızca{" "}
+                <b>Restoran Yöneticisi</b> değiştirebilir.{" "}
                 {isRestaurantManager
                   ? "Aktif rolünüz Restoran Yöneticisi — durumu değiştirebilirsiniz."
                   : `Aktif rolünüz (${currentUser?.role}) — Tıkladığınızda sunucu RBAC kuralı işlemi reddeder ve AuditLog'a REJECTED kaydı düşer.`}
@@ -1828,7 +1828,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             </div>
 
             <div className="rounded-xl border border-[#705e37] bg-[#393321] p-3.5 text-[11px] leading-relaxed text-[#f1db9f]">
-              <b>§5.15 Servis Tamamlama Kuralı:</b> Açık taslak kalem, zamanlı/bekletilen iş, bekleyen iptal talebi veya sonucu belirsiz baskı işi çözülmeden masa kapatılamaz.
+              <b>Servis Tamamlama:</b> Açık taslak kalem, bekleyen iptal talebi veya belirsiz baskı işi çözülmeden masa kapatılamaz.
             </div>
           </div>
         </div>
@@ -1941,7 +1941,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
               </span>
             </h1>
             <p className="mt-1 max-w-3xl text-xs text-[#9aaead]">
-              Servis turları, koltuk/paylaşım bilgileri, işlem ve yazdırma zaman çizgisi, Masa Taşı ve Servisi Tamamla engel kontrolü (§5.15).
+              Servis turları, koltuk/paylaşım bilgileri, işlem ve yazdırma zaman çizgisi, Masa Taşı ve Servisi Tamamla kontrolü.
             </p>
           </div>
 
@@ -2029,7 +2029,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-[#9aaead]">Engel Durumu (§5.15):</span>
+            <span className="text-[#9aaead]">Engel Durumu:</span>
             {sessionBlockers.length === 0 ? (
               <span className="rounded-full border border-[#3c6058] bg-[#243d39] px-2.5 py-1 text-[10px] font-bold text-[#bdf0e4]">
                 ✓ Servis Tamamlamaya Engel Yok
@@ -2052,7 +2052,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <b className="text-xs font-extrabold uppercase tracking-wider text-[#ffc4bc]">
-                  ▲ §5.15 SERVİS TAMAMLAMA ENGEL ÇÖZÜM PANELİ ({sessionBlockers.length} ENGEL)
+                  ▲ SERVİS TAMAMLAMA ENGEL ÇÖZÜM PANELİ ({sessionBlockers.length} ENGEL)
                 </b>
                 <p className="mt-0.5 text-[11px] text-[#f3d2ce]">
                   Aşağıdaki taslak, zamanlı/bekletilen iş, bekleyen iptal kararı veya belirsiz baskı kayıtları çözülmeden masa boşaltılamaz:
@@ -3365,7 +3365,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             Operasyonel Raporlar ve Dışa Aktarım
           </h1>
           <p className="mt-1 max-w-3xl text-xs text-[#9aaead]">
-            Kayıtlı kaynak verilerden 10 kategoride operasyonel rapor üretin. Rapor sorgularında sabit 5 yıl tarih sınırı yoktur; veritabanında korunan tüm geçmiş sorgulanabilir (§5.13).
+            Kayıtlı verilerden 10 kategoride operasyonel rapor üretin, yazdırın veya CSV olarak indirin.
           </p>
         </div>
 

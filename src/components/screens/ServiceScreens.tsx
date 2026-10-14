@@ -2618,20 +2618,12 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                           {activeSession.openedBy?.name || "Garson"})
                         </>
                       ) : (
-                        `Bu masada şu an açık servis yok. Kapasite notu: ${
-                          activeTable.capacity || 4
-                        } kişilik.`
+                        `Kapasite: ${activeTable.capacity || 4} kişilik.`
                       )}
                     </p>
                   </div>
 
-                  {activeSession ? (
-                    <div className="rounded-xl border border-[#705e37] bg-[#393321] p-3 text-xs text-[#f1db9f]">
-                      Açık servis seçildiğinde mükerrer yeni sipariş açılmaz;{" "}
-                      <strong>{activeSession.referenceCode}</strong> referanslı
-                      servis oturumuna kaldığı yerden devam edilir.
-                    </div>
-                  ) : (
+                  {!activeSession && (
                     <div className="rounded-xl border border-[#344647] bg-[#141f20] p-3">
                       <label className="mb-1.5 block text-[10px] font-extrabold text-[#aab9b6] uppercase">
                         BAŞLANGIÇ MİSAFİR (KUVER) SAYISI

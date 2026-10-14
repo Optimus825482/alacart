@@ -1,6 +1,6 @@
-# MERİT ROYAL HOTEL & CASINO — 5 A LA CARTE RESTORAN
-## Özel Dijital Servis, Mutfak Sevk ve İzole Ağ Mimarisi Raporu
-### (Merit Royal Dedicated A La Carte Digital Service & Kitchen Dispatch Architecture)
+# MERİT ROYAL HOTEL & CASINO —  A LA CARTE RESTORAN
+## Özel Dijital Servis ve İzole Ağ Mimarisi Proje Dokümantasyonu
+
 
 **Tarih:** 14 Ekim 2026  
 **Lokasyon:** Alsancak / Girne, Kuzey Kıbrıs Türk Cumhuriyeti (KKTC)  
@@ -45,15 +45,33 @@ Sistemin bu mantıkla tasarlanmasının temel nedeni: **Deneyimli sektör çalı
 
 Uluslararası otelcilik sektöründe MICROS ve benzeri geleneksel POS yazılımlarından en çok şikayet edilen 7 kronik problem derinlemesine incelenmiş ve sistemimizde Merit Royal prestijine yakışır şekilde kökten çözülmüştür:
 
-| # | Geleneksel Sistemlerdeki (MICROS vb.) Kronik Sorunlar | Merit A La Carte Sistemimizin Getirdiği Çözümler |
-|---|---|---|
-| **1** | **Kullanım ve Öğrenme Zorluğu:**<br>Aşırı karmaşık, onlarca alt menüye boğulmuş hantal ekranlar; yeni bir garsonun veya kominin sistemi öğrenmesi haftalar sürer, yoğun serviste yanlış tuşlamalara yol açar. | **Sezgisel Arayüz & İnteraktif Öğrenme Modu:**<br>Tamamen modern dokunmatik ekran ergonomisi. Restoran yöneticisinin açabildiği yerleşik **"Bağlamsal Öğrenme Modu (Adım Adım Rehber)"** sayesinde yeni başlayan bir personel 15 dakikada tüm sipariş ve mutfak adımlarını hatasız öğrenir. |
-| **2** | **Modüler Olmaması ve Fahiş Özelleştirme Maliyetleri:**<br>Sistem katıdır; otele veya restorana özel tek bir menü kuralı, yeni bir pişme derecesi veya garnitür seçeneği eklemek için aylar süren bürokrasi ve on binlerce dolarlık ek geliştirme faturaları talep edilir. | **%100 Esnek, Modüler ve Sıfır Lisans Maliyeti:**<br>Merit Royal'in 5 farklı mutfağının (Steakhouse'taki et derecelerinden, Mandarin'deki acılık seviyelerine kadar) tüm özel kuralları kod seviyesinde esnek ve modülerdir. Ek lisans ücreti olmadan anında uyarlanabilir. |
-| **3** | **Destek ve Sorun Çözümünün Yavaşlığı:**<br>Uluslararası hantal çağrı merkezleri; cuma/cumartesi yoğun akşam servisinde terminal kilitlendiğinde veya yazıcı durduğunda saatlerce telefonda bekleme çaresizliği yaşanır. | **Otonom SCR-19 Sıralı Tanılama ve Kendi Kendine Onarım:**<br>Sistem dış desteğe muhtaç değildir. Yerel sunucu üzerinde tek tıkla çalışan 6 adımlı teşhis motoru; veritabanı, yazıcı kuyrukları ve yerel ağı saniyeler içinde tarar, arızayı ve çözüm yolunu ekranda anında gösterir. |
-| **4** | **İşlem Gecikmesi ve Donma (Lag / Latency):**<br>Eski nesil Java ve ağır Windows servisleri yüzünden terminallerde donmalar yaşanır; garson ekrana bastığında 3-5 saniye beklemek zorunda kalır, servis yavaşlar. | **Ultra-Hızlı Next.js 16 + Turbopack Performansı:**<br>Yerel ağda çalışan sistemde tüm sayfa ve işlem yanıt süreleri **p95 < 2 saniyenin** altındadır. Dokunmatik tepkiler anlıktır, hiçbir bekleme veya donma yaşanmaz. |
-| **5** | **Birden Fazla Terminalde Veri Tutarlılığı ve Çakışmalar:**<br>İki garson aynı masayı açtığında veya ağda anlık bir gecikme olduğunda siparişler çakışır, masalar kilitlenir veya mutfağa mükerrer fiş basılır. | **Atomik Veri Garantisi (`prisma.$transaction`):**<br>Masa açma, ürün ekleme ve mutfağa fiş çıkarma işlemleri tek bir atomik veritabanı işlemiyle yürütülür. Kriptografik tekil anahtarlar sayesinde mükerrer mutfak fişi basılması matematiksel olarak imkânsızdır. |
-| **6** | **Rapor Oluşturmanın ve Yorumlamanın Zor Olması:**<br>Yüzlerce karmaşık muhasebe parametresi; F&B müdürünün hangi mutfağın ne kadar sürede yemek çıkardığını veya hangi kalemin neden iptal edildiğini görmesi saatler alır. | **Şeffaf ve Anlaşılır Operasyonel Raporlama:**<br>Kıbrıs yerel saatine (`Asia/Nicosia`) tam uyumlu; mutfak hazırlık sürelerini, istasyon bazlı sipariş yoğunluğunu ve onaylı iptal gerekçelerini tek bakışta gösteren sade ve net rapor paneli. |
-| **7** | **Kurulum Karmaşıklığı ve Yüksek Altyapı Maliyeti:**<br>Ayrı sunucu odaları, pahalı Windows Server ve veritabanı lisansları, karmaşık kablolama ve yüksek kurulum maliyetleri. | **Ubuntu Linux + Docker ile 2 Dakikada Kurulum:**<br>Pahalı sunucu donanımlarına gerek yoktur. Dokunmatik kasa içine gömülü Ubuntu Linux 24.04 üzerinde tek komutla (`docker compose up -d`) izole olarak kurulur; sıfır ek yazılım maliyeti sunar. |
+| #     | Geleneksel Sistemlerdeki (MICROS vb.) Kronik Sorunlar                      | Merit A La Carte Sistemimizin Getirdiği Çözümler                                           |
+| ----- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **1** | **Kullanım ve Öğrenme Zorluğu:**<br>Aşırı karmaşık, onlarca alt menüye     | **Sezgisel Arayüz & İnteraktif Öğrenme Modu:**<br>Tamamen modern dokunmatik ekran          |
+|       | boğulmuş hantal ekranlar; yeni bir garsonun veya kominin sistemi öğrenmesi | ergonomisi. Restoran yöneticisinin açabildiği yerleşik **"Bağlamsal Öğrenme Modu (Adım     |
+|       | haftalar sürer, yoğun serviste yanlış tuşlamalara yol açar.                | Adım Rehber)"** sayesinde yeni başlayan bir personel 15 dakikada tüm sipariş ve mutfak     |
+|       |                                                                            | adımlarını hatasız öğrenir.                                                                |
+| **2** | **Modüler Olmaması ve Fahiş Özelleştirme Maliyetleri:**<br>Sistem katıdır; | **%100 Esnek, Modüler ve Sıfır Lisans Maliyeti:**<br>Merit Royal'in 5 farklı mutfağının    |
+|       | otele veya restorana özel tek bir menü kuralı, yeni bir pişme derecesi     | (Steakhouse'taki et derecelerinden, Mandarin'deki acılık seviyelerine kadar) tüm özel      |
+|       | veya garnitür seçeneği eklemek için aylar süren bürokrasi ve on binlerce   | kuralları kod seviyesinde esnek ve modülerdir. Ek lisans ücreti olmadan anında             |
+|       | dolarlık ek geliştirme faturaları talep edilir.                            | uyarlanabilir.                                                                             |
+| **3** | **Destek ve Sorun Çözümünün Yavaşlığı:**<br>Uluslararası hantal çağrı      | **Sistem Tanılama ve Onarım Seçenekleri Sunarak Çözüm Üretme:**<br>Sistem dış desteğe muhtaç|
+|       | merkezleri; cuma/cumartesi yoğun akşam servisinde terminal kilitlendiğinde | değildir. Yerel sunucu üzerinde tek tıkla çalışan sıralı tanılama motoru; veritabanı,      |
+|       | veya yazıcı durduğunda saatlerce telefonda bekleme çaresizliği yaşanır.    | yazıcı kuyrukları ve yerel ağı saniyeler içinde tarar, arızayı tespit eder ve yöneticiye    |
+|       |                                                                            | tek tıkla uygulanabilir onarım seçenekleri sunarak anında çözüm üretir.                     |
+| **4** | **İşlem Gecikmesi ve Donma (Lag / Latency):**<br>Eski nesil Java ve ağır   | **Ultra-Hızlı Next.js 16 + Turbopack Performansı:**<br>Yerel ağda çalışan sistemde tüm     |
+|       | Windows servisleri yüzünden terminallerde donmalar yaşanır; garson ekrana  | sayfa ve işlem yanıt süreleri **p95 < 2 saniyenin** altındadır. Dokunmatik tepkiler        |
+|       | bastığında 3-5 saniye beklemek zorunda kalır, servis yavaşlar.             | anlıktır, hiçbir bekleme veya donma yaşanmaz.                                              |
+| **5** | **Birden Fazla Terminalde Veri Tutarlılığı ve Çakışmalar:**<br>İki garson  | **Atomik Veri Garantisi (`prisma.$transaction`):**<br>Masa açma, ürün ekleme ve mutfağa    |
+|       | aynı masayı açtığında veya ağda anlık bir gecikme olduğunda siparişler     | fiş çıkarma işlemleri tek bir atomik veritabanı işlemiyle yürütülür. Kriptografik tekil    |
+|       | çakışır, masalar kilitlenir veya mutfağa mükerrer fiş basılır.             | anahtarlar sayesinde mükerrer mutfak fişi basılması matematiksel olarak imkânsızdır.       |
+| **6** | **Rapor Oluşturmanın ve Yorumlamanın Zor Olması:**<br>Yüzlerce karmaşık    | **Şeffaf ve Anlaşılır Operasyonel Raporlama:**<br>Kıbrıs yerel saatine (`Asia/Nicosia`)    |
+|       | muhasebe parametresi; F&B müdürünün hangi mutfağın ne kadar sürede yemek   | tam uyumlu; mutfak hazırlık sürelerini, istasyon bazlı sipariş yoğunluğunu ve onaylı iptal |
+|       | çıkardığını veya hangi kalemin neden iptal edildiğini görmesi saatler      | gerekçelerini tek bakışta gösteren sade ve net rapor paneli.                               |
+|       | alır.                                                                      |                                                                                            |
+| **7** | **Kurulum Karmaşıklığı ve Yüksek Altyapı Maliyeti:**<br>Ayrı sunucu        | **Ubuntu Linux + Docker ile 2 Dakikada Kurulum:**<br>Pahalı sunucu donanımlarına gerek     |
+|       | odaları, pahalı Windows Server ve veritabanı lisansları, karmaşık          | yoktur. Dokunmatik kasa içine gömülü Ubuntu Linux 24.04 üzerinde tek komutla (`docker      |
+|       | kablolama ve yüksek kurulum maliyetleri.                                   | compose up -d`) izole olarak kurulur; sıfır ek yazılım maliyeti sunar.                     |
 
 ---
 
@@ -183,9 +201,9 @@ sequenceDiagram
     Mutfak-->>Sef: Ana Yemekleri Hazırla Uyarısı
 
     Note over Garson,Adisyon: 4. Masa Teyit Fişi
-    Garson->>Kasa: "Masa Sipariş Özeti Bas"
+    Garson->>Kasa: "Masa Servis Özeti Bas"
     Kasa->>Adisyon: ESC/POS Servis Özeti
-    Adisyon-->>Garson: Çıktı: "MALİ GEÇERLİLİĞİ YOKTUR"
+    Adisyon-->>Garson: Çıktı: 80mm Servis Özeti / Masa Dökümü
 
     Note over Garson,Kasa: 5. Servisi Kapatma
     Garson->>Kasa: Masayı Boşalt / Servisi Tamamla
@@ -231,7 +249,6 @@ Tur: 1. Tur (BAŞLANGIÇLAR)
         MERIT ROYAL HOTEL & CASINO        
            THE STEAK HOUSE REST.          
           ADİSYON / SERVİS ÖZETİ          
-         MALİ GEÇERLİLİĞİ YOKTUR          
 ==========================================
 Masa: Masa 08 (Teras)        Sipariş: ORD-2026-000192
 Çıktı zamanı: 20:30          Kapsam: TÜM KALEMLER
@@ -245,9 +262,7 @@ Tur 01  19:15  1 x KREMALI ISPANAK [Paylaşım Koltuk 1,2]
 Tur 01  19:15  2 x SAN PELLEGRINO (750ml)
                  Soğuk · Limonlu
 ------------------------------------------
-Kalem adedi: 5                 Sayfa 1/1
-------------------------------------------
-         MALİ GEÇERLİLİĞİ YOKTUR          
+TOPLAM SERVİS KALEMİ: 5       Sayfa 1/1
 ==========================================
 ```
 
@@ -404,7 +419,7 @@ Sistemin Merit Royal'deki 5 restoranda sorunsuz devreye alınması için takip e
     [ ] "Mutfağa Gönder" basıldığında mutfak yazıcısından 2 saniyede fiş çıkması ve sesli ikaz çalması.
     [ ] 2. Tur (Ana Yemek) Bekletme (Hold) ve Çağırma (Fire) akışının doğrulanması.
     [ ] Yönetici onaylı kısmi iptal (Void) yapılarak mutfaktan kırmızı/belirgin iptal fişinin alınması.
-    [ ] Masa Teyit Fişi çıktısının alınması; üzerinde yalnızca "MALİ GEÇERLİLİĞİ YOKTUR" ibaresinin teyit edilmesi.
+    [ ] Masa Teyit Fişi çıktısının alınması; fiyatsız servis özeti ve kalem dökümünün teyit edilmesi.
     [ ] Test yedeğinin USB belleğe yazıldığının ve SHA-256 hash bütünlüğünün teyit edilmesi.
 ```
 

@@ -2025,8 +2025,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                   Salon ve Teras Masa Yerleşimi
                 </h2>
                 <p className="text-xs text-[#9aaead]">
-                  Bütün garsonlar tüm alanlardaki masaları görür. Masa kapasitesi görsel
-                  referanstır; misafir (kuver) sayısını kısıtlamaz.
+                  Masa kapasitesi görsel referanstır; misafir (kuver) sayısını kısıtlamaz.
                 </p>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

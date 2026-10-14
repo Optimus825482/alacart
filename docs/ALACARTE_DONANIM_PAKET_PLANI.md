@@ -58,23 +58,21 @@ flowchart TD
 
 ---
 
-## 2. RESTORAN BAŞINA STANDART DONANIM SATIN ALMA LİSTESİ (BOM)
+## 2. DONANIM LİSTESİ
 
-Merit Royal'in 5 alakart restoranı için standartlaştırılmış 7 kalemlik donanım satın alma paketi:
+Merit Royal'in 5 alakart restoranı için standartlaştırılmış 7 kalemlik donanım paketi:
 
-| Sıra | Donanım Kalemi | Adet | Önerilen Model / Teknik Özellik | Tahmini Birim Fiyat | Toplam Tutar |
-|---|---|:---:|---|---:|---:|
-| **1** | **Dokunmatik Server Kasa** | 1 | **Tiwox TP-8610 All-in-One POS (veya muadili)**<br>• Ubuntu Linux 24.04 LTS kurulu<br>• Docker üzerinde çalışan veritabanı ve web sunucusunu barındıran hepsi-bir-arada dokunmatik terminal<br>• 15.6" - 18.5" Kapasitif Dokunmatik, 16 GB RAM & 256 GB SSD | 37.780 TL | 37.780 TL |
-| **2** | **Garson Mobil Terminali / Akıllı Cihazlar** | 1 | **İşletme Tarafından Sağlanan Mobil Cihazlar (Android / iOS)**<br>• Yalnızca yerel Wi-Fi'a bağlanan, modern PWA mobil istemcisi<br>• Hızlı masa/ürün seçimi, dokunmatik titreşim ve tam ekran çalışma | 0 TL *(Mevcut Envanter)* | 0 TL |
-| **3** | **Termal Adisyon Yazıcısı (80mm)** | 1 | **Epson TM-T20III USB (Model 011)**<br>• Kasa yanında yer alan masa servis dökümü yazıcısı<br>• Doğrudan Kasaya 1.5m USB kablosuyla bağlı, otomatik kağıt kesici<br>• Fiyatsız masa servis koordinasyon dökümü için kullanılır | 7.722 TL | 7.722 TL |
-| **4** | **Termal Mutfak Yazıcısı (80mm Ethernet)** | 1 | **Epson TM-T20III Ethernet (C31CH51012 / Model 012)**<br>*(Alternatif: Bixolon SRP-350III Ethernet)*<br>• Mutfak hazırlık istasyonuna bağlı, dayanıklı fiş yazıcısı<br>• Dahili 10/100 RJ45 Ethernet portu ve sesli ikaz zili (Buzzer) uyumlu | 8.250 TL | 8.250 TL |
-| **5** | **Salon Tavan All-in-One Router & Wi-Fi 6 AP** | 1 | **Keenetic Voyager Pro KN-3510 (AX1800)**<br>*(Alternatif: MikroTik cAP ax)*<br>• Tavana monte estetik kubbe formunda, dahili Gigabit Router ve bağımsız DHCP sunucusu barındıran Wi-Fi 6 erişim noktası<br>• Kasa arkasındaki harici router ihtiyacını ortadan kaldırır; 2x Gigabit port, 360° kubbe tavan yayılımı | 3.750 TL | 3.750 TL |
-| **6** | **Kasa Yanı Gigabit PoE+ Enjektör** | 1 | **Keenetic / TP-Link TL-POE160S (Gigabit 802.3at 30W)**<br>• Kasa arkasında mini boyutta çalışır; kasadan çıkan CAT6 kabloya elektrik basarak tavandaki Voyager Pro'yu tek kabloyla besler<br>• Tavanda 220V priz ihtiyacını tamamen ortadan kaldırır | 590 TL | 590 TL |
-| **7** | **Mutfak Kablosuz Mesh Access Point / Köprü** | 1 | **Keenetic Orbiter Pro KN-3610 / Buddy 6 (veya Keenetic Mesh Node)**<br>• Mutfak servis bankosuna bağlı, salondaki tavan Voyager Pro'ya 5 GHz kablosuz mesh ile bağlı (mutfaktan kasaya sıfır kablo çekimi)<br>• Arkasındaki Gigabit Ethernet portundan mutfak yazıcısına köprü sağlar | 2.850 TL | 2.850 TL |
-| **TOPLAM** | **Restoran Başına Donanım Paketi** | **7 Kalem** | **Standart Donanım Paketi (All-in-One Tavan Ağ Ekipmanları Dahil)** | | **60.942 TL** |
+| Sıra | Donanım Kalemi | Adet | Önerilen Model / Teknik Özellik | Notlar / İşlev |
+|---|---|:---:|---|---|
+| **1** | **Dokunmatik Server Kasa** | 1 | **Tiwox TP-8610 All-in-One POS (veya muadili)**<br>• Ubuntu Linux 24.04 LTS kurulu<br>• Docker üzerinde çalışan veritabanı ve web sunucusunu barındıran hepsi-bir-arada dokunmatik terminal<br>• 15.6" - 18.5" Kapasitif Dokunmatik, 16 GB RAM & 256 GB SSD | Restoranın yerel veritabanı, Web POS ve yazdırma motoru |
+| **2** | **Garson Mobil Terminali / Akıllı Cihazlar** | 1 | **İşletme Tarafından Sağlanan Mobil Cihazlar (Android / iOS)**<br>• Yalnızca yerel Wi-Fi'a bağlanan, modern PWA mobil istemcisi<br>• Hızlı masa/ürün seçimi, dokunmatik titreşim ve tam ekran çalışma | Mevcut işletme envanterinden tahsis edilir |
+| **3** | **Termal Adisyon Yazıcısı (80mm)** | 1 | **Epson TM-T20III USB (Model 011)**<br>• Kasa yanında yer alan masa servis dökümü yazıcısı<br>• Doğrudan Kasaya 1.5m USB kablosuyla bağlı, otomatik kağıt kesici<br>• Fiyatsız masa servis koordinasyon dökümü için kullanılır | Kasa yanı yerel USB bağlantı |
+| **4** | **Termal Mutfak Yazıcısı (80mm Ethernet)** | 1 | **Epson TM-T20III Ethernet (C31CH51012 / Model 012)**<br>*(Alternatif: Bixolon SRP-350III Ethernet)*<br>• Mutfak hazırlık istasyonuna bağlı, dayanıklı fiş yazıcısı<br>• Dahili 10/100 RJ45 Ethernet portu ve sesli ikaz zili (Buzzer) uyumlu | Mutfak mesh AP Ethernet portuna bağlı |
+| **5** | **Salon Tavan All-in-One Router & Wi-Fi 6 AP** | 1 | **Keenetic Voyager Pro KN-3510 (AX1800)**<br>*(Alternatif: MikroTik cAP ax)*<br>• Tavana monte estetik kubbe formunda, dahili Gigabit Router ve bağımsız DHCP sunucusu barındıran Wi-Fi 6 erişim noktası<br>• Kasa arkasındaki harici router ihtiyacını ortadan kaldırır; 2x Gigabit port, 360° kubbe tavan yayılımı | Salon tavan merkezi (PoE beslemeli) |
+| **6** | **Kasa Yanı Gigabit PoE+ Enjektör** | 1 | **Keenetic / TP-Link TL-POE160S (Gigabit 802.3at 30W)**<br>• Kasa arkasında mini boyutta çalışır; kasadan çıkan CAT6 kabloya elektrik basarak tavandaki Voyager Pro'yu tek kabloyla besler<br>• Tavanda 220V priz ihtiyacını tamamen ortadan kaldırır | Kasa arkası tek CAT6 hat enjektörü |
+| **7** | **Mutfak Kablosuz Mesh Access Point / Köprü** | 1 | **Keenetic Orbiter Pro KN-3610 / Buddy 6 (veya Keenetic Mesh Node)**<br>• Mutfak servis bankosuna bağlı, salondaki tavan Voyager Pro'ya 5 GHz kablosuz mesh ile bağlı (mutfaktan kasaya sıfır kablo çekimi)<br>• Arkasındaki Gigabit Ethernet portundan mutfak yazıcısına köprü sağlar | Mutfak kablosuz mesh köprüsü |
 
 > [!NOTE]
-> **5 Restoran Toplam Standart Donanım Yatırım Tutarı:** 5 x 60.942 TL = **304.710 TL**.  
 > Garson mobil terminalleri ve yedekleme USB bellekleri otel işletme envanterinden tahsis edilir.
 
 ---
@@ -115,14 +113,14 @@ Merit Royal Hotel & Casino bünyesindeki 5 restoranın fiziksel mimari büyükl�
 #### 4. The Roof Garden Restaurant & Lounge (Çatı Katı Panoramik Teras):
 * **Fiziksel Özellikler:** ~180 m² kapalı lounge ve ~250 m² panoramik açık teras (toplam ~430 m²). Çatı katında yoğun rüzgar ve çift kat lamine rüzgar kırıcı cam paneller mevcuttur.
 * **RF Analizi:** Salondaki tavan Voyager Pro kapalı lounge'ı ve terasa yakın ilk sıra masaları mükemmel kapsar. Ancak terasın en uç köşesindeki (çatı kenarındaki) masalar salondan 40 metreden uzakta kalır ve çift kat lamine camlar 5 GHz sinyalini ~8-10 dB zayıflatır.
-* **Uygulanan Çözüm:** Terasın dış cephe saçak altına **1x Keenetic Stellar 6 (KAP-650 Outdoor IP65 AX3000)** ilave edilir (5.200 TL).
+* **Uygulanan Çözüm:** Terasın dış cephe saçak altına **1x Keenetic Stellar 6 (KAP-650 Outdoor IP65 AX3000)** ilave edilir.
   - Tavan Voyager Pro ile 5 GHz kablosuz mesh üzerinden eşleşir.
   - Açık havadaki teras masalarına doğrudan görüş açısıyla (Line-of-Sight) kesintisiz `-45 dBm` güçlü sinyal basar.
 
 #### 5. Blue Sea Seafood Restaurant (Denize Sıfır & Açık Deniz İskelesi):
 * **Fiziksel Özellikler:** Denize sıfır kıyı salonu (~200 m²) ve Akdeniz üzerine doğru uzanan **50–80 metre uzunluğunda ahşap açık deniz iskelesi**.
 * **RF Analizi:** Deniz tuzu serpintisi, aşırı nem ve su yüzeyinden kaynaklanan sinyal kırılmaları (multipath reflection) nedeniyle salondaki bir iç tavan cihazının sinyali iskelenin 70-80 metre ilerisindeki uç masalara ulaşamaz (sinyal `-78 dBm` altına düşer, garson cihazları kopar).
-* **Uygulanan Çözüm:** İskelenin başlangıç noktasına / aydınlatma direğine **1x Keenetic Stellar 6 (KAP-650 Outdoor IP65 AX3000)** monte edilir (5.200 TL).
+* **Uygulanan Çözüm:** İskelenin başlangıç noktasına / aydınlatma direğine **1x Keenetic Stellar 6 (KAP-650 Outdoor IP65 AX3000)** monte edilir.
   - ASA mühendislik plastiği gövdesi sayesinde tuza, neme, UV güneş ışınlarına ve fırtınaya karşı tam dirençlidir (IP65).
   - İskelenin en uç masasına kadar 80 metre mesafede garson mobil terminallerine sıfır kayıpla sinyal ulaştırır.
   - Tek SSID ve şifreye sahiptir; garson salondan iskeleye yürüdüğünde sıfır kesintiyle dolaşır (802.11k/v/r Fast Roaming).
@@ -162,24 +160,3 @@ SALON TAVANI:                               ▼
 * **Blue Sea:** Subnet `192.168.13.0/24` | Tavan Router: `.1` | Kasa: `.10` | Mutfak: `.25`
 * **Royal Mandarin:** Subnet `192.168.14.0/24` | Tavan Router: `.1` | Kasa: `.10` | Mutfak: `.25`
 * **Bella Merit:** Subnet `192.168.15.0/24` | Tavan Router: `.1` | Kasa: `.10` | Mutfak: `.25`
-
----
-
-## 5. PİLOT VE TEST KABUL PROTOKOLÜ
-
-Kurulum tamamlandığında sahada uygulanacak testler:
-
-1. **All-in-One Tavan Router DHCP ve İletişim Testi:**
-   - Kasanın tavan Voyager Pro üzerinden statik IP (`192.168.X.10`) ile haberleştiği, garson terminallerinin tavan cihazından 2 saniye içinde DHCP IP aldığı doğrulanır.
-2. **Kablosuz Mutfak Mesh İletişim Testi:**
-   - Kasadan mutfak yazıcısına ping ve soket testi yapılır: `nc -zv 192.168.X.25 9100`.
-   - Yanıt süresinin <5 ms olduğu ve kablosuz köprüde paket kaybı (%0 packet loss) yaşanmadığı doğrulanır.
-3. **Blue Sea İskele ve Roof Garden Teras Uç Nokta Wi-Fi Testi:**
-   - Garson el terminali ile Blue Sea iskelesinin en uç masasına (80m) ve Roof Garden terasının rüzgarlı köşesine gidilir.
-   - Sinyal seviyesinin `-65 dBm` veya daha güçlü olduğu, sipariş gönderiminin 1 saniyenin altında kasaya ulaştığı teyit edilir.
-4. **Mutfak Fişi Dayanıklılık Testi:**
-   - Kasadan arka arkaya 50 adet mutfak sipariş ve iptal fişi tetiklenir; mutfak yazıcısının sesli ikaz zilinin çaldığı, kağıdın düzgün kesildiği teyit edilir.
-5. **Masa Adisyon Teyit Testi:**
-   - USB adisyon yazıcısından servis özeti basılır; hiçbir fiyat veya ödeme verisi bulunmadığı teyit edilir.
-6. **İzole Ağ Doğrulaması:**
-   - Sistemin otel PMS ağına (Opera) ve internete kesinlikle kapalı olduğu yerel güvenlik denetimiyle onaylanır.

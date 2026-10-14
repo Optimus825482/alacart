@@ -32,20 +32,20 @@ Bu rapor; Merit Royal tesislerindeki 5 seçkin A La Carte restoranda devreye al�
 
 ---
 
-## 2. NEDEN ENDÜSTRİ STANDARDI AKIŞI SEÇİLDİ VE ESKİ SİSTEMLERİN (MICROS VB.) KRONİK SORUNLARI NASIL ÇÖZÜLDÜ?
+## 2. NEDEN ENDÜSTRİ STANDARDI AKIŞI SEÇİLDİ VE GELENEKSEL HANTAL SİSTEMLERİN KRONİK SORUNLARI NASIL ÇÖZÜLDÜ?
 
 ### 2.1. Neden Bu Mantık ve Görsel Akış Referans Alındı?
-Dünya genelindeki 5 yıldızlı lüks otellerde ve uluslararası fine-dining restoranlarda (Merit Royal dahil) çalışan F&B müdürleri, şefler, restoran kaptanları ve deneyimli servis personeli, Oracle MICROS tarzı operasyonel mantığa (masa krokisi, misafir kuveri, koltuk bazlı sipariş, pişme derecesi/sos modifier'ları, turlar/courses ve mutfak fişi) yıllardır aşinadır. 
+Dünya genelindeki 5 yıldızlı lüks otellerde ve uluslararası fine-dining restoranlarda (Merit Royal dahil) çalışan F&B müdürleri, şefler, restoran kaptanları ve deneyimli servis personeli, uluslararası endüstri standardı operasyonel mantığa (masa krokisi, misafir kuveri, koltuk bazlı sipariş, pişme derecesi/sos modifier'ları, turlar/courses ve mutfak fişi) yıllardır aşinadır. 
 
 Sistemin bu mantıkla tasarlanmasının temel nedeni: **Deneyimli sektör çalışanlarının aşina olduğu iş akışını koruyarak sıfır eğitim süresiyle personelin sisteme anında adapte olmasını sağlamaktır.** Personel yabancı, karmaşık veya alışılagelmişin dışında bir arayüzle vakit kaybetmez; bildiği profesyonel adımlarla doğrudan misafirine odaklanır.
 
 ---
 
-### 2.2. Geleneksel Sistemlerden (MICROS vb.) En Çok Şikayet Edilen 7 Temel Sorun ve Çözümlerimiz
+### 2.2. Geleneksel Sistemlerden En Çok Şikayet Edilen 7 Temel Sorun ve Çözümlerimiz
 
-Uluslararası otelcilik sektöründe MICROS ve benzeri geleneksel POS yazılımlarından en çok şikayet edilen 7 kronik problem derinlemesine incelenmiş ve sistemimizde Merit Royal prestijine yakışır şekilde kökten çözülmüştür:
+Uluslararası otelcilik sektöründe geleneksel POS yazılımlarından en çok şikayet edilen 7 kronik problem derinlemesine incelenmiş ve sistemimizde Merit Royal prestijine yakışır şekilde kökten çözülmüştür:
 
-| #     | Geleneksel Sistemlerdeki (MICROS vb.) Kronik Sorunlar                      | Merit A La Carte Sistemimizin Getirdiği Çözümler                                           |
+| #     | Geleneksel Sistemlerdeki Kronik Sorunlar                                   | Merit A La Carte Sistemimizin Getirdiği Çözümler                                           |
 | ----- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | **1** | **Kullanım ve Öğrenme Zorluğu:**<br>Aşırı karmaşık, onlarca alt menüye     | **Sezgisel Arayüz & İnteraktif Öğrenme Modu:**<br>Tamamen modern dokunmatik ekran          |
 |       | boğulmuş hantal ekranlar; yeni bir garsonun veya kominin sistemi öğrenmesi | ergonomisi. Restoran yöneticisinin açabildiği yerleşik **"Bağlamsal Öğrenme Modu (Adım     |
@@ -428,7 +428,7 @@ Sistemin Merit Royal'deki 5 restoranda sorunsuz devreye alınması için takip e
 ## 8. SONUÇ: MERİT ROYAL PRESTİJİNE UYGUN KESİNTİSİZ DESTEK ARACI
 
 Merit Royal Hotel & Casino bünyesindeki **The Roof Garden, The Steak House, Blue Sea, Royal Mandarin ve Bella Merit** restoranları için özel olarak tasarlanan bu mimari:
-- Uluslararası lüks otelcilikte personelin aşina olduğu fine-dining servis disiplinini korurken, geleneksel hantal sistemlerin (MICROS vb.) **öğrenme zorluğu, gecikme, donma, yüksek lisans maliyetleri ve destek yavaşlığı** gibi tüm kronik zayıflıklarını kökünden temizlemiştir.
+- Uluslararası lüks otelcilikte personelin aşina olduğu fine-dining servis disiplinini korurken, geleneksel hantal sistemlerin **öğrenme zorluğu, gecikme, donma, yüksek lisans maliyetleri ve destek yavaşlığı** gibi tüm kronik zayıflıklarını kökünden temizlemiştir.
 - **Tamamen izole yerel ağ** güvencesiyle dış internet, PMS veya bulut arızalarından bağımsız olarak %100 kesintisiz çalışır.
 - Sistem personele veya yönetime bir bürokrasi ya da muhasebe yükü getiren karmaşık bir POS değil; **servis garsonu, salon şefi ve mutfak ekibi arasında pürüzsüz koordinasyon sağlayan güçlü bir operasyonel destek aracıdır**.
 - Sipariş hatalarını, unutulan pişme derecelerini ve servis aksamalarını sıfırlayarak Merit Royal misafirlerine sunulan gastronomi deneyimini ve memnuniyetini en üst düzeye çıkarır.

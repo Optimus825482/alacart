@@ -639,17 +639,6 @@ export function WaiterPwaManager({
               >
                 🔔 Bildirim & Titreşim Testi
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  checkLanHealth();
-                  onRefresh();
-                  notify("Sunucu-Kasa ile menü ve masa durumu eşitlendi.", "teal");
-                }}
-                className="px-3.5 py-2 rounded-xl bg-[#73d8c6] hover:bg-[#8be7d6] text-[#10201e] text-xs font-black"
-              >
-                ↻ Sunucu ile Şimdi Eşitle
-              </button>
             </div>
           </div>
         </div>

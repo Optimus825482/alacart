@@ -2995,7 +2995,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
                   <tbody className="divide-y divide-[#2a3939]">
                     <tr>
                       <td className="px-3 py-2 font-semibold">
-                        Masa Planı ve Sipariş / Servis Turu (SCR-03..06)
+                        Masa Planı ve Sipariş / Servis Turu
                       </td>
                       <td className="px-3 py-2 text-[#73d8c6]">✓</td>
                       <td className="px-3 py-2 text-[#73d8c6]">✓</td>
@@ -3006,7 +3006,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
                     </tr>
                     <tr>
                       <td className="px-3 py-2 font-semibold">
-                        Gönderilmiş Kalem İptal Kararı & VOID Fişi (SCR-09)
+                        Gönderilmiş Kalem İptal Kararı & VOID Fişi
                       </td>
                       <td className="px-3 py-2 text-[#73d8c6]">✓</td>
                       <td className="px-3 py-2 text-[#73d8c6]">
@@ -3021,7 +3021,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
                     </tr>
                     <tr>
                       <td className="px-3 py-2 font-semibold">
-                        Operasyon Panosu, Raporlar & Öğrenme Modu (SCR-07..12)
+                        Operasyon Panosu ve Raporlar
                       </td>
                       <td className="px-3 py-2">
                         {matrixRoleView === "WAITER" ? "—" : "✓"}
@@ -3042,7 +3042,7 @@ export function SysAdminScreensView(props: SysAdminScreensProps) {
                     </tr>
                     <tr>
                       <td className="px-3 py-2 font-semibold">
-                        Audit, Menü, Yazıcı, Yedek & Tanılama (SCR-13..19)
+                        Denetim, Menü, Yazıcı, Yedek & Tanılama
                       </td>
                       <td className="px-3 py-2">
                         {matrixRoleView === "SYSTEM_ADMIN" ? "✓" : "—"}

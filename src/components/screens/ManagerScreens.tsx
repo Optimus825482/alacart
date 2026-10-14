@@ -458,7 +458,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
           title: `Gönderilmemiş Taslak Kalem: ${item.quantity}x ${item.productNameSnapshot}`,
           detail: `Koltuk ${item.seatNumber ?? "-"} · Taslak kalem mutfağa gönderilmeli veya silinmelidir.`,
           targetScreen: "SCR-04",
-          targetLabel: "Sipariş Ekranında Çöz (SCR-04)",
+          targetLabel: "Sipariş Ekranında Çöz",
         });
       } else if (
         item.status === "HELD" ||
@@ -471,7 +471,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
           title: `Bekletilen / Zamanlı Kalem: ${item.quantity}x ${item.productNameSnapshot}`,
           detail: `Durum: ${item.status} · Şimdi gönderilmeli veya zamanlama iptal edilmelidir.`,
           targetScreen: "SCR-06",
-          targetLabel: "Zamanlama Ekranında Çöz (SCR-06)",
+          targetLabel: "Zamanlama Ekranında Çöz",
         });
       }
     }
@@ -487,7 +487,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
         title: `Bekleyen İptal Kararı: ${cr.referenceCode}`,
         detail: `${cr.reasonCategory} — Yönetici onay veya red kararı verilmelidir.`,
         targetScreen: "SCR-09",
-        targetLabel: "İptal Taleplerinde Karar Ver (SCR-09)",
+        targetLabel: "İptal Taleplerinde Karar Ver",
       });
     }
 
@@ -503,7 +503,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
         title: `Sonucu Belirsiz / Hatalı Baskı İşi: ${pj.jobCode}`,
         detail: `${pj.stationName ?? "Yazıcı Kuyruğu"} · Kontrollü tekrar deneme veya inceleme gereklidir.`,
         targetScreen: "SCR-10",
-        targetLabel: "Yazdırma Kuyruğunda Çöz (SCR-10)",
+        targetLabel: "Yazdırma Kuyruğunda Çöz",
       });
     }
 
@@ -1433,27 +1433,17 @@ export function ManagerScreensView(props: ManagerScreensProps) {
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={() => {
-                onRefresh();
-                notify("Yönetici operasyon panosu yenilendi.", "teal");
-              }}
-              className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-2 text-xs font-bold text-[#f0f5f3] hover:brightness-110"
-            >
-              ↻ Panoyu Yenile
-            </button>
-            <button
-              type="button"
               onClick={() => onNavigate("SCR-11")}
               className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-2 text-xs font-bold text-[#f0f5f3] hover:brightness-110"
             >
-              ⎙ Adisyon Yazdır (SCR-11)
+              ⎙ Adisyon Yazdır
             </button>
             <button
               type="button"
               onClick={() => onNavigate("SCR-12")}
               className="rounded-lg border border-[#58b7a6] bg-[#73d8c6] px-3.5 py-2 text-xs font-extrabold text-[#10221f] hover:brightness-110"
             >
-              📊 Rapor Merkezini Aç (SCR-12)
+              📊 Rapor Merkezi
             </button>
           </div>
         </div>
@@ -1499,7 +1489,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             </strong>
             <small className="text-[10px] text-[#efc97b]">
               {uncertainOrErrorJobs.length > 0
-                ? "Kontrollü inceleme gerekli (SCR-10)"
+                ? "Kontrollü inceleme gerekli"
                 : "Belirsiz veya hatalı iş yok"}
             </small>
           </div>
@@ -1519,7 +1509,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             </strong>
             <small className="text-[10px] text-[#efc97b]">
               {pendingCancelRequests.length > 0
-                ? "Yönetici onayı bekliyor (SCR-09)"
+                ? "Yönetici onayı bekliyor"
                 : "Bekleyen iptal talebi yok"}
             </small>
           </div>
@@ -1749,7 +1739,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                           }}
                           className="rounded-lg border border-[#344647] bg-[#202f30] px-2.5 py-1.5 text-[10px] font-bold text-[#f0f5f3] hover:border-[#73d8c6]"
                         >
-                          Masa Ayrıntısı (SCR-08) →
+                          Masa Ayrıntısı →
                         </button>
                       </div>
                     </div>
@@ -1795,7 +1785,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                         onClick={() => onNavigate("SCR-09")}
                         className="rounded-lg border border-[#665637] bg-[#3b3325] px-2.5 py-1.5 text-[10px] font-bold text-[#f2d38f] hover:brightness-110"
                       >
-                        Karar Ver (SCR-09)
+                        Karar Ver
                       </button>
                     </div>
                   );
@@ -1814,7 +1804,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                           {tbl?.name ?? "Masa"} · Baskı Sonucu Belirsiz ({job.jobCode})
                         </b>
                         <p className="mt-0.5 text-[10px] text-[#9aaead]">
-                          {job.stationName ?? "Mutfak-Windows"} · Otomatik tekrar yapılmadı
+                          {job.stationName ?? "Mutfak"} · Otomatik tekrar yapılmadı
                         </p>
                       </div>
                       <button
@@ -1822,7 +1812,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                         onClick={() => onNavigate("SCR-10")}
                         className="rounded-lg border border-[#684442] bg-[#3e2c2b] px-2.5 py-1.5 text-[10px] font-bold text-[#ffc0b5] hover:brightness-110"
                       >
-                        Kuyruk (SCR-10)
+                        Yazıcı Kuyruğu
                       </button>
                     </div>
                   );
@@ -1961,7 +1951,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
               onClick={() => onNavigate("SCR-07")}
               className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-2 text-xs font-bold text-[#f0f5f3] hover:brightness-110"
             >
-              ← Panoya Dön (SCR-07)
+              ← Panoya Dön
             </button>
             <button
               type="button"
@@ -1973,7 +1963,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
               }}
               className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-2 text-xs font-bold text-[#f0f5f3] hover:brightness-110"
             >
-              ⎙ Adisyon Önizle (SCR-11)
+              ⎙ Adisyon Önizle
             </button>
             {currentDetailSession?.status === "OPEN" && (
               <>
@@ -2305,14 +2295,14 @@ export function ManagerScreensView(props: ManagerScreensProps) {
                 onClick={() => onNavigate("SCR-10")}
                 className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-1.5 text-[10px] font-bold text-[#f0f5f3]"
               >
-                Yazdırma Kuyruğu (SCR-10)
+                Yazdırma Kuyruğu
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate("SCR-09")}
                 className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-1.5 text-[10px] font-bold text-[#f0f5f3]"
               >
-                İptal Talepleri (SCR-09)
+                İptal Talepleri
               </button>
             </div>
           </div>
@@ -2332,7 +2322,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             >
               <div>
                 <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#73d8c6]">
-                  MASA TAŞIMA İŞLEMİ (SCR-08)
+                  MASA TAŞIMA İŞLEMİ
                 </div>
                 <h2
                   id="transfer-modal-title"
@@ -2816,73 +2806,62 @@ export function ManagerScreensView(props: ManagerScreensProps) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#73d8c6]">
-              SCR-10 · YAZICILAR VE YAZDIRMA KUYRUĞU
+              YAZICILAR VE YAZDIRMA KUYRUĞU
             </div>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#f0f5f3]">
-              Windows Spooler Kuyrukları ve Termal Fiş İşleri
+              Yazdırma Kuyrukları ve Fiş İşleri
             </h1>
             <p className="mt-1 max-w-3xl text-xs text-[#9aaead]">
-              Windows kuyruk durumu ile fiziksel çıktının doğrulanabildiği seviyeyi ayrı izleyin. Belirsiz işlerde otomatik çoğaltma yapılmaz; aynı iş koduyla <b className="text-[#f0f5f3]">Kontrollü Tekrar Dene</b> veya ilk iş referanslı <b className="text-[#f0f5f3]">*** TEKRAR BASKI ***</b> kullanılır.
+              Yazıcı kuyruklarını ve mutfak/adisyon fiş işlerini takip edin. Belirsiz işlerde aynı iş koduyla <b className="text-[#f0f5f3]">Kontrollü Tekrar Dene</b> veya <b className="text-[#f0f5f3]">Tekrar Baskı</b> kullanılır.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                onRefresh();
-                notify("Windows yazdırma kuyrukları durumu yenilendi.", "teal");
-              }}
-              className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-2 text-xs font-bold text-[#f0f5f3]"
-            >
-              ↻ Kuyrukları Yenile
-            </button>
             {currentUser?.role === "SYSTEM_ADMIN" && (
               <button
                 type="button"
                 onClick={() => onNavigate("SCR-17")}
                 className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-2 text-xs font-bold text-[#f0f5f3]"
               >
-                ⚙ Yazıcı ve İstasyon Ayarları (SCR-17)
+                ⚙ Yazıcı ve İstasyon Ayarları
               </button>
             )}
           </div>
         </div>
 
-        {/* Status Cards for Mutfak-Windows and Adisyon-USB */}
+        {/* Status Cards for Mutfak and Adisyon */}
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-[#344647] bg-[#192526] p-3.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#9aaead]">
-                MUTFAK-WINDOWS KUYRUĞU
+                MUTFAK YAZICI KUYRUĞU
               </span>
               <span className="rounded-full border border-[#3c6058] bg-[#243d39] px-2 py-0.5 text-[9px] font-bold text-[#bdf0e4]">
                 {kitchenQueue?.status ?? "ONLINE"}
               </span>
             </div>
             <strong className="mt-1.5 block text-sm font-extrabold text-[#f0f5f3]">
-              {kitchenQueue?.deviceModel ?? "Epson TM-T20III (011)"}
+              Mutfak Yazıcısı
             </strong>
             <small className="mt-1 block text-[10px] text-[#9aaead]">
-              {kitchenQueue?.printServerModel ?? "DIGITUS DN-13003-2"} →{" "}
-              {kitchenQueue?.bridgeApModel ?? "TP-Link TL-WA801N Client/Bridge"}
+              Ağ Bağlantılı · 80mm Termal Sipariş Fişi
             </small>
           </div>
 
           <div className="rounded-xl border border-[#344647] bg-[#192526] p-3.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#9aaead]">
-                ADİSYON-USB KUYRUĞU
+                ADİSYON YAZICI KUYRUĞU
               </span>
               <span className="rounded-full border border-[#3c6058] bg-[#243d39] px-2 py-0.5 text-[9px] font-bold text-[#bdf0e4]">
                 {receiptQueue?.status ?? "ONLINE"}
               </span>
             </div>
             <strong className="mt-1.5 block text-sm font-extrabold text-[#f0f5f3]">
-              {receiptQueue?.deviceModel ?? "Epson TM-T20III (011)"}
+              Kasa / Bar Adisyon Yazıcısı
             </strong>
             <small className="mt-1 block text-[10px] text-[#9aaead]">
-              Doğrudan Sunucu-Kasa USB · Servis Özeti
+              USB Bağlantılı · 80mm Termal Servis Özeti
             </small>
           </div>
 
@@ -3069,12 +3048,6 @@ export function ManagerScreensView(props: ManagerScreensProps) {
               </tbody>
             </table>
           </div>
-
-          <div className="border-t border-[#344647] p-3.5">
-            <div className="rounded-lg border border-[#705e37] bg-[#393321] p-2.5 text-[11px] text-[#f1db9f]">
-              <b>§5.9.2 Dürüst Baskı Doğrulama Kuralı:</b> İşin Windows yazdırma kuyruğuna kabul edilmesi kâğıdın fiziksel olarak çıktığını kesinleştirmez. Sonucu belirsiz işler otomatik çoğaltılmaz; mutfakta fiziksel çıktı kontrol edildikten sonra <b>Kontrollü Tekrar Dene</b> (aynı iş koduyla) veya <b>Tekrar Baskı</b> (<code>*** TEKRAR BASKI ***</code> ibareli) kullanılır.
-            </div>
-          </div>
         </div>
 
         {/* Thermal Receipt Snapshot Modal */}
@@ -3221,7 +3194,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#73d8c6]">
-              SCR-11 · ADİSYON / SERVİS ÖZETİ ÖNİZLEME VE YAZDIRMA
+              ADİSYON / SERVİS ÖZETİ ÖNİZLEME VE YAZDIRMA
             </div>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#f0f5f3]">
               80mm Servis Özeti (Adisyon) Önizlemesi
@@ -3237,7 +3210,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
               onClick={() => onNavigate("SCR-08")}
               className="rounded-lg border border-[#344647] bg-[#202f30] px-3 py-2 text-xs font-bold text-[#f0f5f3]"
             >
-              ← Sipariş Ayrıntısına Dön (SCR-08)
+              ← Sipariş Ayrıntısına Dön
             </button>
             <button
               type="button"
@@ -3254,7 +3227,7 @@ export function ManagerScreensView(props: ManagerScreensProps) {
             >
               {busyAction === "print-priceless-check"
                 ? "Kuyruğa İletiliyor..."
-                : "⎙ Adisyon-USB Kuyruğuna Yazdır"}
+                : "⎙ Adisyon Yazdır"}
             </button>
           </div>
         </div>

@@ -137,10 +137,10 @@ export const SCREEN_CATALOG: ScreenDefinition[] = [
     id: "SCR-11",
     shortCode: "s11",
     number: "11",
-    title: "Fiyatsız Adisyon Önizleme",
+    title: "Adisyon Önizleme",
     group: "RESTORAN YÖNETİMİ",
     allowedRoles: ["SYSTEM_ADMIN", "RESTAURANT_MANAGER"],
-    description: "80mm fiyatsız servis özeti önizlemesi ve Adisyon-USB yazdırma (tahsilat belgesi değildir)",
+    description: "80mm servis özeti önizlemesi ve adisyon yazdırma",
   },
   {
     id: "SCR-12",

@@ -197,7 +197,7 @@ export function AlacarteWorkspace({
   };
 
   const visibleScreens = SCREEN_CATALOG.filter(
-    (s) => s.id !== "SCR-01" && canAccessScreen(s.id)
+    (s) => s.id !== "SCR-01" && s.id !== "SCR-11" && canAccessScreen(s.id)
   );
   const groups = Array.from(new Set(visibleScreens.map((s) => s.group)));
 
@@ -373,25 +373,12 @@ export function AlacarteWorkspace({
               </span>
             )}
 
-            {/* Sync & Server Clock */}
+            {/* Server Clock */}
             <div className="hidden 2xl:flex flex-col items-end text-xs text-[#9aaead] font-mono shrink-0">
               <span>
                 Sunucu Saati: <b className="text-[#f0f5f3]">{serverClock || "19:42:00"}</b>
               </span>
-              <span className="text-[11px] text-[#73d8c6]">
-                Son Eşitleme: {lastSyncTime || "Şimdi"} · {businessTz}
-              </span>
             </div>
-
-            <button
-              type="button"
-              onClick={handleRefresh}
-              disabled={isPending}
-              className="px-2.5 py-1.5 rounded-lg border border-[#344647] bg-[#202f30] hover:bg-[#263738] text-xs font-semibold shrink-0 whitespace-nowrap"
-              title="Sunucu Veritabanından Yenile"
-            >
-              {isPending ? "⟳ ..." : "↻ Eşitle"}
-            </button>
 
             <button
               type="button"

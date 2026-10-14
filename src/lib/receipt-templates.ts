@@ -214,8 +214,6 @@ export function formatPricelessCheckSummary(input: PricelessCheckInput): string 
   const headerTitle = `ALACARTE / ${input.restaurantName.toLocaleUpperCase("tr-TR")}`;
   lines.push(headerTitle.padStart(Math.floor((48 + headerTitle.length) / 2), " "));
   lines.push("              ADİSYON / SERVİS ÖZETİ");
-  lines.push("        FİYATSIZ A LA CARTE MİSAFİR ÇIKTISI");
-  lines.push("              MALİ GEÇERLİLİĞİ YOKTUR");
   if (input.isReprint) {
     lines.push(`          *** TEKRAR BASKI (İlk: ${input.originalJobCode ?? "-"}) ***`);
   }
@@ -273,10 +271,6 @@ export function formatPricelessCheckSummary(input: PricelessCheckInput): string 
   lines.push(
     `${`TOPLAM SERVİS KALEMİ: ${activeQuantityTotal}`.padEnd(31, " ")}Sayfa 1/1`
   );
-  lines.push("------------------------------------------------");
-  lines.push("           FİYATSIZ SERVİS ADİSYONUDUR");
-  lines.push("        TAHSİLAT VEYA MALİ DEĞERİ YOKTUR");
-  lines.push("                 AFİYET OLSUN");
   lines.push("================================================");
   return lines.join("\n");
 }

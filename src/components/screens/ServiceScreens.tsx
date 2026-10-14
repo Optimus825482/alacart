@@ -123,13 +123,13 @@ const LEARNING_GUIDE_STEPS = [
   },
   {
     step: 4,
-    title: "Kalem Seçenekleri, Pişme Derecesi ve Paylaşım (SCR-05)",
+    title: "Kalem Seçenekleri, Pişme Derecesi ve Paylaşım",
     detail:
-      "Eklediğiniz taslak kaleme dokunarak veya sağdaki 'KALEM SEÇENEKLERİ' düğmesiyle SCR-05'e geçin; zorunlu/isteğe bağlı modifier, mutfak notu ve koltuk paylaşımı ([1,2,3] adet çoğaltmadan) ayarlayın.",
+      "Eklediğiniz taslak kaleme dokunarak veya sağdaki 'KALEM SEÇENEKLERİ' düğmesini kullanarak; zorunlu/isteğe bağlı modifier, mutfak notu ve koltuk paylaşımını ayarlayın.",
   },
   {
     step: 5,
-    title: "Bekletme veya Zamanlı Gönderim Planlayın (SCR-06)",
+    title: "Bekletme veya Zamanlı Gönderim Planlayın",
     detail:
       "Misafir bazı yemeklerin daha sonra hazırlanmasını isterse üstten 'Bu turdaki ürünleri beklet' anahtarını açın veya 'BEKLET / ZAMANLA' ekranından sunucu saatine göre zaman atayın.",
   },
@@ -143,7 +143,7 @@ const LEARNING_GUIDE_STEPS = [
     step: 7,
     title: "Adisyon ve İptal Kuralları",
     detail:
-      "Mutfağa gönderilmiş kalemler doğrudan silinemez; gerekirse 'İPTAL TALEBİ (SCR-09)' açılır. Servis özeti için 'ADİSYON YAZDIR (SCR-11)' kullanılır.",
+      "Mutfağa gönderilmiş kalemler doğrudan silinemez; gerekirse 'İPTAL TALEBİ' açılır. Servis özeti için 'ADİSYON YAZDIR' kullanılır.",
   },
 ];
 
@@ -967,7 +967,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
     if (!item) return;
     if (item.status === "SENT") {
       notify(
-        "Mutfağa gönderilmiş kalem doğrudan silinemez! İptal Talebi (SCR-09) ekranına yönlendiriliyorsunuz.",
+        "Mutfağa gönderilmiş kalem doğrudan silinemez! İptal talebi ekranına yönlendiriliyorsunuz.",
         "gold"
       );
       onNavigate("SCR-09");
@@ -1822,7 +1822,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                 </p>
                 <p>
                   2. Garson veya restoran yöneticisi parolasını unuttuğunda{" "}
-                  <strong>Yerel Sistem Yöneticisi (SCR-16)</strong> ilgili kullanıcı
+                  <strong>Yerel Sistem Yöneticisi</strong> ilgili kullanıcı
                   için tek kullanımlık geçici parola/PIN tanımlar ve mevcut açık
                   oturumları sonlandırır.
                 </p>
@@ -2418,10 +2418,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
         {/* Top Screen Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="text-[10px] font-extrabold tracking-[0.16em] text-[#73d8c6] uppercase">
-              SCR-03 · MASA PLANI VE MASA LİSTESİ
-            </div>
-            <h1 className="mt-1 text-2xl font-bold text-[#f0f5f3]">
+            <h1 className="text-2xl font-bold text-[#f0f5f3]">
               Masa ve Servis Durumu
             </h1>
             <p className="mt-1 text-xs text-[#9aaead]">
@@ -2430,23 +2427,6 @@ export function ServiceScreensView(props: ServiceScreensProps) {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-lg border border-[#344647] bg-[#141f20] px-3 py-1.5 text-[11px] text-[#9aaead]">
-              Son Eşitleme:{" "}
-              <strong className="text-[#73d8c6]">
-                {formatIstanbulTime(new Date())}
-              </strong>{" "}
-              · Menü Sürümü:{" "}
-              <strong className="text-[#f0f5f3]">
-                v{config?.menuVersion ?? 1}
-              </strong>
-            </span>
-            <button
-              type="button"
-              onClick={onRefresh}
-              className="rounded-xl border border-[#344647] bg-[#202f30] px-3.5 py-2 text-xs font-bold text-[#f0f5f3] hover:border-[#73d8c6]"
-            >
-              ↻ Durumu Yenile
-            </button>
             {activeTable && (
               <button
                 type="button"
@@ -2458,54 +2438,6 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                   : `＋ Yeni Servis Başlat (${activeTable.name})`}
               </button>
             )}
-          </div>
-        </div>
-
-        {/* 4 Summary Stat Cards */}
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <div className="rounded-xl border border-[#344647] bg-[#192526] p-3.5">
-            <div className="text-[10px] font-bold tracking-wider text-[#9aaead] uppercase">
-              TOPLAM MASA
-            </div>
-            <strong className="mt-1 block text-2xl font-black tabular-nums text-[#f0f5f3]">
-              {totalCount}
-            </strong>
-            <small className="text-[10px] text-[#73d8c6]">
-              Salon ve Teras aktif masalar
-            </small>
-          </div>
-          <div className="rounded-xl border border-[#344647] bg-[#192526] p-3.5">
-            <div className="text-[10px] font-bold tracking-wider text-[#9aaead] uppercase">
-              SERVİSTE
-            </div>
-            <strong className="mt-1 block text-2xl font-black tabular-nums text-[#73d8c6]">
-              {inServiceCount}
-            </strong>
-            <small className="text-[10px] text-[#9aaead]">
-              Açık servis oturumu bulunan
-            </small>
-          </div>
-          <div className="rounded-xl border border-[#344647] bg-[#192526] p-3.5">
-            <div className="text-[10px] font-bold tracking-wider text-[#9aaead] uppercase">
-              TASLAK / GÖNDERİM BEKLEYEN
-            </div>
-            <strong className="mt-1 block text-2xl font-black tabular-nums text-[#efc97b]">
-              {draftOrScheduledCount}
-            </strong>
-            <small className="text-[10px] text-[#efc97b]">
-              Mutfağa iletilecek / zamanlı
-            </small>
-          </div>
-          <div className="rounded-xl border border-[#344647] bg-[#192526] p-3.5">
-            <div className="text-[10px] font-bold tracking-wider text-[#9aaead] uppercase">
-              İPTAL / BASKI KARARI BEKLEYEN
-            </div>
-            <strong className="mt-1 block text-2xl font-black tabular-nums text-[#f18d83]">
-              {decisionPendingCount}
-            </strong>
-            <small className="text-[10px] text-[#f18d83]">
-              Yönetici incelemesi gereken
-            </small>
           </div>
         </div>
 
@@ -2746,8 +2678,8 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                       className="flex-1 rounded-xl border border-[#58b7a6] bg-[#73d8c6] px-4 py-2.5 text-xs font-extrabold text-[#10221f] hover:brightness-110 disabled:opacity-50"
                     >
                       {activeSession
-                        ? "Açık Siparişe Dön (SCR-04) →"
-                        : "＋ Yeni Servis Başlat (SCR-04) →"}
+                        ? "Açık Siparişe Dön →"
+                        : "＋ Yeni Servis Başlat →"}
                     </button>
                     {activeSession && (
                       <button
@@ -2755,7 +2687,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                         onClick={() => onNavigate("SCR-08")}
                         className="rounded-xl border border-[#344647] bg-[#202f30] px-3 py-2.5 text-xs font-bold text-[#f0f5f3] hover:border-[#73d8c6]"
                       >
-                        Masa Ayrıntısı (SCR-08)
+                        Masa Ayrıntısı
                       </button>
                     )}
                   </div>
@@ -2962,14 +2894,14 @@ export function ServiceScreensView(props: ServiceScreensProps) {
               onClick={() => onNavigate("SCR-03")}
               className="rounded-xl border border-[#344647] bg-[#202f30] px-3 py-1.5 text-xs font-bold text-[#f0f5f3] hover:border-[#73d8c6]"
             >
-              ← Masalara Dön (SCR-03)
+              ← Masalara Dön
             </button>
             <button
               type="button"
               onClick={() => onNavigate("SCR-05")}
               className="rounded-xl border border-[#344647] bg-[#202f30] px-3 py-1.5 text-xs font-bold text-[#f0f5f3] hover:border-[#73d8c6]"
             >
-              Kalem Seçenekleri (SCR-05)
+              Kalem Seçenekleri
             </button>
           </div>
         </div>
@@ -3593,7 +3525,6 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                 onClick={() => onNavigate("SCR-11")}
                 className="flex flex-col justify-center rounded border border-[#798582] bg-[#384544] p-2 text-left transition hover:brightness-110"
               >
-                <span className="text-[9px] font-bold text-[#8dc4e9]">SCR-11</span>
                 <span className="text-xs font-extrabold text-[#f0f5f3]">
                   ADİSYON YAZDIR
                 </span>
@@ -3602,14 +3533,14 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                 </small>
               </button>
 
-              {/* MICROS TSR: RE-ORDER / REPEAT ROUND */}
+              {/* RE-ORDER / REPEAT ROUND */}
               <button
                 type="button"
                 disabled={busyAction === "reorder-round" || !activeSession}
                 onClick={() => handleReorderRound()}
                 className="flex flex-col justify-center rounded border border-[#49605b] bg-[#243d39] p-2 text-left transition hover:brightness-110 disabled:opacity-50"
               >
-                <span className="text-[9px] font-bold text-[#73d8c6]">MICROS RE-ORDER</span>
+                <span className="text-[9px] font-bold text-[#73d8c6]">HIZLI TEKRAR</span>
                 <span className="text-xs font-extrabold text-[#bdf0e4]">
                   {busyAction === "reorder-round" ? "⟳ KOPYALANIYOR..." : "⟲ TURU TEKRARLA"}
                 </span>
@@ -3701,7 +3632,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
             </h1>
             <p className="mt-1 text-xs text-[#9aaead]">
               Taslak ve bekletilen kalemleri düzenleyin. Mutfağa gönderilmiş (SENT)
-              kalemler silinemez veya adedi düşürülemez; iptal talebi (SCR-09)
+              kalemler silinemez veya adedi düşürülemez; yönetici onaylı iptal talebi
               gerektirir.
             </p>
           </div>
@@ -3710,7 +3641,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
             onClick={() => onNavigate("SCR-04")}
             className="rounded-xl border border-[#344647] bg-[#202f30] px-4 py-2 text-xs font-bold text-[#f0f5f3] hover:border-[#73d8c6]"
           >
-            ← Sipariş Ekranına Dön (SCR-04)
+            ← Sipariş Ekranına Dön
           </button>
         </div>
 
@@ -3730,7 +3661,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
               <div className="divide-y divide-[#2b3b3b] max-h-60 overflow-y-auto">
                 {allSessionItems.length === 0 ? (
                   <div className="p-5 text-center text-xs text-[#9aaead]">
-                    Bu masada henüz kalem yok. SCR-04 ekranından ürün ekleyin.
+                    Bu masada henüz kalem yok. Sipariş ekranından ürün ekleyin.
                   </div>
                 ) : (
                   allSessionItems.map((item: any) => {
@@ -3789,7 +3720,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                       <p className="mt-1 text-[11px]">
                         Gönderilmiş kalemler doğrudan silinemez veya adedi
                         azaltılamaz. İptal veya miktar düşümü için yönetici onaylı{" "}
-                        <strong>İptal Talebi (SCR-09)</strong> oluşturun. (Yalnızca
+                        <strong>İptal Talebi</strong> oluşturun. (Yalnızca
                         denetim kayıtlı koltuk numarası düzeltmesi yapılabilir.)
                       </p>
                       <button
@@ -3797,7 +3728,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                         onClick={() => onNavigate("SCR-09")}
                         className="mt-2 rounded-lg border border-[#f18d83] bg-[#52302e] px-3 py-1.5 text-xs font-extrabold text-[#ffc7be]"
                       >
-                        ⊘ Bu Kalem İçin İptal Talebi Aç (SCR-09) →
+                        ⊘ Bu Kalem İçin İptal Talebi Aç →
                       </button>
                     </div>
                   )}
@@ -4172,7 +4103,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
             onClick={() => onNavigate("SCR-04")}
             className="rounded-xl border border-[#344647] bg-[#202f30] px-4 py-2 text-xs font-bold text-[#f0f5f3] hover:border-[#73d8c6]"
           >
-            ← Siparişe Dön (SCR-04)
+            ← Siparişe Dön
           </button>
         </div>
       </div>
@@ -4345,13 +4276,6 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                     : "Tüm restoran masaları"}
                 </small>
               </div>
-              <button
-                type="button"
-                onClick={onRefresh}
-                className="rounded-lg border border-[#344647] bg-[#202f30] px-2.5 py-1 text-[10px] font-bold text-[#f0f5f3]"
-              >
-                ↻ Yenile
-              </button>
             </div>
 
             <div className="divide-y divide-[#2b3b3b] max-h-64 overflow-y-auto">

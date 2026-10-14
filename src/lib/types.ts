@@ -257,8 +257,8 @@ export const HARDWARE_BOM_PACKAGE: HardwarePackageItem[] = [
   {
     category: "Termal Mutfak Yazıcısı (80mm Ethernet)",
     quantity: 1,
-    selectedModel: "Epson TM-T20III Ethernet (C31CH51012) / Bixolon SRP-350III Ethernet",
-    specs: "Mutfak hazırlık istasyonuna bağlı, dahili 10/100 RJ45 Ethernet portlu, sesli ikaz ziline sahip dayanıklı fiş yazıcısı (Port 9100 RAW)",
+    selectedModel: "Epson TM-T88VII-112 Termal Fiş Yazıcı",
+    specs: "Mutfak hazırlık istasyonuna bağlı, dahili Gigabit Ethernet + USB portlu, 500 mm/sn ultra hızlı ve sesli ikaz ziline sahip endüstriyel fiş yazıcısı (Port 9100 RAW)",
     unitPriceTl: 8250,
     totalPriceTl: 8250,
     pilotStatus: "Dahili Ethernet portlu, sesli ikaz zilli endüstriyel mutfak hazırlık ve iptal dökümü",

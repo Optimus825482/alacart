@@ -22,7 +22,7 @@ Devreye alma süreci 5 ana fazdan oluşur. Sistem prototip aşamasını geçmiş
 - **Donanım Paketi Tedariği:**
   - 1x Tiwox TP-8610 Dokunmatik Sunucu-Kasa (18.5" Dokunmatik, Ubuntu 24.04 LTS, Docker Compose).
   - 1x Epson TM-T20III Termal Adisyon Yazıcısı (Doğrudan kasaya USB bağlantı).
-  - 1x Epson TM-T20III Termal Mutfak Yazıcısı (Dahili Ethernet portlu, mutfakta kablosuz mesh AP'ye CAT6 ile bağlı).
+  - 1x Epson TM-T88VII-112 Termal Fiş Yazıcı (Mutfak için dahili Ethernet portlu, mutfakta kablosuz mesh AP'ye CAT6 ile bağlı).
   - 1x Keenetic Voyager Pro (KN-3510) All-in-One Router & Wi-Fi 6 Tavan AP (Ana router ve DHCP sunucusu).
   - 1x Keenetic Orbiter Pro (KN-2810) Mutfak Kablosuz Mesh AP (Kasadan mutfağa kablo çekilmeden kablosuz köprü kurar, yazıcı bu AP'nin Ethernet portuna bağlanır).
   - 1x Keenetic EAP650-Outdoor Wi-Fi 6 AP (Geniş teras veya açık alan varsa kapsama için).

@@ -190,7 +190,7 @@ Gönderim: 20:14:32       Fiş: K-000391
 
 #### 4.9.2 Tek Fiziksel Mutfak Yazıcısı ve Çoklu Mantıksal İstasyon İşleyişi
 
-Standart alakart restoran paketimizde mutfakta **1 adet fiziksel termal mutfak yazıcısı (Epson TM-T20III Ethernet)** yer alır. Ancak mutfak operasyonu şef ve tezgâhlar bazında birden çok bölüme ayrılır:
+Standart alakart restoran paketimizde mutfakta **1 adet fiziksel termal mutfak yazıcısı (Epson TM-T88VII-112 Termal Fiş Yazıcı - Dahili Ethernet)** yer alır. Ancak mutfak operasyonu şef ve tezgâhlar bazında birden çok bölüme ayrılır:
 
 1. **Mantıksal İstasyonlar (KitchenStation):** Sistemde 4 ana istasyon tanımlıdır:
    - `SICAK MUTFAK` (Fırın, tava, sıcak başlangıçlar)

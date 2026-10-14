@@ -28,7 +28,7 @@ Bu rapor; Merit Royal tesislerindeki 5 seçkin A La Carte restoranda devreye al�
    - **1x Dokunmatik Server Kasa:** Ubuntu Linux 24.04 LTS kurulu, Docker üzerinde çalışan veri tabanı ve web sunucusunu barındıran hepsi-bir-arada (All-in-One) dokunmatik terminal.
    - **Garson Mobil Terminali / Akıllı Cihazlar:** Yalnızca yerel Wi-Fi'a bağlanan, modern PWA mobil istemcisi.
    - **1x Termal Adisyon Yazıcısı (80mm):** Kasa yanında yer alan masa servis dökümü yazıcısı.
-   - **1x Termal Mutfak Yazıcısı (80mm Ethernet):** Mutfak hazırlık istasyonuna bağlı, sesli ikaz ziline sahip dayanıklı fiş yazıcısı.
+   - **1x Termal Mutfak Yazıcısı (80mm Ethernet):** Epson TM-T88VII-112 Termal Fiş Yazıcı; mutfak hazırlık istasyonuna bağlı, dahili Gigabit Ethernet + USB portlu, 500 mm/sn ultra hızlı ve sesli ikaz ziline sahip dayanıklı endüstriyel fiş yazıcısı.
 
 ---
 
@@ -295,9 +295,9 @@ Her alakart restoranda yer alacak standart donanım seti:
 │                         │ • Kasaya doğrudan USB kablosuyla bağlı                       │
 │                         │ • Fiyatsız masa servis koordinasyon dökümü için kullanılır   │
 ├─────────────────────────┼──────────────────────────────────────────────────────────────┤
-│ 4. Termal Mutfak        │ 1x Termal Mutfak Yazıcısı (80mm Ethernet)                    │
+│ 4. Termal Mutfak        │ 1x Epson TM-T88VII-112 Termal Fiş Yazıcı (80mm Ethernet)     │
 │    Yazıcısı             │ • Mutfak hazırlık istasyonuna bağlı                          │
-│                         │ • Dahili 10/100 RJ45 Ethernet portlu dayanıklı fiş yazıcısı  │
+│                         │ • Dahili Gigabit Ethernet + USB portlu ultra hızlı yazıcı    │
 │                         │ • Sesli ikaz ziline (Buzzer) ve yağ kapağına sahip           │
 │                         │ • Rol: Şef hazırlık ve iptal (Void) fişlerinin anlık basımı  │
 ├─────────────────────────┼──────────────────────────────────────────────────────────────┤

@@ -33,7 +33,7 @@ flowchart TD
 
     subgraph MUTFAK_BOLGESI["MUTFAK VE HAZIRLIK İSTASYONU"]
         MutfakAP["Mutfak Kablosuz Mesh AP / Köprü<br/>Keenetic Orbiter Pro / Buddy 6<br/>IP: 192.168.X.3"]
-        MutfakYazici["Mutfak Fiş Yazıcısı (Dahili Ethernet)<br/>Epson TM-T20III Ethernet<br/>IP: 192.168.X.25 (Port 9100 RAW)"]
+        MutfakYazici["Mutfak Fiş Yazıcısı (Dahili Ethernet)<br/>Epson TM-T88VII-112<br/>IP: 192.168.X.25 (Port 9100 RAW)"]
     end
 
     subgraph DIS_MEKAN_BOLGESI["AÇIK TERAS & İSKELE (BLUE SEA & ROOF GARDEN)"]
@@ -67,7 +67,7 @@ Merit Royal'in 5 alakart restoranı için standartlaştırılmış 7 kalemlik do
 | **1** | **Dokunmatik Server Kasa** | 1 | **Tiwox TP-8610 All-in-One POS (veya muadili)**<br>• Ubuntu Linux 24.04 LTS kurulu<br>• Docker üzerinde çalışan veritabanı ve web sunucusunu barındıran hepsi-bir-arada dokunmatik terminal<br>• 15.6" - 18.5" Kapasitif Dokunmatik, 16 GB RAM & 256 GB SSD | Restoranın yerel veritabanı, Web POS ve yazdırma motoru |
 | **2** | **Garson Mobil Terminali / Akıllı Cihazlar** | 1 | **İşletme Tarafından Sağlanan Mobil Cihazlar (Android / iOS)**<br>• Yalnızca yerel Wi-Fi'a bağlanan, modern PWA mobil istemcisi<br>• Hızlı masa/ürün seçimi, dokunmatik titreşim ve tam ekran çalışma | Mevcut işletme envanterinden tahsis edilir |
 | **3** | **Termal Adisyon Yazıcısı (80mm)** | 1 | **Epson TM-T20III USB (Model 011)**<br>• Kasa yanında yer alan masa servis dökümü yazıcısı<br>• Doğrudan Kasaya 1.5m USB kablosuyla bağlı, otomatik kağıt kesici<br>• Fiyatsız masa servis koordinasyon dökümü için kullanılır | Kasa yanı yerel USB bağlantı |
-| **4** | **Termal Mutfak Yazıcısı (80mm Ethernet)** | 1 | **Epson TM-T20III Ethernet (C31CH51012 / Model 012)**<br>*(Alternatif: Bixolon SRP-350III Ethernet)*<br>• Mutfak hazırlık istasyonuna bağlı, dayanıklı fiş yazıcısı<br>• Dahili 10/100 RJ45 Ethernet portu ve sesli ikaz zili (Buzzer) uyumlu | Mutfak mesh AP Ethernet portuna bağlı |
+| **4** | **Termal Mutfak Yazıcısı (80mm Ethernet)** | 1 | **Epson TM-T88VII-112 Termal Fiş Yazıcı**<br>• Mutfak hazırlık istasyonuna bağlı, ultra hızlı ve endüstriyel dayanıklı fiş yazıcısı<br>• Dahili Ethernet (Gigabit) + USB portu, 500 mm/sn ultra yüksek baskı hızı<br>• Mutfak sesli ikaz zili (Buzzer) ve yağ kapağı uyumlu | Mutfak mesh AP Ethernet portuna bağlı |
 | **5** | **Salon Tavan All-in-One Router & Wi-Fi 6 AP** | 1 | **Keenetic Voyager Pro KN-3510 (AX1800)**<br>*(Alternatif: MikroTik cAP ax)*<br>• Tavana monte estetik kubbe formunda, dahili Gigabit Router ve bağımsız DHCP sunucusu barındıran Wi-Fi 6 erişim noktası<br>• Kasa arkasındaki harici router ihtiyacını ortadan kaldırır; 2x Gigabit port, 360° kubbe tavan yayılımı | Salon tavan merkezi (PoE beslemeli) |
 | **6** | **Kasa Yanı Gigabit PoE+ Enjektör** | 1 | **Keenetic / TP-Link TL-POE160S (Gigabit 802.3at 30W)**<br>• Kasa arkasında mini boyutta çalışır; kasadan çıkan CAT6 kabloya elektrik basarak tavandaki Voyager Pro'yu tek kabloyla besler<br>• Tavanda 220V priz ihtiyacını tamamen ortadan kaldırır | Kasa arkası tek CAT6 hat enjektörü |
 | **7** | **Mutfak Kablosuz Mesh Access Point / Köprü** | 1 | **Keenetic Orbiter Pro KN-3610 / Buddy 6 (veya Keenetic Mesh Node)**<br>• Mutfak servis bankosuna bağlı, salondaki tavan Voyager Pro'ya 5 GHz kablosuz mesh ile bağlı (mutfaktan kasaya sıfır kablo çekimi)<br>• Arkasındaki Gigabit Ethernet portundan mutfak yazıcısına köprü sağlar | Mutfak kablosuz mesh köprüsü |

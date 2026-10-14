@@ -1,13 +1,4 @@
-# ALACARTE — Ürün Mimarisi ve Çalışma Prensipleri Şartnamesi
-
-**Belge türü:** Ürün kapsamı, fonksiyonel şartname, sistem mimarisi ve çalışma prensipleri  
-**Tarih:** 14.10.2026  
-**Durum:** Yürürlükte — Ürün Şartnamesi ve Mimarisi  
-**Temel kısıt:** Bu belge, Alacarte restoran otomasyonunun ürün içeriğini, çalışma prensiplerini, ekran akışlarını ve sistem mimarisini tanımlar. Saha kurulum ve devreye alma fazları için `ALACARTE_UYGULAMA_VE_DEVREYE_ALMA_FAZLARI.md` belgesi esas alınır.
-
-**Dağıtım kapsamı:** Ürün ilk olarak tek restoran için geliştirilir; daha sonra aynı sürüm toplam beş restorana ayrı ayrı kurulur. Her restoranın kendi sunucusu, veritabanı ve kapalı ağı bulunur. Restoranlar arası ağ bağlantısı, ortak merkezi panel, çok kiracılı tek veritabanı ve uzaktan merkezi yönetim kapsam dışıdır. Her kurulumun yönetimi o restorandaki yerel sistem yöneticisindedir.
-
-**Demo/üretim ayrımı:** Mevcut gösterim ve değerlendirme ortamı Coolify üzerinde Docker Compose ile çalışır. Bu internet üzerinden erişilebilen demo; restoranın üretim LAN'ına, router/AP'sine, USB belleğine veya fiziksel yazıcılarına bağlı değildir. Üretim hedefi restoran başına bağımsız yerel kurulumdur. Mevcut onaylı gereksinimde üretim sunucusu Windows ve OS yazdırma kuyruğu olarak kalır; Coolify/Linux seçimi bunu değiştirmez. Demo ekranlarında fiziksel olarak ölçülmeyen bileşenler “Bilinmiyor” gösterilir, çıktı ve yedek işleri gerçek teslim/doğrulama olmadan başarılı sayılmaz.
+# ALACARTE — Ürün Mimarisi ve Çalışma Prensipleri
 
 ---
 
@@ -15,7 +6,7 @@
 
 Her alakart restoranın kendi kapalı yerel ağında çalışan; garsonların masa ve sipariş girdiği, siparişin restorandaki sunucuda kaydedildiği ve mutfak yazıcısından çıktığı bir restoran operasyon sistemi oluşturmak.
 
-Sistem internet, otelin kurumsal ağı, otel PMS'i ve ödeme servisleri olmadan çalışmalıdır. MICROS restoran yönetim sisteminin masa, sipariş ve servis akışları ile ekran düzeni ve görsel yaklaşımı referans alınacaktır. Görsel olarak benzer, ancak Alacarte'a özgü ve özgün ekranlar üretilecektir.
+Sistem internet, otelin kurumsal ağı, otel PMS'i ve ödeme servisleri olmadan çalışmalıdır. Uluslararası 5 yıldızlı otel ve fine-dining masa servis standartlarına uygun masa, sipariş ve servis akışları ile modern, yüksek kontrastlı ve Alacarte'a özgü ekranlar üretilecektir.
 
 ## 2. Onaylı gereksinimler
 
@@ -25,8 +16,8 @@ Sistem internet, otelin kurumsal ağı, otel PMS'i ve ödeme servisleri olmadan 
 | Ağ | Her restoran için kendi kapalı LAN/Wi-Fi ağı; otel ağına ve internete bağlantı yok |
 | Eşzamanlı kullanım | Aynı anda en fazla 10 garson hedefi |
 | Masa görünürlüğü | Her garson bütün masaları görebilir |
-| Mutfak İstasyonları ve Tek Yazıcı Eşlemesi | Restoranda fiziksel olarak 1 adet mutfak yazıcısı (80mm Ethernet) bulunur. Veritabanında ise 4 mantıksal istasyon (SICAK, SOĞUK/MEZE, IZGARA, TATLI) tanımlıdır ve hepsi varsayılan olarak bu tek mutfak kuyruğuna bağlıdır. Aynı turda farklı istasyonlara ait kalemler tek yazıcıdan otomatik kesimle istasyon başlıkları ayrı ayrı basılır (şefin ilgili tezgaha vermesi için). İleride 2. bir yazıcı eklenirse kod yazılmadan SCR-17'den eşleştirilebilir. |
-| Zorunlu Modifier (Hazırlama Kuralları) | Sistem Yöneticisi SCR-14/15 üzerinden modifier gruplarını dinamik ekleyebilir/düzenleyebilir (Zorunlu kuralı, minSelect, maxSelect, seçenek listesi). Bir üründe zorunlu modifier tanımlıysa (örn: etin pişme derecesi), garson seçim yapmadan siparişi mutfağa basamaz; sistem gönderimi engelleyip eksik seçimi bildirir. |
+| Mutfak İstasyonları ve Tek Yazıcı Eşlemesi | Restoranda fiziksel olarak 1 adet mutfak yazıcısı (80mm Ethernet) bulunur. Veritabanında ise 4 mantıksal istasyon (SICAK, SOĞUK/MEZE, IZGARA, TATLI) tanımlıdır ve hepsi varsayılan olarak bu tek mutfak kuyruğuna bağlıdır. Aynı turda farklı istasyonlara ait kalemler tek yazıcıdan otomatik kesimle istasyon başlıkları ayrı ayrı basılır (şefin ilgili tezgaha vermesi için). İleride 2. bir yazıcı eklenirse kod yazılmadan sistem ayarlarından eşleştirilebilir. |
+| Zorunlu Modifier (Hazırlama Kuralları) | Sistem Yöneticisi ilgili yönetim ekranı üzerinden modifier gruplarını dinamik ekleyebilir/düzenleyebilir (Zorunlu kuralı, minSelect, maxSelect, seçenek listesi). Bir üründe zorunlu modifier tanımlıysa (örn: etin pişme derecesi), garson seçim yapmadan siparişi mutfağa basamaz; sistem gönderimi engelleyip eksik seçimi bildirir. |
 | Ödeme/PMS | Ödeme alma ve otel PMS bağlantısı yok |
 | Yedek | Günlük arka plan yedeği hem firma tarafından sağlanan sunucu USB belleğine hem sunucu/atanmış yerel dizine alınır; her hedefte en fazla 15 kopya tutulur. Yerel sistem yöneticisi manuel yedek/geri yükleme yapabilir. |
 | Rapor geçmişi | Raporlar veritabanındaki kaynak kayıtlardan yeniden çalıştırılır; saklama/arşivleme/silme işlemlerini yerel sistem yöneticisi yönetir ve tüm değişiklikler audit'e alınır. |
@@ -37,17 +28,7 @@ Sistem internet, otelin kurumsal ağı, otel PMS'i ve ödeme servisleri olmadan 
 | İptal | Gönderilmiş siparişi iptal etme yönetici onayına bağlı |
 | Teknoloji | Next.js, PostgreSQL, shadcn/ui |
 | İşletim sistemi/yazdırma | Sunucu Ubuntu Linux (24.04 LTS) ve Docker kullanır. Adisyon kasaya doğrudan USB ile, mutfak ise kasadan kablo çekilmeden mutfaktaki kablosuz mesh AP'nin Ethernet portu (CAT6 / Port 9100 RAW) üzerinden bağlanır; mutfaktan kasaya fiziksel kablo çekimi yoktur. |
-| MICROS referansı | İş akışları, ekran düzeni ve görsel yaklaşım referans alınır; görsel olarak benzer ama özgün Alacarte ekranları tasarlanır |
-
-### Demo dağıtım profili (Coolify/Docker)
-
-- Next.js, PostgreSQL ve yalnız iç Compose ağına bağlı zamanlı gönderim worker'ı ayrı container'lardadır; worker `SCHEDULER_SECRET` ile yetkili iç çağrı yapar. Compose etiketi ve dış `coolify` ağı yalnız demo dağıtımı için kullanılır. PostgreSQL dış porta açılmaz.
-- Coolify Secret değişkenleri zorunludur: `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DATABASE_URL`. Güvenli oturum çerezi HTTPS'te `HttpOnly`, `Secure`, `SameSite=Lax` olur. Varsayılan/parola içeren ortam yapılandırması kullanılmaz.
-- İlk seed varsayılan olarak kapalıdır. Yalnız boş demo veritabanında, açıkça etkinleştirilmiş ve Secret'lardan verilen kimlik bilgileriyle çalıştırılır; seed'in mevcut veriyi sildiği arayüz ve kurulum kılavuzunda açıklanır.
-- Demo dışarıya açılacaksa test kullanıcı hesapları/menüsü gerçek çalışan bilgisi veya operasyonel üretim verisi içermez. `/api/health` yalnız minimal durum döndürür.
-- Demo yazıcıya, kapalı LAN'a veya sunucu USB belleğine erişmez. Mutfak/adisyon çıktısı OS spooler teslimiyle doğrulanmadıkça `PENDING` kalır; yazıcı/AP/telefon durumu yapılandırma kaydından “sağlıklı” çıkarılmaz.
-- Demo ortamında gerçek pg_dump + şifreleme/doğrulama/geri yükleme hedefi kurulana dek yedek/geri yükleme ve fiziksel onarım başarıyla tamamlanmış gibi gösterilmez. Bu aksiyonlar engellenir ve audit'e engel nedeni kaydedilir.
-- Üretim yerel ağ profili için ayrı Compose yapılandırması ve dağıtım prosedürü gerekir: dış Coolify/Traefik ağı kaldırılır, uygulama yalnız restoran LAN'ında sunulur; Windows spooler/Print Bridge, gerçek USB/yedek yolları, zamanlayıcı ve cihaz tanılaması saha kabulünde etkinleştirilir. Bu profile geçiş ayrıca doğrulanmadan Coolify demo imajı üretim kabulü sayılmaz.
+| Servis Standardı | Uluslararası fine-dining ve masa servis operasyon akışları, ergonomik ekran düzeni ve Alacarte'a özgü tasarım ilkeleri uygulanır. |
 
 ## 3. Kapsam ve sınırlar
 
@@ -70,7 +51,6 @@ Sistem internet, otelin kurumsal ağı, otel PMS'i ve ödeme servisleri olmadan 
 - Fiyat, toplam, vergi veya ödeme bilgisini adisyon fişinde gösterme
 - Otel PMS/oda hesabı entegrasyonu
 - Otel ağı, internet, bulut servisleri veya dış API bağımlılığı
-- MICROS marka varlıklarının veya ekranlarının birebir kopyalanması; hedef, MICROS'tan esinlenen benzer ama özgün Alacarte görsel tasarımıdır.
 
 ## 4. Hedef mimari
 
@@ -91,7 +71,7 @@ Adisyon yazıcısı ───────┘                            ├─ P
 - Uygulama, adisyon ve mutfak yazdırma işlerini sunucuda oluşturur ve sunucunun işletim sistemi yazdırma kuyruklarına bırakır. Her yazıcı için işletim sistemi kuyruğu, uygun sürücü/ham baskı ayarı ve hedef bağlantısı kurulur; uygulamanın doğrudan USB portu veya yazıcı protokolünü yönetmesi gerekmez. Başarısız/bekleyen işler arayüzde görünür ve yetkili kontrollü tekrar deneyebilir.
 - Uygulamanın yazdırma katmanı tek bir işletim sistemi kuyruğu veya Port 9100 RAW soket arayüzü kullanır. Mutfak yazıcısı doğrudan dahili Ethernet portu üzerinden mutfaktaki kablosuz mesh AP'nin Ethernet portuna bağlanır; mutfaktan kasaya kablo çekimi yoktur.
 - Sipariş gönderimlerinde istemci tekrar denemeleri çift sipariş üretmemelidir. Sipariş ve yazdırma işi veritabanında izlenebilir kimliklerle kaydedilir.
-- Next.js self-hosting belgeleri yerel sunucuda üretim dağıtımını ve tek sunuculu kurulumda yerel disk önbelleğini destekler; üretim dağıtımında reverse proxy değerlendirilecektir. Sistem internet bağlantısına veya CDN'e ihtiyaç duymayacak şekilde paketlenecektir. Kaynak: [Next.js self-hosting](https://nextjs.org/docs/app/guides/self-hosting).
+- Next.js self-hosting altyapısı yerel sunucuda üretim dağıtımını ve tek sunuculu kurulumda yerel disk önbelleğini destekler; sistem internet bağlantısına veya CDN'e ihtiyaç duymayacak şekilde paketlenmiştir.
 
 ## 5. Kullanıcı akışları
 
@@ -138,7 +118,7 @@ Sistem yöneticisi veya restoran yöneticisi, mutfak siparişinden ayrı bir **f
 6. Masa servisi tamamlandı/masayı yeniden boşalt işlemi ayrı bir durum geçişidir; sipariş geçmişini silmez. Bu işlemi yalnız restoran yöneticisi yapabilir; eylem audit'e yazılır.
 7. Aynı açık masaya iki garson aynı anda eriştiğinde her ikisi de son sipariş sürümünü görür. Değişiklikler sessizce birbirinin üzerine yazılmaz; yeni kalemler işlem kimliğiyle eklenir ve aynı gönderim tekrarlandığında mükerrer sipariş oluşturulmaz. Çakışan iptal talebi veya masa kapatma ikinci kez onaylanmaz.
 
-Bu yaklaşım, Simphony masa servis ana ekranının açık check özetleri ve var olan check'i tekrar açma davranışından uyarlanmıştır. Kaynak: [TSR ana ekranı ve açık check'ler](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_tsr_home.htm), [masa durumları ve masa işlevleri](https://docs.oracle.com/en/industries/food-beverage/simphony/19.7/sipou/c_tms_table_status.htm).
+Bu yaklaşım, uluslararası masa servisi standartlarındaki açık check özetleri ve var olan check'i tekrar açma operasyon akışına dayanır.
 
 ### 5.6 Sipariş ekranında ürün seçimi
 
@@ -148,9 +128,9 @@ Bu yaklaşım, Simphony masa servis ana ekranının açık check özetleri ve va
 4. Özet önceki servis turlarını ve bu turdaki yeni kalemleri ayrı durum işaretleriyle gösterir. Fiyat veya ödeme alanları ürün seçim ekranında bulunmaz.
 5. Ürün yanlışlıkla seçildiyse, gönderilmemiş taslak kalemin silinmesi de kullanıcı kimliği ve denetim olayıyla kaydedilir. Garsonun taslak düzeltmesi gönderilmiş siparişin iptalinden ayrıdır.
 
-**Misafir ve koltuk yönetimi (Simphony referansı):** Misafir sayısı masa servis check'ine ait toplam kuver değeridir; koltuk numarası her bir sipariş kaleminin masada hangi misafire ait olduğunu gösterir. İşlem ekranından misafir sayısı artırılabilir/azaltılabilir veya sayı girişiyle belirlenebilir. Koltuklar işlem sırasında artırılabilir; kalem seçilip `Koltuk Değiştir` ile başka koltuğa taşınabilir. Paylaşılabilir olarak tanımlanan ürün birden fazla koltuğa atanabilir. Ürün sınıfı ayarı koltuk numarasını her ana ürün eklemesinde sormayı açıp kapatabilir. Alacarte varsayılanında koltuk ataması isteğe bağlıdır; işletme isterse bu soruyu ürün sınıfı bazında zorunlu hale getirir. Misafir sayısı ile atanmış koltuk sayısı uyuşmadığında sistem bunu sessizce düzeltmez; kullanıcıya gösterir ve yetkili düzeltmesine izin verir. Koltuk filtresi/ayrıntısı servis ve ürün teslimini kolaylaştırmak içindir; ödeme, hesap bölme, memo check veya tender işlemi bu sistemde bulunmaz. Kaynaklar: [Simphony Essentials işlem ekranı — misafir ve koltuk alanları](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_tsr_transactions.htm), [misafir/kuver sayısını check'e ekleme](https://docs.oracle.com/en/industries/food-beverage/simphony/19.6/sipou/t_checks_add_guest_count.htm), [koltuk düzenleme, taşıma ve paylaşma](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/t_check_func_edit_seat.htm), [ürün sınıfı seçenekleri: koltuk numarası sorma ve paylaşılabilir ürün](https://docs.oracle.com/en/industries/food-beverage/simphony/simcg/t_menu_items_configure_mi_classes.htm).
+**Misafir ve koltuk yönetimi:** Misafir sayısı masa servis check'ine ait toplam kuver değeridir; koltuk numarası her bir sipariş kaleminin masada hangi misafire ait olduğunu gösterir. İşlem ekranından misafir sayısı artırılabilir/azaltılabilir veya sayı girişiyle belirlenebilir. Koltuklar işlem sırasında artırılabilir; kalem seçilip `Koltuk Değiştir` ile başka koltuğa taşınabilir. Paylaşılabilir olarak tanımlanan ürün birden fazla koltuğa atanabilir. Ürün sınıfı ayarı koltuk numarasını her ana ürün eklemesinde sormayı açıp kapatabilir. Alacarte varsayılanında koltuk ataması isteğe bağlıdır; işletme isterse bu soruyu ürün sınıfı bazında zorunlu hale getirir. Misafir sayısı ile atanmış koltuk sayısı uyuşmadığında sistem bunu sessizce düzeltmez; kullanıcıya gösterir ve yetkili düzeltmesine izin verir. Koltuk filtresi/ayrıntısı servis ve ürün teslimini kolaylaştırmak içindir; ödeme, hesap bölme veya tahsilat işlemi bu sistemde bulunmaz.
 
-Simphony TSR işlem ekranı check ayrıntısı, ürün arama, misafir/koltuk, sipariş türü, menü grupları, ürün tuşları ve check işlevlerini bir işlem ekranında toplar. Alacarte aynı görev bölgelerini özgün tasarımla kullanır; maliyet, indirim, vergi ve ödeme öğelerini almaz. Kaynak: [TSR işlemleri ve ekran bölgeleri](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_tsr_transactions.htm), [mobil TSR işlem ekranı](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_mobile_tsr_transactions.htm).
+Alacarte işlem ekranı check ayrıntısı, ürün arama, misafir/koltuk, menü grupları, ürün tuşları ve sipariş işlevlerini ergonomik bir işlem ekranında toplar; operasyonel akışta maliyet, indirim, vergi ve ödeme öğelerine yer verilmez.
 
 ### 5.7 Servis turu ve mutfağa gönderim
 
@@ -172,7 +152,7 @@ Simphony TSR işlem ekranı check ayrıntısı, ürün arama, misafir/koltuk, si
 7. Zamanlı gönderim sunucu saatine göre planlanan anda çalışır; normal işleyişte gecikmeli gönderim davranışı yoktur. Sunucu kapalıyken veya yazdırma kuyruğu kullanılamazken iş zamanında yürütülemezse sessizce geç gönderilmez: **Zamanında yürütülemedi** olarak işaretlenir ve yöneticiye bildirilir. Yönetici açıkça **Şimdi gönder** veya yeni saat seçer; böylece arıza sonrası eski sipariş mutfağa habersiz düşmez.
 8. Zamanı gelerek mutfağa iletilmiş bir ürün artık bekleyen/zamanlanmış değildir; iptali 5.8'deki yönetici onaylı iptal akışına tabidir. Bekletme/zamanlama, iptal yetkisini atlatmaz.
 
-Simphony `Send`/`Service Total` davranışlarında servis turunu mutfak cihazına gönderme ile check'in daha sonra çağrılabilmesi ayrışır. Tek kalemi/tüm turu bekletme, belirli saat için zamanlı gönderim, gönderim saatini değiştirme ve bekleyen kalemleri görüntüleme resmî belgelerde tanımlıdır. Alacarte bu işlevleri yerel sunucu tarafından yürütülen, fiyat/ödeme/PMS kapsamı dışında kalan sipariş durumları olarak uygular. Kaynak: [açık check'lerde sipariş yönetimi](https://docs.oracle.com/en/industries/food-beverage/simphony/sipou/c_checks_order_handling_open_checks_ug.htm), [kalemleri bekletme](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/t_check_func_hold_items.htm), [belirli saate zamanlı gönderim](https://docs.oracle.com/en/industries/food-beverage/simphony/19.3/sipou/t_checks_hold_selected_entire_preset.htm), [bekleyen siparişlerle servis turunu bitirme](https://docs.oracle.com/en/industries/food-beverage/simphony/19.5/sipou/t_checks_end_round_close_check.htm), [Service Total davranışı](https://docs.oracle.com/en/industries/food-beverage/simphony/19.7/simcg/c_checks_service_total.htm), [Simphony Table Service işlemleri](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/vid_tsr.html).
+Uluslararası masa servisi standartlarında servis turunu mutfak cihazına gönderme ile check'in daha sonra çağrılabilmesi ayrışır. Tek kalemi veya tüm turu bekletme, belirli saat için zamanlı gönderim, gönderim saatini değiştirme ve bekleyen kalemleri görüntüleme standart operasyon akışıdır. Alacarte bu işlevleri yerel sunucu tarafından yürütülen, fiyat/ödeme/PMS kapsamı dışında kalan sipariş durumları olarak uygular.
 
 ### 5.8 Gönderilmemiş turu iptal etme ve gönderilmiş kalemi iptal talebi
 
@@ -181,11 +161,11 @@ Simphony `Send`/`Service Total` davranışlarında servis turunu mutfak cihazın
 - Restoran yöneticisi talebi inceler, onaylar veya reddeder. Onay/ret kararı kimlik, zaman ve gerekçeyle kaydedilir. İptal, yalnızca yönetici onayı verildiğinde yürürlüğe girer.
 - Onaylı ve daha önce mutfağa iletilmiş kalem için ayrı iptal bildirimi mutfak yazdırma kuyruğuna gönderilir. İptal bildirimi orijinal fişi değiştirmez; masa, sipariş turu, ürün, adet ve iptal referansını belirtir.
 - Reddedilen talepte orijinal ürün siparişi geçerli kalır; garson ve yönetici karar sonucunu görür.
-- Bir gönderim turundaki yalnız gönderilmemiş kalemlerin çıkarılması, Simphony `Cancel Transaction` benzeri bir durum olsa da Alacarte'ta sessiz silme yapılmaz; audit kaydı korunur. Garsonun gönderilmiş sipariş iptali için yönetici onayı her zaman zorunludur.
+- Bir gönderim turundaki yalnız gönderilmemiş kalemlerin çıkarılması durumunda dahi Alacarte'ta sessiz silme yapılmaz; denetim (audit) kaydı korunur. Garsonun mutfağa iletilmiş sipariş kalemini iptali için yönetici onayı her zaman zorunludur.
 
-Simphony çalışan rolü/yetkisine göre POS işlevlerini sınırlar; iptal gerekçeleri yapılandırılmışsa `Void Item` sırasında gerekçe seçtirir. Garson rolünden ayrı, belirli POS yetkileri verilmiş çalışanlar yetkilendirme yapabilir; yönetici/süpervizör rollerinde void yetkileri örnek olarak bulunur. Ayrıca çalışan grubu kısıtları, hangi çalışanın başka bir çalışan adına yetkilendirme yapabileceğini etkiler. Oracle belgeleri, her işletmede yönetici yokken uygulanacak tek bir evrensel politika tarif etmez; davranış rol, yetki ve çalışan grubu yapılandırmasına bağlıdır. Kaynak: [Oracle Void Item ve iptal nedeni](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/t_check_func_void_item.htm), [Oracle çalışan rolleri ve POS yetkileri](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/sslcg/t_emc_create_employee_roles.htm), [Oracle authorization/rol modeli](https://docs.oracle.com/en/industries/food-beverage/simphony/19.3/simsg/c_auth_privs.htm), [çalışan grubu ve yetkilendirme kısıtı](https://docs.oracle.com/en/industries/food-beverage/simphony/19.8/simcg/c_config_emp_groups.htm).
+Sistem, çalışan rolü ve yetkisine göre POS işlevlerini sınırlar; iptal gerekçeleri yapılandırılmışsa iptal sırasında zorunlu gerekçe seçtirir. Garson rolünden ayrı, yetkili roller onay verebilir.
 
-**Alacarte için önerilen müdür yokluğu çözümü:** İşletme, vardiya başlamadan önce restoran yöneticisi dışında kendi hesabıyla giriş yapan bir veya daha fazla **vardiya iptal yetkilisi** belirleyebilir. Bu kişiye yalnız gönderilmiş kalem iptal talebini onaylama/reddetme yetkisi verilir; kullanıcı/menü/yedek/audit yönetimi gibi diğer yönetici ayrıcalıkları verilmez. Garson talebi açan kişi ise aynı talebi onaylayamaz. Gerekçe listesi zorunlu tutulur; seçilen nedenin yanında kısa açıklama alınır ve talep eden, karar veren, masa, kalem/adet, servis turu, zaman, gerekçe ve mutfağa giden iptal fişi tek audit zincirinde tutulur. Vardiya yetkilisi atanmamışsa veya erişilemiyorsa mevcut güvenli kural geçerlidir: talep bekler, sipariş satırı etkin kalır, otomatik/garson kaynaklı iptal yapılmaz. Yetkilendirme rollerinde yalnız gerekli iptal izni açılır ve Oracle’daki employee-group benzeri uygunluk kuralı gözetilir; kullanıcılar arasında parola/PIN paylaşımı kullanılmaz. Bu delege seçeneği Alacarte için ürün önerisidir, Oracle’ın zorunlu kuralı değildir; işletme onayı verilene kadar yalnız restoran yöneticisi iptal kararı verebilir.
+**Alacarte için önerilen müdür yokluğu çözümü:** İşletme, vardiya başlamadan önce restoran yöneticisi dışında kendi hesabıyla giriş yapan bir veya daha fazla **vardiya iptal yetkilisi** belirleyebilir. Bu kişiye yalnız gönderilmiş kalem iptal talebini onaylama/reddetme yetkisi verilir; kullanıcı/menü/yedek/audit yönetimi gibi diğer yönetici ayrıcalıkları verilmez. Garson talebi açan kişi ise aynı talebi onaylayamaz. Gerekçe listesi zorunlu tutulur; seçilen nedenin yanında kısa açıklama alınır ve talep eden, karar veren, masa, kalem/adet, servis turu, zaman, gerekçe ve mutfağa giden iptal fişi tek audit zincirinde tutulur. Vardiya yetkilisi atanmamışsa veya erişilemiyorsa mevcut güvenli kural geçerlidir: talep bekler, sipariş satırı etkin kalır, otomatik/garson kaynaklı iptal yapılmaz. Yetkilendirme rollerinde yalnız gerekli iptal izni açılır; kullanıcılar arasında parola/PIN paylaşımı kesinlikle kullanılmaz. İşletme onayı verilene kadar varsayılan olarak yalnız restoran yöneticisi iptal kararı verebilir.
 
 ### 5.9 Mutfak yazıcısı ve fiyatsız adisyon yazıcısı
 
@@ -194,11 +174,11 @@ Simphony çalışan rolü/yetkisine göre POS işlevlerini sınırlar; iptal ger
 - Adisyon yazdırma isteği için sipariş sürümü kaydedilir; çıktının hangi servis turlarını kapsadığı, kim tarafından ve ne zaman alındığı kayda geçer.
 - Yazıcı erişim hatası siparişi veritabanından geri almaz. Kuyruk hatası yöneticiye görünür ve yetkili yeniden deneyebilir. Sonucun belirsiz olduğu tekrar baskı ekranda ve çıktıda yeniden basım olarak belirtilir.
 
-Simphony TSR işlem ekranındaki `Print` ve `Send` ayrı komutlardır. Alacarte bu ayrımı korur; Simphony'nin check maliyet/toplam/vergi/ödeme içeriğini almaz. Kaynak: [TSR işlem ekranı](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_tsr_transactions.htm), [Order Device çıktı yapılandırması](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/sslcg/c_emc_print_class.htm).
+İşlem ekranında yazdırma (`Yazdır`) ve mutfağa iletim (`Gönder`) ayrı komutlardır. Alacarte bu ayrımı kesin olarak korur; operasyonel akışta maliyet, toplam, vergi veya ödeme içeriğine yer vermez.
 
-#### 5.9.1 MICROS referanslı çıktı düzenleri ve Alacarte fiş şablonları
+#### 5.9.1 Uluslararası Servis Standartlarında Çıktı Düzenleri ve Fiş Şablonları
 
-Oracle Simphony belgelerinde sipariş cihazı çıktısı (order chit) ile check/adisyon yazdırma ayrı işlemlerdir. Bir servis turu mutfağa gönderilebilir; check/guest check ayrıca talep üzerine basılabilir. Sipariş fişlerinde ürün adı, miktar, masa/çalışan bilgisi, modifier/condiment, koltuk numarası, sıralama, ayrı kalem fişi ve iptal işareti gibi unsurlar yapılandırılabilir. Alacarte bu bilgi hiyerarşisini ve iş akışını örnek alır; MICROS logosu, birebir fiş şablonu, ekran görüntüsü veya tipografi kopyalanmaz. Kaynak: [Oracle order device yazdırma seçenekleri](https://docs.oracle.com/en/industries/food-beverage/simphony/simcg/t_printers_config_printer_order_device.htm), [servis turu ve check yazdırma ayrımı](https://docs.oracle.com/en/industries/food-beverage/simphony/simcg/t_guest_check_configure_service_total_tender.htm).
+Sipariş cihazı çıktısı (mutfak sipariş fişi) ile servis adisyonu yazdırma birbirinden bağımsız iki ayrı operasyonel eylemdir. Bir servis turu mutfağa gönderilebilir; servis adisyonu ise talep üzerine basılabilir. Mutfak sipariş fişlerinde ürün adı, miktar, masa/garson bilgisi, hazırlama seçenekleri (modifier), koltuk numarası ve iptal işareti gibi unsurlar yapılandırılabilir. Alacarte bu bilgi hiyerarşisini ve iş akışını uluslararası 5 yıldızlı otel alakart standartlarına uygun olarak sunar.
 
 **Uygulama için bağlayıcı çıktı kuralları:** Mutfak gönderimi ile adisyon yazdırma arayüzde ayrı düğmeler, sunucu komutları, denetim olayları, kuyruk işleri ve şablonlardır. Birinin çalışması diğerini tetiklemez. “Mutfağa Gönder” adisyon basmaz; “Adisyon Yazdır” mutfağa sipariş göndermez, masa/servisi kapatmaz ve ödeme/tahsilat oluşturmaz. Mutfak fişinde adet (1 olsa da), masa, sipariş ve servis turu referansı, fişi gönderen garson, gönderim zamanı, ilgili istasyon, ürün ve varsa modifier/not zorunludur. Koltuk numarası yalnız siparişte girilmişse ürün satırında gösterilir. Fiyat ve finansal/PMS alanları hiçbir mutfak fişinde veya fiyatsız adisyon özetinde yer almaz.
 
@@ -250,7 +230,6 @@ Standart alakart restoran paketimizde mutfakta **1 adet fiziksel termal mutfak y
 ```text
               ALACARTE / RESTORAN ADI
               ADİSYON / SERVİS ÖZETİ
-       FİYATSIZ — TAHSİLAT BELGESİ DEĞİLDİR
 Masa: 12            Sipariş: A-2026-000184
 Çıktı zamanı: 20:42   Kapsam: Tüm gönderilmiş turlar
 ------------------------------------------------
@@ -259,14 +238,14 @@ Tur 01  19:48  2 x Izgara Köfte
 Tur 02  20:14  1 x Mevsim Salata
                  Sos ayrı servis edilsin
 ------------------------------------------------
-Kalem adedi: 3                 Sayfa 1/1
+TOPLAM SERVİS KALEMİ: 3        Sayfa 1/1
 ```
 
 - Yalnız restoran yöneticisi masa ve sipariş kapsamını (seçili tur/tüm gönderilmiş turlar) seçer, önizler ve yazdırır. Yalnız kaydedilmiş, mutfağa gönderilmiş etkin kalemler özete girer; bekletilmiş/taslak kalemler dahil edilmez. İptal edilen kalemler ayrı bir bölümde **İPTAL** durumuyla gösterilir; etkin adet toplamına katılmaz.
 - Fiyat, ara toplam, toplam, vergi, bakiye, ödeme/tahsilat, tender, indirim veya PMS/oda alanı yoktur. Yazdırma mutfağa gönderim, masa kapatma veya ödeme değildir.
 - Uzun çıktıda masa/sipariş referansı ve sayfa numarası her sayfada yinelenir. Tekrar baskı işaretlenir ve kullanıcı, zaman, sipariş snapshot sürümü kaydedilir.
 
-Her iki formatta özgün Alacarte başlıkları ve tipografi kullanılır. Büyük masa/durum hiyerarşisi, ürün-modifier ilişkisi, boşluk ve okunabilirlik MICROS örneklerinden işlevsel olarak esinlenir; ölçü, renk, logo ve birebir tipografi kopyalanmaz. HTML önizlemesi ile gerçek 80 mm çıktı ayrı ayrı kabul edilir; Türkçe karakter, uzun ürün adı/not, çoklu adet, kesim, yeni tur ve tekrar baskı kontrol edilir.
+Her iki formatta özgün Alacarte başlıkları ve tipografi kullanılır. Büyük masa/durum hiyerarşisi, ürün-modifier ilişkisi, boşluk ve okunabilirlik uluslararası ergonomi ve termal baskı standartlarına dayanır; ölçü, renk, logo ve gereksiz ibareler kopyalanmaz. HTML önizlemesi ile gerçek 80 mm çıktı ayrı ayrı kabul edilir; Türkçe karakter, uzun ürün adı/not, çoklu adet, kesim, yeni tur ve tekrar baskı kontrol edilir.
 
 ### 5.10 Restoran yöneticisi servis kontrolü
 
@@ -283,7 +262,7 @@ Her iki formatta özgün Alacarte başlıkları ve tipografi kullanılır. Büy�
 3. Bağlantı geldikten sonra tekrar gönderimde istemci işlem kimliği kullanılır; sunucu aynı sipariş/servis turunu ikinci kez oluşturmaz.
 4. Mutfağa gönderme ile yazıcının işi alıp almadığı ayrı durumlar olarak görünür. Yetkili, belirsiz baskı sonucunu kontrol etmeden sessiz otomatik tekrar başlatmaz.
 
-Simphony belgeleri bağlantı kesildiğinde gönderilmemiş check uyarısını açıkça gösterir; Alacarte merkez sunuculu modelde bu uyarı dili, sunucu onayı ve yazıcı sonucu ayrımına uyarlanır. Kaynak: [TSR ana ekranı ve gönderilmemiş check uyarıları](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_tsr_home.htm).
+Bağlantı kesildiğinde veya çevrimdışı kalındığında gönderilmemiş taslak uyarısı açıkça gösterilir; Alacarte yerel sunucu modelinde sunucu onayı ve yazıcı sonucu ayrımı net bir şekilde kullanıcıya sunulur.
 
 ### 5.11.1 Tüm sistem için kullanıcı ve zaman damgalı denetim izi
 
@@ -333,16 +312,16 @@ Aşağıdaki liste planlanan her kullanıcı ekranını, ana içeriğini, eyleml
 
 #### 5.12.1 Ekran düğmeleri ve işlev davranışları
 
-Bu katalog, ekrandaki düğmenin tetikleyicisini, beklenen sonucunu ve önemli sınırını tanımlar. Simphony resmi kılavuzları transaction ekranını check ayrıntısı, arama, misafir/koltuk, servis türü, menü seviyeleri, ürün/kategori, check functions ve ayrı `Print`/`Send` alanlarıyla tarif eder; touchscreen sayfalarının her düğmesi bir fonksiyona bağlanır. Alacarte aynı operasyon mantığını kendi adları ve tasarımıyla uygular. Fiyat, ödeme, indirim, vergi, kasa çekmecesi ve PMS işlemleri uyarlanmaz. Kaynaklar: [TSR transaction ekranı](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_tsr_transactions.htm), [touchscreen sayfaları](https://docs.oracle.com/en/industries/food-beverage/simphony/19.7/simcg/c_workstation_touchscreen.htm), [check/transaction functions](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_check_functions.htm).
+Bu katalog, ekrandaki düğmenin tetikleyicisini, beklenen sonucunu ve operasyonel sınırını tanımlar. Ekran yerleşimi sipariş özeti, ürün arama, misafir/koltuk, menü kategorileri, ürün tuşları ve `Yazdır`/`Gönder` alanlarını uluslararası dokunmatik POS ergonomisine uygun olarak sunar. Fiyat, ödeme, indirim, vergi, kasa çekmecesi ve PMS işlemleri sistem kapsamı dışındadır.
 
 | Ekran | Görünür ana düğmeler/alanlar | Tetikleyici ve sonuç | Yetki, hata ve denetim kuralı |
 |---|---|---|---|
 | SCR-01 Giriş | `Giriş Yap`, `Yönetici Yardımı`, `Çıkış Yap` | Giriş, kullanıcı hesabını doğrular ve izin verilen ana ekrana yönlendirir; çıkış oturumu kapatır. Şifresini/PIN'ini unutan çalışan yerel sistem yöneticisinden sıfırlama ister. | E-posta, SMS veya internet üzerinden parola sıfırlama yoktur. Yönetici geçici kimlik bilgisini verir; ilk girişte yenisi belirlenir ve önceki oturumlar geçersiz kılınır. Başarısız denemeler audit'e yazılır, sırlar loglanmaz. |
 | SCR-02 İlk kurulum | `Geri`, `Devam`, `Kontrol Et`, `Kurulumu Tamamla` | Restoran adı, masa/alan ve saat dilimi doğrulanır; ilk sistem yöneticisi tek kullanımlık kurulum anahtarıyla oluşturulur; son adımda yerel sunucu kurulumu tamamlanır. | Kurulum yalnız sunucunun yerel ekranından başlatılır; varsayılan ortak yönetici parolası yoktur. İlk yönetici hesabı açılınca kurulum anahtarı ve ilk kurulum uç noktası geçersizleşir. |
 | SCR-03 Masa planı | Alan sekmesi, `Ara`, durum filtreleri, masa kartı, `Yeni Servis`, `Açık Siparişe Dön`, `Servisi Tamamla` | Masa kartı açık siparişe gider; boş masa `Yeni Servis` ile açılır; açık masa tekrar seçilince yeni sipariş açmak yerine mevcut servis sürdürülür. Tamamlama masa/servisi operasyonel olarak bitirir, hesap/ödeme kapatmaz. | Tüm garsonlar bütün masaları görür. `Servisi Tamamla` yalnız restoran yöneticisine açıktır ve neden/sonuç audit izi üretir; aynı masa için eşzamanlı ikinci servis açılmaz. |
-| SCR-04 Sipariş/işlem | Kategori/alt kategori, `Ürün Ara`, `Temizle`, ürün tuşu, misafir/kuver sayısı, `Koltuk Ekle`, `Koltuk Ata/Değiştir`, `Ürünü Paylaştır`, servis turu, `İşlemler`, `Mutfağa Gönder`, `Yardım`, `Adım Adım Rehber` | Ürün tuşu kalemi yeni taslak tura ekler. Arama açılır, sorgu uygulanır ve `Temizle` tüm menüyü geri getirir. Misafir sayısı check düzeyinde girilir/değiştirilir; koltuk numarası kalem düzeyinde seçilir, mevcut kalem taşınabilir veya paylaşılabilir ürün birden fazla koltuğa atanabilir. Kalem geçmişinde önceki tur `*`, bekletilmiş `BEKLETİLDİ`, iptal edilmiş `İPTAL` olarak ayırt edilir. `Mutfağa Gönder` Simphony `Send and Stay` mantığıyla mevcut gönderilebilir kalemleri OS kuyruğuna verir; masa açık kalır ve kullanıcı aynı servis üzerinde çalışmaya devam eder. `Yardım` kısa bağlamsal ipuçlarını, `Adım Adım Rehber` sıralı öğrenme akışını açar. | `Masa Servisi` varsayılan işlem türüdür; başka servis türü tanımlı değilse tür seçici gösterilmez. Misafir sayısı isteğe bağlıdır; koltuk ataması varsayılan olarak isteğe bağlıdır ve menü/ürün sınıfı ayarından ekleme sırasında sorulabilir/zorunlu kılınabilir. Koltuk ve paylaşım değişiklikleri sipariş yetkisi olan garson veya yönetici tarafından yapılır ve audit'e yazılır. Gönderim çift dokunma/idempotency korumalıdır. Öğrenme modu kapalıysa eğitim düğmeleri görünmez; açıkken yalnız restoran yöneticisi modu kapatır. Yardım/rehber adımı sipariş verisini değiştirmez; gerçek işlem yine garsonun açık eylemiyle yapılır. |
+| SCR-04 Sipariş/işlem | Kategori/alt kategori, `Ürün Ara`, `Temizle`, ürün tuşu, misafir/kuver sayısı, `Koltuk Ekle`, `Koltuk Ata/Değiştir`, `Ürünü Paylaştır`, servis turu, `İşlemler`, `Mutfağa Gönder`, `Yardım`, `Adım Adım Rehber` | Ürün tuşu kalemi yeni taslak tura ekler. Arama açılır, sorgu uygulanır ve `Temizle` tüm menüyü geri getirir. Misafir sayısı check düzeyinde girilir/değiştirilir; koltuk numarası kalem düzeyinde seçilir, mevcut kalem taşınabilir veya paylaşılabilir ürün birden fazla koltuğa atanabilir. Kalem geçmişinde önceki tur `*`, bekletilmiş `BEKLETİLDİ`, iptal edilmiş `İPTAL` olarak ayırt edilir. `Mutfağa Gönder` kesintisiz servis akışı mantığıyla (Send and Stay) mevcut gönderilebilir kalemleri OS kuyruğuna verir; masa açık kalır ve kullanıcı aynı servis üzerinde çalışmaya devam eder. `Yardım` kısa bağlamsal ipuçlarını, `Adım Adım Rehber` sıralı öğrenme akışını açar. | `Masa Servisi` varsayılan işlem türüdür; başka servis türü tanımlı değilse tür seçici gösterilmez. Misafir sayısı isteğe bağlıdır; koltuk ataması varsayılan olarak isteğe bağlıdır ve menü/ürün sınıfı ayarından ekleme sırasında sorulabilir/zorunlu kılınabilir. Koltuk ve paylaşım değişiklikleri sipariş yetkisi olan garson veya yönetici tarafından yapılır ve audit'e yazılır. Gönderim çift dokunma/idempotency korumalıdır. Öğrenme modu kapalıysa eğitim düğmeleri görünmez; açıkken yalnız restoran yöneticisi modu kapatır. Yardım/rehber adımı sipariş verisini değiştirmez; gerçek işlem yine garsonun açık eylemiyle yapılır. |
 | SCR-05 Kalem/seçenek | `+`, `−`, `Seçenekleri Düzenle`, modifier seç/çıkar, `Not`, `Yardım`, `Koltuk Ata/Değiştir`, `Ürünü Paylaştır`, `Uygula`, `Taslaktan Kaldır`, `İptal Talebi` | Adet ve modifier/not değişikliği `Uygula` ile taslağa yansır; `Koltuk Ata/Değiştir` seçili kalemi yeni koltuğa taşır, `Ürünü Paylaştır` yalnız paylaşılabilir menü ürününü seçilen koltuklara bağlar. Taslak kalem kaldırılır; gönderilmiş kalem miktar/modifier olarak değiştirilemez ve yönetici onaylı iptal talebine yönelir; koltuk düzeltmesi audit'li yapılabilir. | Sıfır/negatif adet engellenir; zorunlu modifier eksikse gönderim kapalıdır. Gönderilmiş kalem kaldırma veya sessiz değiştirme yoktur; koltuk değişimi siparişin ürün adet sayısını değiştirmez. Öğrenme modu açıksa zorunlu modifier ve koltuk adımı kısa açıklamayla gösterilir. |
-| SCR-06 Bekletme/zamanlama | `Kalemi Beklet`, `Turu Beklet`, `Bekleyenleri Gönder`, `Bekletilenleri de Gönder`, `Seçileni Şimdi Gönder`, `Zaman Ata`, `Saati Değiştir`, `Zamanlamayı Kaldır`, `Gönderim Saatlerini Gör`, `Yardım` | Kalem bazlı bekletme sadece seçili ürünü; tur bekletme turun uygun kalemlerini etkiler. `Bekleyenleri Gönder` bekletilmemiş kalemleri gönderir; `Bekletilenleri de Gönder` tutulanları serbest bırakır; seçili gönderim o kalemleri yeni mutfak işi yapar. Zaman ata/değiştir/kaldır, sunucu zamanlayıcısındaki kalıcı işi günceller. | Simphony Hold/Timed Fire akışı referans alınır; held/timed kalem gönderilmedikçe mutfak işine dönüşmez. Otomatik tetikleyici aktörü `SİSTEM`, planı kuran kullanıcı ayrıca kayıtlıdır. Tüm değişiklikler audit'e yazılır. Öğrenme modu açıksa bekletme ve zamanlama sonucu, mutfağa gönderimle farkı açıklanır. |
+| SCR-06 Bekletme/zamanlama | `Kalemi Beklet`, `Turu Beklet`, `Bekleyenleri Gönder`, `Bekletilenleri de Gönder`, `Seçileni Şimdi Gönder`, `Zaman Ata`, `Saati Değiştir`, `Zamanlamayı Kaldır`, `Gönderim Saatlerini Gör`, `Yardım` | Kalem bazlı bekletme sadece seçili ürünü; tur bekletme turun uygun kalemlerini etkiler. `Bekleyenleri Gönder` bekletilmemiş kalemleri gönderir; `Bekletilenleri de Gönder` tutulanları serbest bırakır; seçili gönderim o kalemleri yeni mutfak işi yapar. Zaman ata/değiştir/kaldır, sunucu zamanlayıcısındaki kalıcı işi günceller. | Uluslararası bekletme ve zamanlı ateşleme (Hold/Timed Fire) akışı uygulanır; bekletilen/zamanlanan kalem gönderilmedikçe mutfak işine dönüşmez. Otomatik tetikleyici aktörü `SİSTEM`, planı kuran kullanıcı ayrıca kayıtlıdır. Tüm değişiklikler audit'e yazılır. Öğrenme modu açıksa bekletme ve zamanlama sonucu, mutfağa gönderimle farkı açıklanır. |
 | SCR-07 Yönetici panosu | Durum filtresi, `Yenile`, `Masa Ayrıntısı`, `İptal Talepleri`, `Zamanlı İşler`, `Yazdırma Kuyruğu`, bağlantı ışıkları, `Garson Öğrenme Modu: Aç/Kapat` | Seçilen kart/listeden ilgili yönetim ekranına gider; `Yenile` sunucu ve cihaz heartbeat bilgilerini tekrar okur. Bağlantı göstergesi tıklanınca sistem yöneticisi yetkisi gerektiren SCR-19 ayrıntısına yönlendirilir; restoran yöneticisine yalnız operasyonel durum gösterilir. | Göstergeler veri yaşı eşiği geçince Bilinmiyor/Uyarı olur; erişilemeyen AP'nin durumu tahmin edilmez. Restoran yöneticisi onarım başlatamaz. Her operasyonel karar ve öğrenme modu değişikliği aktör/sunucu zamanı/eski-yeni değerle audit'e yazılır. |
 | SCR-08 Sipariş/masa ayrıntısı | Tur sekmeleri, kalem ayrıntısı, `Masa Taşı`, `Servisi Tamamla`, yazdırma/olay geçmişi | Tur ve kalem detayları açılır. `Masa Taşı`, açık siparişi hedef masaya aynı kimlik ve geçmişle taşır; eski ve yeni masa birlikte güncellenir. | Taşıma ve tamamlama restoran yöneticisine aittir; hedef masa boş değilse çakışma uyarısı verilir ve işlem yapılmaz; fiyat/check settlement yoktur. |
 | SCR-09 İptal talepleri | `Onayla ve Mutfağa Bildir`, `Reddet`, gerekçe alanı, `Detay` | Talep edilen gönderilmiş kalem/adet için karar verilir. Onay, ayrı iptal mutfak işi oluşturur; red ürünü etkin bırakır. | Yalnız restoran yöneticisi; gerekçe zorunlu; önceki gönderim değişmez. `İptal/VOID` ve `İade/RETURN` ayrıdır: iade/refund ve kapalı mali check işlevleri kapsam dışıdır. |
@@ -357,11 +336,11 @@ Bu katalog, ekrandaki düğmenin tetikleyicisini, beklenen sonucunu ve önemli s
 | SCR-18 Yedek/geri yükleme | USB ve yerel dizin hedeflerinin durumu, hedef seçimi, `Şimdi Yedekle`, yedek listesi, `Doğrula`, `Geri Yüklemeyi Başlat`, `Vazgeç` | Her iki hedefteki günlük ve manuel yedekler listelenir; kaynak/hedef seçilerek doğrulama ve geri yükleme başlatılır; geri yükleme öncesi etki özeti gösterilir. | Yerel sistem yöneticisi; geri yükleme açık onay ve bütünlük kontrolü ister; her hedefte toplam günlük+manuel kopya sayısı en fazla 15'tir; başarısız işlem audit'e yazılır. |
 | SCR-19 Sistem durumu/bakım/tanı | `Durumu Yenile`, `Tanılamayı Başlat`, `Kontrolü Durdur`, `Bulguyu Aç`, `Önerilen Onarımı İncele`, `Ön Yedek Al ve Onarımı Onayla`, `Onarım Sonrası Doğrula`, `Tanılama Paketini Dışa Aktar`, `Bakım Paketini İçeri Al`, `Bakımı Başlat`, `Geri` | Sıralı tanılama çalışma/sürüm/sunucu saati → uygulama readiness → PostgreSQL salt-okunur sağlık sorgusu → disk/yerel+USB hedefi ve son yedek manifest/hash doğrulaması → LAN/gateway erişimi ve garson heartbeat/son eşitleme → Windows Print Spooler ve iki OS kuyruğu → mutfak/adisyon yazıcı erişimi → bekleyen/belirsiz iş incelemesi → canlı veriyi değiştirmeyen uçtan uca tutarlılık kontrollerini yürütür. Kontrol ilerlemesi, atlanan/bilinmeyen adımlar ve bulgular gösterilir; fiziksel test fişi ayrıca onaylanır ve `TEST/TANILAMA` olarak işaretlenir. | Yalnız yerel sistem yöneticisi başlatır, durdurur, geçmişi görüntüler ve dışa aktarır. Varsayılan salt okunurdur; gerçek sipariş/masa/menü/audit değiştirilmez, mutfağa gerçek sipariş gönderilmez. Her bulgu için neden, etkilenen işlev/kimlik, önem, çözüm, etki/önkoşul/geri alma adımı sunulur. İzinli, güvenli ve tekrarlanabilir onarım başına ayrı açık onay gerekir; doğrulanmış ön yedek olmadan, aktif servis/iş varken veya gerekli yedek hedefi doğrulanmadığında otomatik onarım başlatılmaz. Belirsiz baskı yeniden gönderilmez; başarısız doğrulamada sonraki onarım zinciri durur. Tüm aşamalar DB ve değiştirilemez audit/bakım izine yazılır. |
 
-**Kapsam uyarlaması:** Bu işlev kataloğu, Simphony’nin konaklama/ödeme odaklı bütün ürün modüllerini kopyalamaz. İndirim, fiyat, vergi, tahsilat, kapalı mali check void/refund/return, PMS, rezervasyon/bekleme listesi, saat giriş-çıkış, envanter ve KDS Alacarte kapsamı dışındadır. Ödeme amacıyla kullanılan split-check/bill-split de kapsam dışıdır. Aktif siparişi başka masaya taşıma operasyonu kapsamdadır. Alacarte’ta yetki onayı veya denetim izi gerektiren işlem, Simphony’de aynı adlı düğme olsa dahi Alacarte’ın belirlenmiş rol kurallarına uyar.
+**Kapsam uyarlaması:** Bu işlev kataloğu konaklama ve ödeme odaklı modülleri içermez. İndirim, fiyat, vergi, tahsilat, mali iade/ödeme kapatma, PMS, rezervasyon/bekleme listesi, personel vardiya kartı, stok/envanter ve KDS Alacarte kapsamı dışındadır. Hesap bölme (split-check) gibi ödeme odaklı işlemler de yer almaz. Aktif siparişi başka masaya taşıma operasyonu kapsamdadır.
 
-#### SCR-12 ayrıntısı — MICROS örnekli, özgün Raporlar arayüzü ve rapor kataloğu
+#### SCR-12 ayrıntısı — Özgün Raporlar arayüzü ve operasyonel rapor kataloğu
 
-Simphony POS Reports sayfası raporları finansal, check, menu item, audit, table service ve clock-in gruplarında toplar; rapor seçildikten sonra tarih/çalışan/iş istasyonu gibi filtreler uygulanır, `Run Report` ile sonuç gösterilir ve yazdırılabilir. Essentials rapor kataloğunda açık/kapalı/zamanlanmış check, item sales detail/summary, check/employee journal, held-item summary ve table sales bulunur. Alacarte **kategori → filtre → çalıştır → tablo/ayrıntı → yazdır** gezinme mantığını kullanır; arayüz bileşenleri özgün üretilir. Oracle kılavuzu raporları mobilde desteklemiyor; bu ürünün SCR-12 rapor merkezi de yönetici/sistem yöneticisi için kasa ekranıdır. Kaynak: [Simphony POS Reports ve filtre/çalıştırma adımları](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_reports_pos.htm), [Menu Item Sales Detail](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_reports_pos_mi_sales_detail.htm), [Employee Journal](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_reports_pos_emp_journal.htm), [Held Item Summary ve Table Sales](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/F44996_10.pdf).
+Operasyonel raporlama sistemi; açık/tamamlanan servisler, ürün sipariş adetleri, garson işlem günlüğü, bekletilen/zamanlı kalemler ve masa hareketlerini kapsar. Alacarte **kategori → filtre → çalıştır → tablo/ayrıntı → yazdır** gezinme mantığını kullanır; arayüz bileşenleri dokunmatik kasa ekranına uygun olarak özgün üretilir. SCR-12 rapor merkezi, güvenlik ve veri bütünlüğü gereği yönetici ve sistem yöneticisi için kasa dokunmatik ekranında sunulur.
 
 **Görsel arayüz ve etkileşim:**
 
@@ -371,22 +350,22 @@ Simphony POS Reports sayfası raporları finansal, check, menu item, audit, tabl
 4. **Eylemler:** Yazdır, CSV indir, uygun raporlarda PDF kaydet, Filtrelere Dön, Kapat. Her rapor üretimi ve dışa aktarım kullanıcı, tarih, filtre ve rapor sürümüyle kaydedilir.
 5. **Arayüz durumları:** yükleniyor, sonuç bulundu, boş sonuç, filtre hatası, erişim/veri hatası, yazdırma/dışa aktarma bekliyor-hatalı. Geniş tarih aralıklı sorgularda yüklenme bildirimi, sayfalama ve gerekli olduğunda arka plan rapor işi kullanılır; yaşa göre sabit rapor sınırı uygulanmaz.
 
-| Alacarte raporu | MICROS işlevsel karşılığı | Gösterilecek alanlar (finansal değer olmadan) | Yetki |
+| Alacarte raporu | Operasyonel Tanım / İşlev | Gösterilecek alanlar (finansal değer olmadan) | Yetki |
 |---|---|---|---|
-| Operasyon Özeti | Financial/Property summary yerleşimi, operasyon ölçüleriyle | Açılan masa/sipariş, servis turu, kayıtlı misafir/kuver toplamı, mutfağa gönderilen ürün adedi, iptal/bekleyen kalem, bekletilen/zamanlanan kalem, yazdırma başarı/hata sayıları | Sistem/restoran yöneticisi |
-| Masa Hareketleri | Table Sales | Masa/alan, servis oturumu sayısı, sipariş/tur ve ürün adedi, kayıtlı misafir/kuver sayısı, ilk açılış/son işlem, açık kalma süresi, tamamlanma. Masa devir süresi yalnız açılış-bitiş olayları varsa hesaplanır. | Sistem/restoran yöneticisi |
-| Ürün Adet Özeti/Detayı | Menu Item Sales Summary/Detail, Major/Family Group | Kategori, alt kategori, ürün, sipariş adedi, mutfağa gönderilen adet, iptal adedi, etkin gönderim adedi; garson/masa/tur kırılımı. Fiyat, indirim, brüt/net satış yok. | Sistem/restoran yöneticisi |
-| Açık Siparişler | Employee Open Check | Masa, sipariş ref, açan/son işlem yapan, açılış/son hareket zamanı, tur sayısı, taslak, yazdırma durumu, bekletilmiş/zamanlanmış kalem adedi | Sistem/restoran yöneticisi |
-| Tamamlanan Servis Oturumları | Employee Closed Check | Tamamlanma zamanı/işlemi, masa, sipariş ref, tur/ürün adetleri, tamamlayan kullanıcı; ödeme/hesap kapama yok | Sistem/restoran yöneticisi |
-| Bekletilen ve Zamanlı Kalemler | Held Item Summary / Autofire Open Check | Ürün, adet, masa, bekleten, bekletme zamanı, planlı serbest bırakma, istasyon, durum, son işlem | Sistem/restoran yöneticisi |
-| Garson İşlem Günlüğü | Employee Journal | Sıralı masa açma, ürün/tur ekleme, mutfağa gönderme, bekletme/zamanlama, iptal talebi/kararı, adisyon isteği, tekrar baskı; kullanıcı, masa, sipariş, zaman, sonuç | Sistem/restoran yöneticisi |
-| Sipariş/Masa Denetim Günlüğü | Check Journal | Tur/kalem değişiklikleri; önceki-yeni durum, aktör, zaman, gerekçe, yazdırma işi ve iptal bağlantısı | Sistem/restoran yöneticisi |
-| İptal ve Onaylar | Closed-check/journal indicator davranışları | Kalem/adet, gerekçe, talep eden/karar veren, karar zamanı/sonucu, mutfak iptal fişi durumu; olay silinmez | Sistem/restoran yöneticisi |
-| Yazdırma Günlüğü | Check Journal/audit düzeni | Fiş ID, çıktı türü, yazıcı, sipariş turu, isteyen, zaman, deneme, sonuç, tekrar baskı bağı | Sistem/restoran yöneticisi |
+| Operasyon Özeti | Genel operasyon ve servis hacmi özeti | Açılan masa/sipariş, servis turu, kayıtlı misafir/kuver toplamı, mutfağa gönderilen ürün adedi, iptal/bekleyen kalem, bekletilen/zamanlanan kalem, yazdırma başarı/hata sayıları | Sistem/restoran yöneticisi |
+| Masa Hareketleri | Masa bazlı servis ve devir hareketleri | Masa/alan, servis oturumu sayısı, sipariş/tur ve ürün adedi, kayıtlı misafir/kuver sayısı, ilk açılış/son işlem, açık kalma süresi, tamamlanma. Masa devir süresi yalnız açılış-bitiş olayları varsa hesaplanır. | Sistem/restoran yöneticisi |
+| Ürün Adet Özeti/Detayı | Kategori ve ürün bazında mutfak sipariş adetleri | Kategori, alt kategori, ürün, sipariş adedi, mutfağa gönderilen adet, iptal adedi, etkin gönderim adedi; garson/masa/tur kırılımı. Fiyat, indirim, brüt/net satış yok. | Sistem/restoran yöneticisi |
+| Açık Siparişler | Anlık açık masa ve aktif servis listesi | Masa, sipariş ref, açan/son işlem yapan, açılış/son hareket zamanı, tur sayısı, taslak, yazdırma durumu, bekletilmiş/zamanlanmış kalem adedi | Sistem/restoran yöneticisi |
+| Tamamlanan Servis Oturumları | Tamamlanan servis oturumları geçmişi | Tamamlanma zamanı/işlemi, masa, sipariş ref, tur/ürün adetleri, tamamlayan kullanıcı; ödeme/hesap kapama yok | Sistem/restoran yöneticisi |
+| Bekletilen ve Zamanlı Kalemler | Bekletilen ve ileri saate planlanan siparişler | Ürün, adet, masa, bekleten, bekletme zamanı, planlı serbest bırakma, istasyon, durum, son işlem | Sistem/restoran yöneticisi |
+| Garson İşlem Günlüğü | Personel bazlı operasyon işlem günlüğü | Sıralı masa açma, ürün/tur ekleme, mutfağa gönderme, bekletme/zamanlama, iptal talebi/kararı, adisyon isteği, tekrar baskı; kullanıcı, masa, sipariş, zaman, sonuç | Sistem/restoran yöneticisi |
+| Sipariş/Masa Denetim Günlüğü | Sipariş ve masa bazlı denetim geçmişi | Tur/kalem değişiklikleri; önceki-yeni durum, aktör, zaman, gerekçe, yazdırma işi ve iptal bağlantısı | Sistem/restoran yöneticisi |
+| İptal ve Onaylar | Yönetici onaylı iptal ve void kayıtları | Kalem/adet, gerekçe, talep eden/karar veren, karar zamanı/sonucu, mutfak iptal fişi durumu; olay silinmez | Sistem/restoran yöneticisi |
+| Yazdırma Günlüğü | Mutfak ve adisyon yazdırma kuyruğu günlüğü | Fiş ID, çıktı türü, yazıcı, sipariş turu, isteyen, zaman, deneme, sonuç, tekrar baskı bağı | Sistem/restoran yöneticisi |
 
 **Raporlama sınırları ve saklama:**
 
-- Simphony Employee/Property Financial, Tip, Tax, Tender, Discount, net/brüt satış ve kasa denkleştirme raporları Alacarte’ta bulunmaz; sistem fiyat veya ödeme verisi tutmaz.
+- Finansal özet, bahşiş, vergi, tahsilat, indirim, net/brüt satış ve kasa denkleştirme raporları Alacarte’ta bulunmaz; sistem fiyat veya ödeme verisi tutmaz.
 - Adet ölçüleri `sipariş edilen`, `mutfağa gönderilen`, `iptal edilen`, `etkin gönderim` olarak ayrılır. Tekrar baskı miktarı değiştirmez; onaylı iptal orijinal gönderime bağlı ayrı olaydır.
 - Rapor tarih arayüzü restoran/sunucu yerel saatini kullanır; kayıt damgası sunucu sistem saati ve yapılandırılmış saat dilimiyle saklanır. Eski kayıtlar o tarihteki ürün adı snapshot’ından raporlanır; kaynak kayıt silinmedikçe raporlanabilir.
 - Rapor çıktısı her çalıştırmada veritabanındaki kaynak kayıtlardan üretilir; rapor dosyaları/snapshot’ları sunucuda ayrıca arşivlenmez. Denetim için rapor adı/sürümü, filtreler, kullanıcı ve üretim zamanı metadata olarak kaydedilir. Kullanıcı açıkça dışa aktarırsa dosya indirilir; merkezi saklama ayrı bir gereksinim olarak tanımlanmadıkça yapılmaz.
@@ -418,7 +397,7 @@ flowchart LR
 
 #### Arayüz ve Tasarım Mimarisi
 
-- Ekran envanteri (SCR-01–SCR-19), Oracle MICROS Simphony TSR görsel yaklaşımı, yüksek kontrastlı salon aydınlatması ve dokunmatik POS ergonomisi esas alınarak geliştirilmiştir.
+- Ekran envanteri (SCR-01–SCR-19), uluslararası masa servisi standartları, yüksek kontrastlı salon aydınlatması ve dokunmatik POS ergonomisi esas alınarak geliştirilmiştir.
 - Kasa dokunmatik ekranı (18.5" 1080p Tiwox TP-8610) ve garson el terminali (Mobil PWA / iOS-Android Web) için optimize edilmiş duyarlı (responsive) tekil React/Next.js bileşen mimarisi uygulanır.
 - İlk kullanım yardımı, restoran yöneticisi kontrollü Garson Öğrenme Modu, SCR-07 bağlantı ışıkları ve SCR-19 sıralı sistem tanılaması doğrudan arayüzde yerleşik olarak çalışır.
 
@@ -538,11 +517,11 @@ Bu akışlardaki “işletim sistemi kuyruğuna alındı” durumu fiziksel kâ�
 - **Garson cihazı ve oturum güvenliği:** Her garson kendi hesabıyla giriş yapar; cihaz kaydı yerel kurulumda tutulur. Oturum zaman aşımında kilitlenir, çıkışta yerel taslak/kimlik bilgisi temizlenir. Kullanıcı devre dışı bırakıldığında sonraki sunucu isteği reddedilir; kayıp cihaz erişimi yerel yönetici tarafından kullanıcı/oturum devre dışı bırakılarak kesilir. Çevrimdışı cihazda yeni sipariş kabul edilmez; gönderilmemiş taslak sunucuda kaydedilmediği açıkça gösterilir.
 - **Sunucu saati:** İşlem damgalarının kaynağı yerel Ubuntu Linux sunucu saatidir; saat dilimi Kıbrıs (KKTC / Lefkoşa) saati olan `Asia/Nicosia` olarak belirlenmiştir ve Docker container seviyesinde `TZ=Asia/Nicosia` olarak zorunlu kılınır. İnternet/otel NTP bağlantısı varsayılmaz. Saat düzeltmesi yalnız yerel sistem yöneticisince yapılır, önce/sonra değerleri audit'e yazılır ve istemcilere uyarı gösterilir.
 - **Denetim günlüğü bütünlüğü:** Uygulama katmanında olaylar eklemeli (append-only) tutulur; normal UI/API ile güncelleme/silme yoktur. Olaylar sıralı kimlik ve önceki olayın özetiyle hash-zincir kontrolüne tabi tutulur; yedek doğrulamasında zincir de kontrol edilir. Veritabanı/Linux işletim sistemi yöneticisi yetkileriyle doğrudan müdahale uygulama dışı ayrıcalık sayılır ve işletim sistemi erişimi sınırlandırılır.
-- **MICROS menü seçenekleri:** Oracle belgelerindeki modifier/condiment modeli uygulanır: her ürün için gruplandırılmış varsayılan, zorunlu ve isteğe bağlı seçenekler; minimum/maksimum adet; “ekstra”, “çıkar”, “yerine koy”, “sossuz/yanında” gibi hazırlama talimatları; gerekiyorsa pişme derecesi ve alerjen/diyet etiketleri. Zorunlu seçimler tamamlanmadan gönderim yapılamaz. Fiyatlı modifier, vergi ve toplam alanları Alacarte kapsamı dışındadır; mutfak fişinde seçilen talimatlar görünür. Menü yöneticisi bu verinin doğruluğundan sorumludur.
+- **Operasyonel menü hazırlama seçenekleri:** Uluslararası masa servisi standartlarındaki modifier modeli uygulanır: her ürün için gruplandırılmış varsayılan, zorunlu ve isteğe bağlı seçenekler; minimum/maksimum adet; “ekstra”, “çıkar”, “yerine koy”, “sossuz/yanında” gibi hazırlama talimatları; gerekiyorsa pişme derecesi ve alerjen/diyet etiketleri. Zorunlu seçimler tamamlanmadan gönderim yapılamaz. Fiyatlı modifier, vergi ve toplam alanları Alacarte kapsamı dışındadır; mutfak fişinde seçilen talimatlar görünür. Menü yöneticisi bu verinin doğruluğundan sorumludur.
 
-### 5.16 Kullanıcı, rol ve yetkilendirme modeli (Simphony referansı)
+### 5.16 Kullanıcı, rol ve yetkilendirme modeli
 
-Oracle Simphony belgelerinde kullanıcı kimliği ile rol/işlem yetkisi ayrıdır: her çalışan kendi kimliğiyle oturum açar; RBAC, o kimliğe atanmış rol ve izinlere göre her eylemi yetkilendirir. Roller POS işlemlerini ve yönetim modüllerini ayrı ayrı sınırlandırabilir; örneğin garson daha az POS yetkisine sahipken yönetici/süpervizör belirli işlemleri onaylayabilir. Roller için görüntüleme/düzenleme/ekleme/silme ve işlem/aksiyon izinleri ayrı yapılandırılabilir; bir kullanıcıya birden çok rol veya vardiya iş koduna göre izin atanması mümkündür. Simphony’de POS kimlik doğrulamasında benzersiz çalışan numarası/PIN veya kart kullanılır; yetkili çalışan başka bir çalışanın kısıtlı işlemini kendi kimliğiyle onaylar. Kaynaklar: [Oracle RBAC ve en az yetki](https://docs.oracle.com/en/industries/food-beverage/simphony/simsg/authorization_services.htm), [roller ve işlem izinleri](https://docs.oracle.com/en/industries/food-beverage/simphony/19.3/simsg/c_auth_privs.htm), [POS kullanıcı doğrulaması](https://docs.oracle.com/en/industries/food-beverage/simphony/simsg/pos_client_user_authentication.htm), [POS erişimi verme ve PIN/rol atama](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/sslcg/t_people_mgmt_grant_access_pos_operations.htm).
+Kullanıcı kimliği ile rol/işlem yetkisi birbirinden bağımsızdır: her çalışan kendi kişisel kimliğiyle oturum açar; rol tabanlı erişim kontrolü (RBAC), o kimliğe atanmış rol ve izinlere göre her eylemi denetler. Roller POS işlemlerini ve yönetim modüllerini ayrı ayrı sınırlandırır; örneğin garson sipariş ve servis yetkisine sahipken, yönetici iptal ve kritik operasyonları onaylayabilir. Kimlik doğrulamasında benzersiz çalışan numarası/PIN kullanılır; yetkili kullanıcı başka bir çalışanın onay gerektiren işlemini kendi kimliğiyle doğrular.
 
 **Alacarte uygulama kuralları:**
 
@@ -562,11 +541,9 @@ Oracle Simphony belgelerinde kullanıcı kimliği ile rol/işlem yetkisi ayrıd�
 
 **Rol/izin yönetimi akışı:** Sistem yöneticisi kullanıcıyı oluşturur → kişisel giriş bilgisini atar → temel rolü seçer → gerekiyorsa sınırlı ek izin verir → izin özetini inceler ve kaydeder. Yetki iptali/değişikliği aynı kullanıcı ve izin geçmişini koruyarak yapılır. İptal yetkilendirme akışı: garson talebi/gerekçeyi girer → restoran yöneticisi veya işletme onayıyla atanmış vardiya yetkilisi kendi hesabıyla yeniden doğrulanır → sistem rol, işlem kapsamı, aynı kişi olmama ve restoran kapsamını sunucuda doğrular → karar ve ayrı iptal yazdırma işi audit'e yazılır. Uygun onaylayan yoksa talep beklemede kalır.
 
-### 5.17 Kullanıcı yorumlarından türetilen kullanılabilirlik ve kalite gereksinimleri
+### 5.17 Kullanılabilirlik, Dayanıklılık ve Kalite Gereksinimleri
 
-**Araştırma kapsamı ve sınırlılığı:** 13.10.2026 tarihinde incelenen Capterra Simphony sayfası 26 kullanıcı yorumu, 4,2/5 genel puan, 3,8/5 kullanım kolaylığı ve 3,3/5 müşteri hizmetleri puanı gösteriyordu; G2 sayfası 9 yorum ve 3,6/5 puan bildiriyordu. Yorumlarda arka uç/kurulum karmaşıklığı, uzun öğrenme süresi, destek yanıtı ve çözüm takibi, bazı raporların üretilme/yorumlanma güçlüğü, terminal geçişlerinde gecikme, cihazlar arasında check/menü tutarsızlığı ve yoğun kullanım sırasında donma anlatılıyor. Bunlar kullanıcı beyanlarıdır; farklı Simphony/MICROS sürümleri, yapılandırmalar ve kurulum koşulları aynı başlık altında yer alabilir. Yaygınlık sırası veya teknik kök neden kanıtı olarak değerlendirilmez. Kullanıcılar özelleştirme, merkezi görünürlük, rapor kapsamı ve yerel ağda internet kesilse de çalışma gibi olumlu yönlerden de söz ediyor; Alacarte mevcut yerel/bağımsız çalışma kararını korur. Kaynaklar: [Capterra Simphony yorumları](https://www.capterra.com/p/202814/Oracle-MICROS-Simphony/reviews/), [G2 Simphony yorumları](https://www.g2.com/products/oracle-micros-simphony/reviews?qs=pros-and-cons), [yoğun kullanımda donma hakkında kullanıcı bildirimi](https://www.reddit.com/r/oracle/comments/1r8101o/oracle_micros_simphony_pos_freezes_in_rush_caps/), [çoklu terminal ve menü senkronizasyonu hakkında kullanıcı tartışması](https://www.reddit.com/r/alohapos/comments/16yc7yr/has_anyone_switched_or_worked_with_simphony_pos/).
-
-Bu yorumlardan Alacarte için aşağıdaki doğrulanabilir ürün koşulları çıkarılır; raporlanan sorunlar Alacarte'ta da varmış gibi varsayılmaz:
+Sektörel saha deneyimleri ve lüks alakart restoran operasyonlarının gereksinimleri doğrultusunda Alacarte için aşağıdaki doğrulanabilir ürün koşulları belirlenmiştir:
 
 - **Öğrenilebilirlik:** Garsonun temel masa → ürün/modifier → siparişi kaydet/gönder akışı az adımlı ve tutarlı kalır. Ekranlar işlem sürüyor, tamamlandı, başarısız ve sonraki eylem durumlarını aynı terimlerle açıklar. Garson ve yönetici için kısa, bağlama duyarlı yardım verilir; yardım sipariş akışını kapatmaz veya alanları temizlemez.
 - **Garson öğrenme modu:** Restoran yöneticisi SCR-07'de restoran genelinde özelliğin kullanılabilirliğini açıp kapatır; değişiklik kullanıcı, sunucu zamanı ve önceki/yeni değerle audit'e yazılır. Mod açıkken garson SCR-04'te geçerli ekrana özgü kısa ipuçlarını görebilir veya adım adım rehberi başlatabilir, duraklatabilir, geri/ileri gidebilir, kapatıp `Yardım`'dan yeniden açabilir. Rehber masa seçimi → isteğe bağlı misafir/koltuk bilgisi → kategori/ürün → adet/modifier/not → sipariş özeti → beklet/zamanla/hemen gönder seçimi → sunucu kaydı ve mutfak kuyruğu sonucunu açıklar. Rehber kontrolü vurgular ama masa/ürün seçimini, sipariş kaydını veya mutfak gönderimini kullanıcı adına yapmaz. Mod kapalıysa ipuçları/rehber düğmeleri sunulmaz; modu kapatmak açık sipariş taslağını silmez.
@@ -655,7 +632,7 @@ flowchart TD
 | Rapor alma | Evet | Evet | Hayır |
 | Denetim kaydını görüntüleme, saklama, yedekleme ve dışa aktarma | Evet (yalnız bu kurulum) | Hayır | Hayır |
 
-En az yetki ilkesi uygulanır. Yetki denetimi API/sunucu katmanında her istekte yapılır; ekranda düğme gizlemek yetkilendirme yerine geçmez. Kullanıcılar ortak hesap paylaşmaz. Kritik yönetim ve iptal kararları kullanıcı kimliğine bağlanır. Simphony benzeri görev yetkisi gerektiğinde yeni bir kapsamlı rol açmak yerine sınırlı ek izin olarak atanır; izin verilmedikçe varsayılan ret sürer.
+En az yetki ilkesi uygulanır. Yetki denetimi API/sunucu katmanında her istekte yapılır; ekranda düğme gizlemek yetkilendirme yerine geçmez. Kullanıcılar ortak hesap paylaşmaz. Kritik yönetim ve iptal kararları kullanıcı kimliğine bağlanır. Özel görev yetkisi gerektiğinde yeni bir kapsamlı rol açmak yerine sınırlı ek izin olarak atanır; izin verilmedikçe varsayılan ret sürer.
 
 ## 7. Veri ve kayıt saklama planı
 
@@ -695,7 +672,7 @@ Saklama ilkesi:
 > Projenin donanım hazırlığı, yerel kurulum adımları, pilot çalışma, devreye alma kontrol listesi ve 5 restorana yaygınlaştırma aşamalarının ayrıntılı faz planı için müstakil dokümana başvurunuz:  
 > 📄 [ALACARTE_UYGULAMA_VE_DEVREYE_ALMA_FAZLARI.md](./ALACARTE_UYGULAMA_VE_DEVREYE_ALMA_FAZLARI.md)
 
-Bu ana şartname belgesi, Alacarte Restoran Operasyon Sistemi'nin fonksiyonel kapsamını, ekran kataloğunu (SCR-01 - SCR-19), Oracle MICROS Simphony TSR servis standartlarını, veri güvenliği ve denetim mimarisini tanımlar.
+Bu ana şartname belgesi, Alacarte Restoran Operasyon Sistemi'nin fonksiyonel kapsamını, ekran kataloğunu (SCR-01 - SCR-19), uluslararası alakart servis standartlarını, veri güvenliği ve denetim mimarisini tanımlar.
 
 ## 10. Kabul senaryoları ve sistem doğrulama kriterleri
 
@@ -780,10 +757,10 @@ Bu ana şartname belgesi, Alacarte Restoran Operasyon Sistemi'nin fonksiyonel ka
 | Yazıcıya gönderildiği halde kağıt çıkmaması | Donanım seçimi ve satın alma öncesi kabulünde incelenir; uygulama işletim sistemi kuyruğunun durumunu gösterir ve belirsiz durumda çift baskı riskini kullanıcıya bildirir |
 | Sipariş tekrarının iki kayıt oluşturması | İstemci işlem anahtarı/idempotency ve veritabanı bütünlüğü |
 | Otomatik tanılamanın yanlış pozitif bulgu veya onarımın servis/veri kesintisi yaratması | Varsayılan salt-okunur çalışma; dar allowlist; iki hedefte manifest/hash doğrulanmış ön yedek; işlem başına yeniden doğrulamalı sistem yöneticisi onayı; aktif iş kilidi; onarım sonrası kontrol ve başarısızlıkta duruş; veri/şema/ ağ/yazıcı değişikliği ve otomatik restore kapsam dışı |
-| Simphony kullanıcı yorumlarında bildirilen öğrenme güçlüğü, uzun destek/arıza teşhisi ve terminal/menü güncellik sorunlarının benzer etkiler yaratması | Basit ve tutarlı görev akışları; sürüm/eşitleme göstergesi; SCR-19 olay kimlikli tanılama ve çözüm adımları; ilk kullanım ve çoklu istemci kabul ölçütleri (§5.17) |
+| Personel öğrenme güçlüğü, teknik arıza teşhisi gecikmeleri veya terminal/menü güncellik uyumsuzlukları | Basit ve tutarlı görev akışları; sürüm/eşitleme göstergesi; SCR-19 olay kimlikli tanılama ve çözüm adımları; ilk kullanım ve çoklu istemci kabul ölçütleri (§5.17) |
 | Rapor sonuçlarının anlaşılmaması veya birbiriyle tutarsız görünmesi | Tanımlı ölçüm sözlüğü, aktif filtre/dönem özeti, kaynak kayıt karşılaştırması ve rapor görevi kullanılabilirlik kabulü (§5.17) |
 | Tarihsel verinin zamanla büyümesi | Veri hacmi ölçümü, indeksleme, sayfalama/arka plan raporu, yedek kapasite planı ve gerektiğinde onaylı arşiv politikası; eski raporlara sessiz yaş filtresi koymama |
-| MICROS arayüzünün birebir kopyalanması | MICROS'un iş akışı ve görsel yaklaşımından esinlenerek benzer, Alacarte'a özgü özgün ekranlar tasarlamak |
+| Karmaşık POS arayüzlerinin operasyonel zorluk yaratması | Uluslararası fine-dining standartlarında, sade, dokunmatik ergonomisine uygun ve Alacarte'a özgü ekranlar tasarlamak |
 
 ## 12. Sabit kararlar ve ayrıca yürütülecek işler
 
@@ -794,70 +771,20 @@ Bu bölümdeki maddeler kullanıcı tarafından seçilmiş ürün kurallarını 
 3. Veri saklama, arşivleme, silme/anonimleştirme yetkisi yerel sistem yöneticisindedir ve audit'lenir.
 4. Sunucu arızası ve hizmete dönüş (yedek sunucu/onarım, RTO) ayrıca iş sürekliliği çalışmasında kararlaştırılır.
 5. Sunucu işletim sistemi Ubuntu Linux (24.04 LTS) ve Docker Compose mimarisi olarak sabittir. Sistem saat dilimi Kıbrıs (`Asia/Nicosia`) olarak ayarlanmıştır.
-6. MICROS'ta bulunan operasyonel menü seçenekleri bu sistemde de olmalıdır: modifier grupları, varsayılan/isteğe bağlı/zorunlu seçenekler, adet/limit, ekle/çıkar/yerine koy ve mevcutsa alerjen/diyet bilgisi. Fiyatlı seçenekler kapsam dışıdır.
+6. Uluslararası restoran standartlarındaki operasyonel menü seçenekleri bu sistemde yer almalıdır: modifier grupları, varsayılan/isteğe bağlı/zorunlu seçenekler, adet/limit, ekle/çıkar/yerine koy ve mevcutsa alerjen/diyet bilgisi. Fiyatlı seçenekler kapsam dışıdır.
 7. Merkezi/uzaktan yönetim ve restoranlar arasında ağ erişimi istenmemektedir; her yerel sistem yöneticisi kendi restoran kurulumunu yönetir.
 8. Zamanlı iş planlanan sunucu saatinde yürütülür; teknik arıza nedeniyle o anda yürütülemezse otomatik geç gönderilmez, yönetici açık eylem seçer. Kuyruk hata/tekrar baskı kuralları §5.9 ve donanım kabul planında tanımlıdır.
 9. Yönetici bulunmadığında gönderilmiş sipariş iptal talebi beklemede kalır; yalnız yetkili yönetici kararıyla yürürlüğe girer.
 
-## 13. Kaynaklar
+## 13. Standartlar ve Teknik İlkeler
 
-- [Oracle Simphony POS User Guide — TSR Transactions](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_tsr_transactions.htm)
-- [Oracle Simphony POS User Guide — Check Functions and Transaction Functions](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_check_functions.htm)
-- [Oracle Simphony Security Guide — Authentication Services](https://docs.oracle.com/en/industries/food-beverage/simphony/simsg/authentication_services.htm)
-- [Oracle Simphony Security Guide — Authorization Services, RBAC and least privilege](https://docs.oracle.com/en/industries/food-beverage/simphony/simsg/authorization_services.htm)
-- [Oracle Simphony Security Guide — Authorization Privileges, roles and module/operation access](https://docs.oracle.com/en/industries/food-beverage/simphony/19.3/simsg/c_auth_privs.htm)
-- [Oracle Simphony — POS Client User Authentication](https://docs.oracle.com/en/industries/food-beverage/simphony/simsg/pos_client_user_authentication.htm)
-- [Oracle Simphony Essentials — Grant Access to POS Operations, PIN and role assignment](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/sslcg/t_people_mgmt_grant_access_pos_operations.htm)
-- [Oracle Simphony Essentials — Employee role creation and POS privileges](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/sslcg/t_emc_create_employee_roles.htm)
-- [Oracle Simphony POS User Guide — Authorization failure messages](https://docs.oracle.com/en/industries/food-beverage/simphony/19.7/sipou/F96892_05.pdf)
-- [Oracle Simphony — Workstation Touchscreen Pages and button functions](https://docs.oracle.com/en/industries/food-beverage/simphony/19.7/simcg/c_workstation_touchscreen.htm)
-- [Oracle Simphony Configuration Guide — Item Hold, Hold Transaction, Timed Fire, View Fire Times](https://docs.oracle.com/en/industries/food-beverage/simphony/19.3/simcg/t_check_config_item_hold_buttons.htm)
-- [Oracle Simphony Essentials — Void Item and reason selection](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/t_check_func_void_item.htm)
-- [Oracle Simphony — Authorization privileges and role-based POS operations](https://docs.oracle.com/en/industries/food-beverage/simphony/19.3/simsg/c_auth_privs.htm)
-- [Oracle Simphony Essentials — Create employee roles and grant POS privileges](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/sslcg/t_emc_create_employee_roles.htm)
-- [Oracle Simphony — Employee-group restrictions on void authorization](https://docs.oracle.com/en/industries/food-beverage/simphony/19.8/simcg/c_config_emp_groups.htm)
-- [Oracle Simphony Essentials — Split Check](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/t_check_func_split_check.htm)
-- [Oracle Simphony — Condiments/modifier türleri, zorunlu/isteğe bağlı ve varsayılan seçenekler](https://docs.oracle.com/en/industries/food-beverage/simphony/simcg/c_condiments.htm)
-- [Oracle Simphony Essentials — Modifier grubu tanımlama](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/sslcg/t_emc_mi_condiment_group.htm)
-- [Oracle Simphony — Rol yetkileri ve yönetici onayı](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/sslcg/t_emc_create_employee_roles.htm)
-- [Oracle Simphony Essentials — Add/Transfer Check](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/t_check_func_add_transfer_check.htm)
-- [Oracle Simphony POS User Guide — TSR Home ve gönderilmemiş check uyarısı](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_tsr_home.htm)
-- [Oracle Simphony POS User Guide — mobil TSR işlemleri](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_mobile_tsr_transactions.htm)
-- [Oracle Simphony POS User Guide — masa durumları ve masa işlevleri](https://docs.oracle.com/en/industries/food-beverage/simphony/19.7/sipou/c_tms_table_status.htm)
-- [Oracle Simphony — açık check'lerde servis turu ve sipariş yönetimi](https://docs.oracle.com/en/industries/food-beverage/simphony/sipou/c_checks_order_handling_open_checks_ug.htm)
-- [Oracle Simphony — Service Total ve servis turunun sonlandırılması](https://docs.oracle.com/en/industries/food-beverage/simphony/19.7/simcg/c_checks_service_total.htm)
-- [Oracle Simphony POS User Guide — void item ve iptal nedeni](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/t_check_func_void_item.htm)
-- [Oracle Simphony POS User Guide — gönderilmemiş turu iptal etme](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_check_func_cancel_transaction.htm)
-- [Oracle Simphony POS User Guide — check işlevleri: hold, fire, refire](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_check_functions.htm)
-- [Oracle Simphony POS User Guide — Hold Items (ürün bekletme)](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/t_check_func_hold_items.htm)
-- [Oracle Simphony User Guide — Holding Menu Items on a Check](https://docs.oracle.com/en/industries/food-beverage/simphony/19.8/sipou/t_checks_hold_mi.htm)
-- [Oracle Simphony User Guide — seçili ürün/turun zamanlı gönderimi (Timed Fire)](https://docs.oracle.com/en/industries/food-beverage/simphony/19.3/sipou/t_checks_hold_selected_entire_preset.htm)
-- [Oracle Simphony Configuration Guide — Hold and Send ayarları](https://docs.oracle.com/en/industries/food-beverage/simphony/19.3/simcg/c_checks_hold_and_send.htm)
-- [Oracle Simphony User Guide — bekleyen ürünlerle servis turunu bitirme](https://docs.oracle.com/en/industries/food-beverage/simphony/19.5/sipou/t_checks_end_round_close_check.htm)
-- [Oracle Simphony Configuration Guide — Print Class ve order device çıktısı](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/sslcg/c_emc_print_class.htm)
-- [Oracle Simphony — Printer Order Device biçimi, kalem sıralama, miktar/koltuk ve iptal işaretleri](https://docs.oracle.com/en/industries/food-beverage/simphony/simcg/t_printers_config_printer_order_device.htm)
-- [Oracle Simphony — servis turu gönderimi ve talep üzerine check yazdırma](https://docs.oracle.com/en/industries/food-beverage/simphony/simcg/t_guest_check_configure_service_total_tender.htm)
-- [Oracle Simphony Essentials POS Reports — kategori, filtre, çalıştırma/yazdırma](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_reports_pos.htm)
-- [Oracle Simphony Essentials — Menu Item Sales Detail](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_reports_pos_mi_sales_detail.htm)
-- [Oracle Simphony Essentials — Employee Journal](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/c_reports_pos_emp_journal.htm)
-- [Oracle Simphony Essentials — Held Item Summary ve Table Sales](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/simsl/F44996_10.pdf)
-- [Oracle Simphony Essentials — Table Service iş akışı eğitim başlıkları](https://docs.oracle.com/en/industries/food-beverage/simphony-essentials/vid_tsr.html)
-- [Next.js self-hosting kılavuzu](https://nextjs.org/docs/app/guides/self-hosting)
-- [PostgreSQL sürekli arşivleme ve zamana göre kurtarma](https://www.postgresql.org/docs/current/continuous-archiving.html)
-- [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
-- [OWASP Authentication Cheat Sheet — login throttling ve hesap kilidi](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
-- [OWASP Session Management Cheat Sheet — HTTPS, çerez ve oturum yaşam döngüsü](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
-- [Oracle MICROS Simphony ürün belgeleri](https://docs.oracle.com/en/industries/food-beverage/simphony/)
-- [Oracle masa servis POS yaklaşımı](https://www.oracle.com/uk/food-beverage/restaurant-pos-systems/table-service-pos/)
-- [Capterra — Oracle MICROS Simphony kullanıcı yorumları ve değerlendirme özetleri](https://www.capterra.com/p/202814/Oracle-MICROS-Simphony/reviews/)
-- [G2 — Oracle MICROS Simphony kullanıcı yorumları](https://www.g2.com/products/oracle-micros-simphony/reviews?qs=pros-and-cons)
-- [Reddit — Simphony yoğun saatlerde donma kullanıcı bildirimi (tekil saha anlatımı)](https://www.reddit.com/r/oracle/comments/1r8101o/oracle_micros_simphony_pos_freezes_in_rush_caps/)
-- [Reddit — Simphony çoklu terminal/check/menü senkronizasyonu kullanıcı tartışması](https://www.reddit.com/r/alohapos/comments/16yc7yr/has_anyone_switched_or_worked_with_simphony_pos/)
-- [Epson TM-T88VII teknik özellikleri](https://www.epson.eu/en_EU/products/printers/pos-printers/pos-printers/pc-pos-printers/epson-tm-t88vii-%28112a0%29%3A-usb%2C-eth%2C-serial%2C-ps%2C-buzz%2C-uk%2C-black/p/32054)
-- [Star mC-Print3 ürün ailesi](https://star-emea.com/products/mC-Print3/)
-- [Epson POS teknik referansı](https://download4.epson.biz/sec_pubs/pos/reference_en/)
+- Uluslararası 5 Yıldızlı Otel ve Fine-Dining Alakart Masa Servis Standartları
+- ESC/POS Termal Yazıcı Standartları ve Ağ İletişim Protokolleri
+- Linux CUPS ve Raw Socket Yazdırma Mimarisi
+- OWASP Güvenli Kimlik Doğrulama ve Oturum Yönetimi İlkeleri
+- Yerel İzolasyonlu Ağ (Air-Gapped LAN) Güvenlik Prensipleri
 
 ---
 
-**Planın tamamlanma ölçütü:** gereksinim ve açık kararlar onaylanmış; SCR-01–SCR-19'un özgün ve etkileşimli prototipi cihaz/rol/hata durumlarıyla kabul edilmiş; MICROS referanslı mutfak/adisyon çıktıları ve SCR-12 rapor arayüzü/kataloğu örnek verilerle incelenmiş; yazıcı modeli ve bağlantı testi, yerel kurulum, operasyon akışları, veri yaşam döngüsü ve geri yükleme politikası işletme tarafından kabul edilmiş olmalıdır. Bu dokümanda ekran envanteri ve süreç akışları tanımlanmıştır; bu ölçütlerin tamamının gerçekleştiği anlamına gelmez.
+**Planın tamamlanma ölçütü:** gereksinim ve açık kararlar onaylanmış; SCR-01–SCR-19'un özgün ve etkileşimli prototipi cihaz/rol/hata durumlarıyla kabul edilmiş; uluslararası standartlarda mutfak/adisyon çıktıları ve SCR-12 rapor arayüzü/kataloğu örnek verilerle incelenmiş; yazıcı modeli ve bağlantı testi, yerel kurulum, operasyon akışları, veri yaşam döngüsü ve geri yükleme politikası işletme tarafından kabul edilmiş olmalıdır. Bu dokümanda ekran envanteri ve süreç akışları tanımlanmıştır; bu ölçütlerin tamamının gerçekleştiği anlamına gelmez.
 

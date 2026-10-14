@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "./prisma";
 
 export interface AuditInput {
   actorId?: string | null;

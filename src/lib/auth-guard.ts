@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import { recordAuditEvent } from "@/lib/audit";
+import { prisma } from "./prisma";
+import { recordAuditEvent } from "./audit";
 import { cookies } from "next/headers";
 import crypto from "node:crypto";
 import type { Role } from "@prisma/client";

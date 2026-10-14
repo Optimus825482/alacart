@@ -26,7 +26,7 @@ echo ">> Veritabanı aktif ve hazır!"
 
 # 2. Prisma Şemasını Veritabanına Senkronize Et (db push)
 echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
-./node_modules/.bin/prisma db push --skip-generate --accept-data-loss || {
+./node_modules/.bin/prisma db push --schema=prisma/schema.prisma --accept-data-loss || {
   echo "UYARI: Prisma db push sırasında hata oluştu, devam ediliyor..."
 }
 

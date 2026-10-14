@@ -2418,13 +2418,9 @@ export function ServiceScreensView(props: ServiceScreensProps) {
         {/* Top Screen Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#f0f5f3]">
-              Masa ve Servis Durumu
+            <h1 className="text-xl font-bold text-[#f0f5f3]">
+              Masa Planı
             </h1>
-            <p className="mt-1 text-xs text-[#9aaead]">
-              Tüm garsonlar bütün masaları görür. Bir masayı seçerek açık siparişe
-              dönün veya yeni servis başlatın.
-            </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {activeTable && (

@@ -51,8 +51,6 @@ export function AlacarteWorkspace({
   });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [serverClock, setServerClock] = useState<string>("");
-  const [lastSyncTime, setLastSyncTime] = useState<string>("");
-  const [menuStaleWarning, setMenuStaleWarning] = useState(false);
   const [toastState, setToastState] = useState<{
     message: string;
     tone: "teal" | "gold" | "red";
@@ -114,16 +112,6 @@ export function AlacarteWorkspace({
     return () => clearInterval(timer);
   }, [businessTz]);
 
-  useEffect(() => {
-    setLastSyncTime(
-      new Date().toLocaleTimeString("tr-TR", {
-        timeZone: businessTz,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      })
-    );
-  }, [initialData, businessTz]);
 
   // Periodic heartbeat every 25s
   useEffect(() => {
@@ -139,16 +127,10 @@ export function AlacarteWorkspace({
           clientMenuVersion: initialData.config?.menuVersion ?? 1,
         });
         if (res?.ok) {
-          setLastSyncTime(
-            new Date().toLocaleTimeString("tr-TR", {
-              timeZone: businessTz,
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-            })
-          );
           if (res.isMenuStale) {
-            setMenuStaleWarning(true);
+            startTransition(() => {
+              router.refresh();
+            });
           }
         }
       } catch {
@@ -161,7 +143,6 @@ export function AlacarteWorkspace({
   const handleRefresh = () => {
     startTransition(() => {
       router.refresh();
-      setMenuStaleWarning(false);
     });
   };
 
@@ -340,17 +321,14 @@ export function AlacarteWorkspace({
             >
               ☰
             </button>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="px-2 py-0.5 rounded bg-[#244440] border border-[#386e65] text-[#73d8c6] font-extrabold text-xs shrink-0">
-                  {activeScreenDef.id}
-                </span>
-                <span className="font-bold text-xs sm:text-sm truncate">
+            <div className="min-w-0 flex items-center gap-3">
+              <div className="flex flex-col min-w-0">
+                <h1 className="font-black text-sm sm:text-base tracking-wider text-[#f0f5f3] uppercase truncate">
+                  {initialData.config?.name || "Merit Garden · A La Carte"}
+                </h1>
+                <span className="text-[11px] text-[#73d8c6] font-medium truncate">
                   {activeScreenDef.title}
                 </span>
-              </div>
-              <div className="text-[11px] text-[#9aaead] hidden md:block truncate">
-                {activeScreenDef.description}
               </div>
             </div>
           </div>
@@ -401,22 +379,6 @@ export function AlacarteWorkspace({
           onRefresh={handleRefresh}
           notify={notify}
         />
-
-        {/* Stale Menu Warning Banner (§5.17 Cihazlar arası güncellik) */}
-        {menuStaleWarning && (
-          <div className="bg-[#393321] border-b border-[#705e37] px-6 py-2.5 flex items-center justify-between text-xs text-[#f1db9f] no-print">
-            <span>
-              ⚠️ <b>Menü veya Masa Sürümü Güncellendi:</b> Sunucuda yeni bir menü/sipariş sürümü yayınlandı. İşleme devam etmeden önce ekranı eşitleyin.
-            </span>
-            <button
-              type="button"
-              onClick={handleRefresh}
-              className="px-3 py-1 rounded bg-[#efc97b] text-[#192526] font-bold"
-            >
-              Şimdi Güncelle
-            </button>
-          </div>
-        )}
 
         {/* CONTENT AREA */}
         <main className="flex-1 p-4 pb-24 lg:p-6 mx-auto w-full max-w-[1600px]">

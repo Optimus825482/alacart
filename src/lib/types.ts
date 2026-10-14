@@ -65,10 +65,10 @@ export const SCREEN_CATALOG: ScreenDefinition[] = [
     id: "SCR-03",
     shortCode: "s03",
     number: "03",
-    title: "Masa Planı ve Masa Listesi",
+    title: "Masa Planı",
     group: "SERVİS OPERASYONU",
     allowedRoles: ["SYSTEM_ADMIN", "RESTAURANT_MANAGER", "WAITER"],
-    description: "Tüm garsonlar bütün masaları görür; boş masada yeni servis veya açık siparişe devam",
+    description: "Masa yerleşimi ve canlı servis takibi",
   },
   {
     id: "SCR-04",
@@ -77,7 +77,7 @@ export const SCREEN_CATALOG: ScreenDefinition[] = [
     title: "Sipariş / İşlem Ekranı",
     group: "SERVİS OPERASYONU",
     allowedRoles: ["SYSTEM_ADMIN", "RESTAURANT_MANAGER", "WAITER"],
-    description: "MICROS TSR referanslı fiyatsız sipariş, kuver/koltuk, servis turu ve öğrenme rehberi",
+    description: "Sipariş yönetimi, koltuk seçimi ve servis turları",
   },
   {
     id: "SCR-05",

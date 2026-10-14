@@ -1,5 +1,3 @@
-version: "3.8"
-
 # ==============================================================================
 # Merit A La Carte - Coolify Docker Compose Konfigürasyonu
 # Domain: http://alacarte.erkanerdem.online (ve HTTPS Let's Encrypt)
@@ -73,6 +71,7 @@ services:
       SEED_SETUP_KEY: ${SEED_SETUP_KEY:-}
     volumes:
       - alacarte_backups:/var/lib/alacarte/backups
+      - alacarte_uploads:/app/public/uploads
     depends_on:
       alacarte-db:
         condition: service_healthy
@@ -123,13 +122,15 @@ services:
       - alacarte_network
 
 # ==============================================================================
-# Kalıcı Veri Alanları (Volumes)
+# Kalıcı Veri Alanları (Volumes) - Sabit İsimli (Coolify UUID Bağımsız)
 # ==============================================================================
 volumes:
   alacarte_pgdata:
-    driver: local
+    name: alacarte_pgdata
   alacarte_backups:
-    driver: local
+    name: alacarte_backups
+  alacarte_uploads:
+    name: alacarte_uploads
 
 # ==============================================================================
 # Ağlar (Networks)

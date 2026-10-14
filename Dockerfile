@@ -11,7 +11,8 @@ WORKDIR /app
 # ==========================================
 FROM base AS deps
 COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+RUN npm ci --no-audit --no-fund --foreground-scripts || npm ci --no-audit --no-fund
+RUN npm rebuild esbuild @prisma/engines || true
 
 # ==========================================
 # 3. Builder
@@ -54,8 +55,10 @@ COPY --from=builder /app/src ./src
 COPY --from=builder /app/scripts ./scripts
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
+# Uploads ve Backups dizinlerini hazırla, izinleri ata
+RUN mkdir -p /app/public/uploads /var/lib/alacarte/backups
 RUN chmod +x ./docker-entrypoint.sh
-RUN chown -R nextjs:nodejs /app
+RUN chown -R nextjs:nodejs /app /var/lib/alacarte/backups
 
 USER nextjs
 

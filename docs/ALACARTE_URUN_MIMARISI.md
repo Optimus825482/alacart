@@ -8,29 +8,8 @@ Her alakart restoranın kendi kapalı yerel ağında çalışan; garsonların ma
 
 Sistem internet, otelin kurumsal ağı, otel PMS'i ve ödeme servisleri olmadan çalışmalıdır. Uluslararası 5 yıldızlı otel ve fine-dining masa servis standartlarına uygun masa, sipariş ve servis akışları ile modern, yüksek kontrastlı ve Alacarte'a özgü ekranlar üretilecektir.
 
-## 2. Onaylı gereksinimler
 
-| Alan | Karar |
-|---|---|
-| Restoran başına donanım | 1 dokunmatik sunucu-kasa (Ubuntu 24.04 LTS + Docker), 1 USB adisyon yazıcısı, 1 dahili Ethernet portlu mutfak yazıcısı, 1 kasa yanı PoE+ enjektör, 1 tavan All-in-One Router & Wi-Fi 6 AP (Keenetic Voyager Pro / MikroTik cAP ax), 1 mutfak kablosuz mesh AP (Keenetic Orbiter Pro); garson mobil terminalleri işletme envanterinden sağlanır. |
-| Ağ | Her restoran için kendi kapalı LAN/Wi-Fi ağı; otel ağına ve internete bağlantı yok |
-| Eşzamanlı kullanım | Aynı anda en fazla 10 garson hedefi |
-| Masa görünürlüğü | Her garson bütün masaları görebilir |
-| Mutfak İstasyonları ve Tek Yazıcı Eşlemesi | Restoranda fiziksel olarak 1 adet mutfak yazıcısı (80mm Ethernet) bulunur. Veritabanında ise 4 mantıksal istasyon (SICAK, SOĞUK/MEZE, IZGARA, TATLI) tanımlıdır ve hepsi varsayılan olarak bu tek mutfak kuyruğuna bağlıdır. Aynı turda farklı istasyonlara ait kalemler tek yazıcıdan otomatik kesimle istasyon başlıkları ayrı ayrı basılır (şefin ilgili tezgaha vermesi için). İleride 2. bir yazıcı eklenirse kod yazılmadan sistem ayarlarından eşleştirilebilir. |
-| Zorunlu Modifier (Hazırlama Kuralları) | Sistem Yöneticisi ilgili yönetim ekranı üzerinden modifier gruplarını dinamik ekleyebilir/düzenleyebilir (Zorunlu kuralı, minSelect, maxSelect, seçenek listesi). Bir üründe zorunlu modifier tanımlıysa (örn: etin pişme derecesi), garson seçim yapmadan siparişi mutfağa basamaz; sistem gönderimi engelleyip eksik seçimi bildirir. |
-| Ödeme/PMS | Ödeme alma ve otel PMS bağlantısı yok |
-| Yedek | Günlük arka plan yedeği hem firma tarafından sağlanan sunucu USB belleğine hem sunucu/atanmış yerel dizine alınır; her hedefte en fazla 15 kopya tutulur. Yerel sistem yöneticisi manuel yedek/geri yükleme yapabilir. |
-| Rapor geçmişi | Raporlar veritabanındaki kaynak kayıtlardan yeniden çalıştırılır; saklama/arşivleme/silme işlemlerini yerel sistem yöneticisi yönetir ve tüm değişiklikler audit'e alınır. |
-| Başlangıç kurulumu | Restoran adı ve masa sayısı girilir |
-| Menü kurulumu | Ana kategori, alt kategori, ürün ve zorunlu/isteğe bağlı modifier tanımları yapılır |
-| Roller | Her restoranın yerel kurulumunda sistem yöneticisi, restoran yöneticisi, garson; restoranlar arasında hesap/rol eşitlemesi yok |
-| Garson yetkisi | Masa seçimi, sipariş oluşturma/gönderme, iptal talebi oluşturma |
-| İptal | Gönderilmiş siparişi iptal etme yönetici onayına bağlı |
-| Teknoloji | Next.js, PostgreSQL, shadcn/ui |
-| İşletim sistemi/yazdırma | Sunucu Ubuntu Linux (24.04 LTS) ve Docker kullanır. Adisyon kasaya doğrudan USB ile, mutfak ise kasadan kablo çekilmeden mutfaktaki kablosuz mesh AP'nin Ethernet portu (CAT6 / Port 9100 RAW) üzerinden bağlanır; mutfaktan kasaya fiziksel kablo çekimi yoktur. |
-| Servis Standardı | Uluslararası fine-dining ve masa servis operasyon akışları, ergonomik ekran düzeni ve Alacarte'a özgü tasarım ilkeleri uygulanır. |
-
-## 3. Kapsam ve sınırlar
+## 2. Kapsam ve sınırlar
 
 ### Kapsamda
 
@@ -52,7 +31,7 @@ Sistem internet, otelin kurumsal ağı, otel PMS'i ve ödeme servisleri olmadan 
 - Otel PMS/oda hesabı entegrasyonu
 - Otel ağı, internet, bulut servisleri veya dış API bağımlılığı
 
-## 4. Hedef mimari
+## 3. Hedef mimari
 
 ```text
 Garson telefonu ───────┐
@@ -73,9 +52,9 @@ Adisyon yazıcısı ───────┘                            ├─ P
 - Sipariş gönderimlerinde istemci tekrar denemeleri çift sipariş üretmemelidir. Sipariş ve yazdırma işi veritabanında izlenebilir kimliklerle kaydedilir.
 - Next.js self-hosting altyapısı yerel sunucuda üretim dağıtımını ve tek sunuculu kurulumda yerel disk önbelleğini destekler; sistem internet bağlantısına veya CDN'e ihtiyaç duymayacak şekilde paketlenmiştir.
 
-## 5. Kullanıcı akışları
+## 4. Kullanıcı akışları
 
-### 5.1 İlk kurulum
+### 4.1 İlk kurulum
 
 1. Yönetici kurulum ekranını açar.
 2. Restoran adını, masa sayısını ve ilk sistem yöneticisini tanımlar.
@@ -86,7 +65,7 @@ Adisyon yazıcısı ───────┘                            ├─ P
 7. Adisyon ve mutfak yazıcısına test çıktısı gönderilir.
 8. Sistem internet/otel ağı olmadan temel sipariş akışıyla çalıştığı doğrulanır.
 
-### 5.2 Garson siparişi
+### 4.2 Garson siparişi
 
 1. Garson kişisel hesabıyla oturum açar.
 2. Tüm masaları ve masa durumlarını görür; masayı seçer.
@@ -96,7 +75,7 @@ Adisyon yazıcısı ───────┘                            ├─ P
 6. Garson siparişin kaydedildiğini ve yazdırma durumunu görür.
 7. Ek sipariş ayrı bir ek fiş olarak yazdırılır; önceki sipariş kalemleri tekrar basılmaz.
 
-### 5.3 İptal onayı
+### 4.3 İptal onayı
 
 1. Garson gönderilmiş kalem için iptal talebi ve gerekçe oluşturur.
 2. Kalem silinmez; yönetici ekranında bekleyen talep görünür.
@@ -104,11 +83,11 @@ Adisyon yazıcısı ───────┘                            ├─ P
 4. Karar, gerekçe, talep eden ve karar veren kullanıcı ile zaman damgası denetim kaydına yazılır.
 5. Onay sonrası mutfağa iptal bildirimi çıktısı gönderilir; önceki sipariş ve çıktı geçmişi korunur.
 
-### 5.4 Adisyon çıktısı
+### 4.4 Adisyon çıktısı
 
 Sistem yöneticisi veya restoran yöneticisi, mutfak siparişinden ayrı bir **fiyatsız servis özeti** yazdırabilir. Bu bir ödeme/hesap kapatma işlemi değildir. Çıktı restoran adı, masa, sipariş kalemleri, adet, not/modifier, tarih-saat ve adisyon referansını içerebilir; fiyat, ara toplam, vergi, bakiye, ödeme/tahsilat, tender veya PMS/oda bilgisi içermez. Garsonun adisyon yazdırma yetkisi verilmesi bu planın kapsamı değildir.
 
-### 5.5 Masa listesi ve açık siparişe devam etme
+### 4.5 Masa listesi ve açık siparişe devam etme
 
 1. Oturum açan garson tüm masaları masa planında ve aranabilir listede görür.
 2. Masa kartı en az masa numarası/adı, alanı ve aşağıdaki operasyon durumlarından birini taşır: **Boş**, **Serviste**, **Yeni sipariş gönderilecek**, **Mutfak çıktısı bekliyor/hatalı**, **İptal kararı bekliyor**. Kullanıcıya atama bu görünürlüğü kısıtlamaz.
@@ -120,7 +99,7 @@ Sistem yöneticisi veya restoran yöneticisi, mutfak siparişinden ayrı bir **f
 
 Bu yaklaşım, uluslararası masa servisi standartlarındaki açık check özetleri ve var olan check'i tekrar açma operasyon akışına dayanır.
 
-### 5.6 Sipariş ekranında ürün seçimi
+### 4.6 Sipariş ekranında ürün seçimi
 
 1. Açık sipariş ekranı masa ve sipariş referansını, açılış zamanını, garsonu ve isteğe bağlı misafir/kuver sayısını gösterir. Garson check açarken veya açık siparişte misafir sayısını girip değiştirebilir. Sipariş kalemlerine koltuk numarası atanması desteklenir; varsayılan olarak zorunlu değildir. Yerel sistem yöneticisi menü/ürün sınıfı ayarından yeni kalem eklenirken koltuk sorulmasını etkinleştirebilir.
 2. Garson ana kategori → alt kategori → ürün tuşu yoluyla ürün seçer; ürün arama da sunulur.
@@ -132,7 +111,7 @@ Bu yaklaşım, uluslararası masa servisi standartlarındaki açık check özetl
 
 Alacarte işlem ekranı check ayrıntısı, ürün arama, misafir/koltuk, menü grupları, ürün tuşları ve sipariş işlevlerini ergonomik bir işlem ekranında toplar; operasyonel akışta maliyet, indirim, vergi ve ödeme öğelerine yer verilmez.
 
-### 5.7 Servis turu ve mutfağa gönderim
+### 4.7 Servis turu ve mutfağa gönderim
 
 1. Garson yeni ürünleri seçtiğinde bu kalemler **Taslak / Bu tur** durumunda kalır; mevcut sipariş satırları değişmeden korunur.
 2. Garson **Mutfağa Gönder** eylemini verdiğinde sunucu, açık siparişe bağlı yeni turu bir defa kaydeder ve mutfak yazdırma işini ayrı bir yazdırma kimliğiyle kuyruğa koyar.
@@ -150,11 +129,11 @@ Alacarte işlem ekranı check ayrıntısı, ürün arama, misafir/koltuk, menü 
 5. Planlanmış saat geldiğinde yerel sunucu görevi yürütür; garson cihazının açık veya ağa bağlı olması gerekmez. Sunucu, zamanlanmış işi ve mutfak yazdırma işini tekil kimlikle ilişkilendirir; yeniden başlama/tekrar deneme aynı sipariş turunu veya fişi ikinci kez oluşturmaz.
 6. Gönderim başlamadan önce garson kendi bekleyen/zamanlanmış ürününün saatini değiştirebilir veya zamanlamayı kaldırabilir. Restoran yöneticisi bütün masalardaki bekleyen/zamanlanmış işleri görebilir, saatini değiştirebilir, iptal edebilir veya **Şimdi gönder** ile serbest bırakabilir. Her değişiklik kullanıcı ve zaman bilgisiyle denetim kaydına yazılır.
 7. Zamanlı gönderim sunucu saatine göre planlanan anda çalışır; normal işleyişte gecikmeli gönderim davranışı yoktur. Sunucu kapalıyken veya yazdırma kuyruğu kullanılamazken iş zamanında yürütülemezse sessizce geç gönderilmez: **Zamanında yürütülemedi** olarak işaretlenir ve yöneticiye bildirilir. Yönetici açıkça **Şimdi gönder** veya yeni saat seçer; böylece arıza sonrası eski sipariş mutfağa habersiz düşmez.
-8. Zamanı gelerek mutfağa iletilmiş bir ürün artık bekleyen/zamanlanmış değildir; iptali 5.8'deki yönetici onaylı iptal akışına tabidir. Bekletme/zamanlama, iptal yetkisini atlatmaz.
+8. Zamanı gelerek mutfağa iletilmiş bir ürün artık bekleyen/zamanlanmış değildir; iptali 4.8'deki yönetici onaylı iptal akışına tabidir. Bekletme/zamanlama, iptal yetkisini atlatmaz.
 
 Uluslararası masa servisi standartlarında servis turunu mutfak cihazına gönderme ile check'in daha sonra çağrılabilmesi ayrışır. Tek kalemi veya tüm turu bekletme, belirli saat için zamanlı gönderim, gönderim saatini değiştirme ve bekleyen kalemleri görüntüleme standart operasyon akışıdır. Alacarte bu işlevleri yerel sunucu tarafından yürütülen, fiyat/ödeme/PMS kapsamı dışında kalan sipariş durumları olarak uygular.
 
-### 5.8 Gönderilmemiş turu iptal etme ve gönderilmiş kalemi iptal talebi
+### 4.8 Gönderilmemiş turu iptal etme ve gönderilmiş kalemi iptal talebi
 
 - Taslak tur gönderilmeden önce garsonca düzeltilebilir; her kaldırma yine denetim geçmişine yazılır. Bu taslak işlemi, mutfağa gönderilmiş kalemin iptaliyle aynı şey değildir.
 - Mutfağa gönderilmiş bir veya daha fazla kalemin kaldırılması için garson gerekçe yazarak **iptal talebi** açar. Talep beklerken orijinal satır silinmez/değiştirilmez ve masa/sipariş geçmişinde görünür.
@@ -167,7 +146,7 @@ Sistem, çalışan rolü ve yetkisine göre POS işlevlerini sınırlar; iptal g
 
 **Alacarte için önerilen müdür yokluğu çözümü:** İşletme, vardiya başlamadan önce restoran yöneticisi dışında kendi hesabıyla giriş yapan bir veya daha fazla **vardiya iptal yetkilisi** belirleyebilir. Bu kişiye yalnız gönderilmiş kalem iptal talebini onaylama/reddetme yetkisi verilir; kullanıcı/menü/yedek/audit yönetimi gibi diğer yönetici ayrıcalıkları verilmez. Garson talebi açan kişi ise aynı talebi onaylayamaz. Gerekçe listesi zorunlu tutulur; seçilen nedenin yanında kısa açıklama alınır ve talep eden, karar veren, masa, kalem/adet, servis turu, zaman, gerekçe ve mutfağa giden iptal fişi tek audit zincirinde tutulur. Vardiya yetkilisi atanmamışsa veya erişilemiyorsa mevcut güvenli kural geçerlidir: talep bekler, sipariş satırı etkin kalır, otomatik/garson kaynaklı iptal yapılmaz. Yetkilendirme rollerinde yalnız gerekli iptal izni açılır; kullanıcılar arasında parola/PIN paylaşımı kesinlikle kullanılmaz. İşletme onayı verilene kadar varsayılan olarak yalnız restoran yöneticisi iptal kararı verebilir.
 
-### 5.9 Mutfak yazıcısı ve fiyatsız adisyon yazıcısı
+### 4.9 Mutfak yazıcısı ve fiyatsız adisyon yazıcısı
 
 - **Mutfak yazdırması:** garsonun gönderdiği servis turu veya yönetici onaylı iptal bildirimi mutfak yazdırma kuyruğuna gider. Mutfağa gönderim ile adisyon basımı ayrı eylem, ayrı çıktı şablonu ve ayrı yazdırma işi olarak tutulur.
 - **Fiyatsız adisyon:** sistem yöneticisi veya restoran yöneticisinin başlattığı, masanın servis kalemlerini özetleyen misafir/operasyon çıktısıdır. Siparişi mutfağa göndermez, servisi/masayı kapatmaz ve ödeme kaydı oluşturmaz.
@@ -176,7 +155,7 @@ Sistem, çalışan rolü ve yetkisine göre POS işlevlerini sınırlar; iptal g
 
 İşlem ekranında yazdırma (`Yazdır`) ve mutfağa iletim (`Gönder`) ayrı komutlardır. Alacarte bu ayrımı kesin olarak korur; operasyonel akışta maliyet, toplam, vergi veya ödeme içeriğine yer vermez.
 
-#### 5.9.1 Uluslararası Servis Standartlarında Çıktı Düzenleri ve Fiş Şablonları
+#### 4.9.1 Uluslararası Servis Standartlarında Çıktı Düzenleri ve Fiş Şablonları
 
 Sipariş cihazı çıktısı (mutfak sipariş fişi) ile servis adisyonu yazdırma birbirinden bağımsız iki ayrı operasyonel eylemdir. Bir servis turu mutfağa gönderilebilir; servis adisyonu ise talep üzerine basılabilir. Mutfak sipariş fişlerinde ürün adı, miktar, masa/garson bilgisi, hazırlama seçenekleri (modifier), koltuk numarası ve iptal işareti gibi unsurlar yapılandırılabilir. Alacarte bu bilgi hiyerarşisini ve iş akışını uluslararası 5 yıldızlı otel alakart standartlarına uygun olarak sunar.
 
@@ -209,7 +188,7 @@ Gönderim: 20:14:32       Fiş: K-000391
 - Tekrar baskı `TEKRAR BASKI` ibaresi ve ilk yazdırma işi referansıyla belirtilir; yeni sipariş/tur veya ürün adedi oluşturmaz. Baskı işi değişmez içerik anlık görüntüsü (snapshot) ve tetikleyen sipariş/tur olayıyla ilişkilendirilir.
 - Zorunlu MVP varsayılanı: aynı tur ve istasyona ait kalemleri tek fişte toplamak; ürün/modifier ilişkisini korumak. Kalem başına fiş veya dopplebon kapsam dışıdır.
 
-#### 5.9.3 Tek Fiziksel Mutfak Yazıcısı ve Çoklu Mantıksal İstasyon İşleyişi
+#### 4.9.2 Tek Fiziksel Mutfak Yazıcısı ve Çoklu Mantıksal İstasyon İşleyişi
 
 Standart alakart restoran paketimizde mutfakta **1 adet fiziksel termal mutfak yazıcısı (Epson TM-T20III Ethernet)** yer alır. Ancak mutfak operasyonu şef ve tezgâhlar bazında birden çok bölüme ayrılır:
 
@@ -247,7 +226,7 @@ TOPLAM SERVİS KALEMİ: 3        Sayfa 1/1
 
 Her iki formatta özgün Alacarte başlıkları ve tipografi kullanılır. Büyük masa/durum hiyerarşisi, ürün-modifier ilişkisi, boşluk ve okunabilirlik uluslararası ergonomi ve termal baskı standartlarına dayanır; ölçü, renk, logo ve gereksiz ibareler kopyalanmaz. HTML önizlemesi ile gerçek 80 mm çıktı ayrı ayrı kabul edilir; Türkçe karakter, uzun ürün adı/not, çoklu adet, kesim, yeni tur ve tekrar baskı kontrol edilir.
 
-### 5.10 Restoran yöneticisi servis kontrolü
+### 4.10 Restoran yöneticisi servis kontrolü
 
 1. Yönetici tüm masa ve açık siparişleri; son sipariş zamanı, servis turu, mutfak yazdırma durumu ve atanmış/işlemi yapan garsonla birlikte görüntüler.
 2. Bekleyen iptal talepleri ayrı listede gerekçe ve gönderilmiş/taslak kalem bilgisiyle gösterilir.
@@ -255,7 +234,7 @@ Her iki formatta özgün Alacarte başlıkları ve tipografi kullanılır. Büy�
 4. Yönetici fiyatsız adisyon yazdırır, yazıcı kuyruğundaki sorunları görür ve gerekirse açıkça işaretli tekrar baskı başlatır.
 5. Kullanıcı, sipariş, iptal, yazdırma ve masa kapatma olayları tarih sırasıyla denetim kaydında aranabilir.
 
-### 5.11 Yerel ağ/sunucu sorunu
+### 4.11 Yerel ağ/sunucu sorunu
 
 1. Garson cihazı sunucuya erişemezse ekranda bağlantı kaybı belirgin gösterilir; kullanıcıya **Kaydedildi** veya **Mutfağa gönderildi** denmez.
 2. Girilmiş ama sunucuya onaylatılmamış taslak cihazda geçici olarak korunabilir ve **Gönderilmedi** etiketiyle kalır.
@@ -264,7 +243,7 @@ Her iki formatta özgün Alacarte başlıkları ve tipografi kullanılır. Büy�
 
 Bağlantı kesildiğinde veya çevrimdışı kalındığında gönderilmemiş taslak uyarısı açıkça gösterilir; Alacarte yerel sunucu modelinde sunucu onayı ve yazıcı sonucu ayrımı net bir şekilde kullanıcıya sunulur.
 
-### 5.11.1 Tüm sistem için kullanıcı ve zaman damgalı denetim izi
+#### 4.11.1 Tüm sistem için kullanıcı ve zaman damgalı denetim izi
 
 Sistemdeki iş akışlarının tamamı denetim izi üretir. Kayıtlar sunucu tarafından oluşturulur; tarayıcı/cihaz saatine güvenilmez. Her olayda sunucunun kendi saatinden alınan tarih-saat damgası, sunucuda ayarlı saat dilimi, kullanıcı kimliği ve işlem anındaki kullanıcı adı, rol, restoran, cihaz/oturum, olay türü, etkilenen nesne kimliği (masa/sipariş/kalem/tur/yazdırma işi vb.), işlem sonucu ve varsa gerekçe bulunur. Değişikliklerde önceki ve yeni değerler; onay akışlarında talep eden ve karar veren ayrı aktörler saklanır. İlgili olaylar ortak bir işlem/izleme kimliğiyle birbirine bağlanır.
 
@@ -284,57 +263,355 @@ Sistem yöneticisi her kurulumda yerel bir roldür. Restoranlar birbirlerinin su
 
 **Kabul ölçütü:** Her başarılı ve reddedilmiş kritik işlem için aktör ve sunucu zaman damgası bulunmalı; bir siparişin masa açılışından tur gönderimine, mutfak baskısına ve varsa iptal/onay/tekrar baskısına kadar olay zinciri tekil referanslarla izlenebilmeli. Yetkisiz rolde görüntüleme ve değiştirme sunucu tarafında engellenmeli. Saklama sonu arşiv/silme provasında imzalı manifest, kapsanan aralık ve hash zinciri doğrulanmalı; yedekten dönüşte geri yükleme öncesi/sonrası bakım günlüğü ve audit izi ilişkilendirilebilmeli.
 
-### 5.12 Ekran envanteri ve ekran gereksinimleri
+### 4.12 Ekran envanteri ve ekran gereksinimleri
 
 Aşağıdaki liste planlanan her kullanıcı ekranını, ana içeriğini, eylemlerini ve kritik durumlarını tanımlar. Ekranların görsel prototipleri ve geliştirme sırasında doğrulanmış gerçek uygulama görünümleri ayrı teslimatlardır; bu bölüm ekran gereksinimlerini tanımlar, tek başına tüm ekranların tasarlanmış veya uygulanmış olduğu anlamına gelmez.
 
-| ID / ekran | Kullanıcı ve cihaz | İçerik ve ana eylemler | Zorunlu durumlar ve kurallar |
-|---|---|---|---|
-| SCR-01 Giriş | Tüm roller; telefon/kasa | Kullanıcı adı, parola/PIN politikası, giriş, oturum kapatma | Hatalı giriş, devre dışı hesap, oturum süresi doldu, sunucuya erişilemiyor; hata metni kullanıcıya Türkçe gösterilir. |
-| SCR-02 İlk kurulum sihirbazı | Sistem yöneticisi; kasa | Restoran adı, masa adedi/numaraları, ilk yönetici, yerel saat dilimi; adım özeti, doğrula ve devam et | Adım adım ilerleme, kısa bağlama duyarlı yardım, zorunlu alan doğrulama, geri dönme, ayar önizlemesi ve kurulum sonrası kontrol listesi; yarıda kalırsa güvenli devam. Teknik terimler açıklamasız bırakılmaz. |
-| SCR-03 Masa planı ve masa listesi | Garson/yönetici; telefon ve dokunmatik kasa | Alan/masa kartları, masa arama, durum filtreleri, masayı açma veya açık siparişe dönme | Boş, serviste, taslak var, zamanlandı/bekliyor, mutfak gönderim/baskı bekliyor-hatalı, iptal kararı bekliyor; tüm garsonlar tüm masaları görür. Son sunucu eşitleme zamanı/bağlantı durumu görünür; eski veriyle işlemde güncelleme uyarısı çıkar. |
-| SCR-04 Sipariş / işlem ekranı | Garson/yönetici; telefon ve dokunmatik kasa | Masa/sipariş başlığı, kişi sayısı (opsiyonel), kategori-alt kategori-ürün tuşları, ürün arama, mevcut kalemler ve yeni tur, adet/not/modifier, kaydet/gönder geri bildirimi, öğrenme ipuçları ve adım paneli | Taslak, kaydedilmemiş, kaydediliyor, kaydedildi, bekletildi, zamanlandı, gönderim/baskı durumu; fiyat/ödeme alanı hiçbir rolde gösterilmez. Yönetici öğrenme modunu açtıysa garson bağlama duyarlı ipuçlarını görebilir veya adım adım sipariş rehberini başlatabilir. Hata/yeniden denemede aynı istek kimliği korunur; çift tıklama çift sipariş oluşturmaz. Eşzamanlı düzenlemede taslak korunur ve yenile/çakışmayı çöz sunulur. |
-| SCR-05 Ürün seçeneği ve kalem düzenleme | Sipariş girebilen rol; telefon/kasa | Adet, tanımlı seçenek/modifier, mutfak notu, kalem/tur seçimi, taslağı kaldırma; seçenek/not/koltuk ipuçları | Yalnız gönderilmemiş kalem düzenlenebilir; gönderilmiş kalem düzenlemesi iptal talebine yönlendirir. Zorunlu seçenek eksikliği gönderimi engeller ve öğrenme modu açıksa eksik adımı anlaşılır biçimde açıklar. |
-| SCR-06 Bekletme ve zamanlama | Garson/yönetici; telefon/kasa | Kalem/grup/turu bekletme, “bu turdakileri beklet”, tarih-saat seçimi, zaman değiştir/kaldır, şimdi gönder; bağlama duyarlı yardım | Bekletildi, zamanlandı, zamanı geldi, gönderim hazırlanıyor, gönderildi, zamanı geçti/gönderilemedi, iptal edildi; saat restoran yerel saati ve saat dilimi açık olmalı. Öğrenme modu bekletme/zamanlamanın mutfağa henüz iş göndermediğini açıklar. |
-| SCR-07 Yönetici operasyon panosu | Restoran yöneticisi; kasa | Tüm masa durumları, son hareket, açık tur, bekletilmiş/zamanlanmış işler, yazıcı uyarıları ve bekleyen iptal kararları; garson öğrenme modu anahtarı; sunucu/uygulama+DB, adisyon/mutfak yazıcıları ve Windows kuyrukları, yerel LAN/AP/gateway ve garson cihazları için ışıklı bağlantı göstergeleri | Filtre/sıralama; alarmın okunmadı/incelemede/çözüldü durumu ve önerilen sonraki eylem; masa açma ve işlem ayrıntısına geçiş. Her gösterge Normal/Uyarı/Kritik/Bilinmiyor, son ölçüm yaşı ve son hata/başarı zamanını sunar; tıklama SCR-19 tanılama ayrıntısına gider. Eski heartbeat yeşil kalmaz. AP sağlık sorgusu desteklenmiyorsa yalnız yerel erişim/son görülen istemci bilgisi gösterilir ve AP kesin sağlıklıymış gibi sunulmaz. Göstergeler bilgi amaçlıdır; tanılama/onarım yetkisi vermez. Öğrenme modu varsayılan kapalıdır; yalnız restoran yöneticisi açıp kapatabilir. |
-| SCR-08 Sipariş ve masa ayrıntısı | Restoran yöneticisi; kasa | Tüm turlar, kalem durumları, işlem yapanlar, mutfak işleri, zamanlanmış gönderiler, olay geçmişi | Gönderilmiş kalem geçmişi silinemez; yönetici eylemleri rol/izin kontrolü ve denetim kaydıyla yapılır. |
-| SCR-09 İptal talepleri | Garson talep açar; restoran yöneticisi karar verir; kasa/telefon | Talep gerekçesi, kalem/tur, talep eden, zaman; onayla/reddet ve karar gerekçesi | Bekliyor, onaylandı, reddedildi; çift karar engeli; onay sonrası ayrı mutfak iptal işi ve baskı durumu. Garson karar veremez. |
-| SCR-10 Yazıcılar ve yazdırma kuyruğu | Restoran yöneticisi/sistem yöneticisi; kasa | Mutfak ve adisyon cihazı, çevrimiçi/erişim durumu, iş kimliği, çıktı türü, deneme ve zaman, hata kodu/açıklaması, son başarılı iş, tekrar baskı/şimdi dene | Bekliyor, gönderiliyor, yazıcıya iletildi, hata, sonucu belirsiz, tekrar baskı; belirsiz işte otomatik çift baskı yok. Kullanıcıya anlaşılır çözüm adımları ve yöneticinin destek için dışa aktaracağı tanılama kaydı sunulur. |
-| SCR-11 Fiyatsız adisyon önizleme/yazdırma | Sistem/restoran yöneticisi; kasa | Masa ve sipariş/tur kapsamı, çıktı önizlemesi, yazdır, yazdırma geçmişi | Fiyat/toplam/vergi/ödeme/PMS alanı yok; yazdırma masa kapatma veya mutfak gönderme yapmaz. |
-| SCR-12 Rapor merkezi | Sistem/restoran yöneticisi; dokunmatik kasa | Rapor kategorileri ve hazır raporlar, arama/sık kullanılanlar, tarih/masa/garson/kategori/ürün/durum filtreleri, çalıştır/temizle, tablo/özet, kaynak ayrıntısı, yazdır/dışa aktar | Boş sonuç, geçersiz filtre, yükleniyor, uzun sorgu/arka plan, hata; etkin filtreler ve veri dönemi açıkça görünür; sonuç adetleri kaynak sipariş/audit kayıtlarıyla tutarlıdır. Fiyat/ödeme raporu yok; filtre ve çalıştırma audit'e yazılır. |
-| SCR-13 Denetim günlüğü | Yerel sistem yöneticisi; kasa | Kullanıcı/rol, olay türü, nesne/masa/sipariş, sonuç ve sunucu tarih-saat aralığı arama; önceki-yeni değer ve olay zinciri; yetkili dışa aktarma | Her olay sunucu sistem saatinden damgalı; salt okunur; saklama, yedekleme ve dışa aktarma yönetimi yalnız yerel sistem yöneticisinde; restoran yöneticisi görüntüleyemez. |
-| SCR-14 Restoran/masa/alan tanımları | Yerel sistem yöneticisi; kasa | Restoran bilgisi, alanlar, masa numarası/adı/aktifliği; ekle/düzenle/pasifleştir | Kullanımdaki masa silinmez; açık siparişte masa değişikliği ayrı ve denetimli işlem olur. |
-| SCR-15 Menü yönetimi | Yerel sistem yöneticisi; kasa | Ana kategori, alt kategori, ürün, ad/fiş adı, etkinlik, sıralama, modifier ve mutfak istasyonu/yazıcı eşlemesi; değişiklik özeti, doğrula ve yayınla | Taslak/aktif/pasif; kullanım geçmişi korunur; kategori veya ürün pasifleştirme açık siparişi silmez. Menü sürümü sunucuda etkinleştirilir; istemcilerin güncel sürümü aldığı doğrulanır ve eski menü kullanan oturum uyarılır. Fiyat alanı kapsam dışıdır. |
-| SCR-16 Kullanıcı ve rol yönetimi | Yerel sistem yöneticisi; kasa | Kullanıcı adı/ad-soyad, kişisel PIN/parola oluşturma veya sıfırlama, aktiflik/oturum iptali, temel rol atama, izin modülleri (görüntüle/oluştur/düzenle/pasifleştir), POS eylem izinleri, kapsam ve değişiklik önizlemesi | Varsayılan ret; kullanıcı başına tekil hesap; son etkin sistem yöneticisi kaldırılamaz; her kullanıcı/rol/izin değişikliği önce/sonra değerleriyle audit'e yazılır. Restoranlar arası hesap/rol eşitlemesi yoktur. |
-| SCR-17 Yazıcı ve istasyon yapılandırması | Yerel sistem yöneticisi; kasa | Yazıcı adı/IP, işletim sistemi kuyruk adı, bağlantı türü, görev (mutfak/adisyon), ürün yönlendirme, test çıktısı | Bağlı/erişilemiyor/hatalı; test çıktısı açıkça test diye işaretlenir; işletim sistemi ve kuyruk sürücü/bağlantı eşleşmesi pilotta doğrulanır. |
-| SCR-18 Yedekleme ve geri yükleme | Yerel sistem yöneticisi; sunucu/kasa | USB ve yerel dizin hedeflerinin durumu, son otomatik yedek zamanı/sonucu, hedef seçimi, günlük+manuel toplam en fazla 15 kopya listesi, şimdi yedekle, seçili kopyayı geri yükle | Günlük arka plan işi; hedef yok/alan yetersiz/hata/başarılı; geri yükleme önizlemesi ve açık onay; işlem sonrası sürüm, kayıt sayısı, audit ve hash zinciri doğrulaması. |
-| SCR-19 Sistem durumu ve bakım | Sistem yöneticisi; kasa | Sunucu/uygulama/DB, disk/saat, yerel ağ/istemci heartbeat, Windows spooler ve iki yazdırma kuyruğu, yazıcı erişimi, yedek hedefi/bütünlüğü ve sürüm; sıralı tanılamayı başlat/durdur, bulgu/öneri/onarım planı, onaylı onarım, onarım sonrası doğrulama, geçmiş ve güvenli dışa aktarım | Her adımın aşaması, süresi, sonucu, önem derecesi, ilk hata/son başarı zamanı ve olay kimliği görünür; varsayılan tarama salt okunurdur. Uygun onarım yalnız yerel sistem yöneticisinin işlem bazlı açık onayı ve doğrulanmış ön yedekten sonra başlar. İnternet/otel ağı gerektirmez; sipariş servisi sağlık kontrolü gerçek hazır olma durumunu yansıtır. |
+| ID / ekran | Kullanıcı ve cihaz | İçerik ve ana eylemler | Zorunlu durumlar ve kurallar                                                                                         |
+| ---------- | ------------------ | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| SCR-01     | Tüm roller;        | Kullanıcı adı,         | Hatalı giriş, devre dışı hesap, oturum süresi doldu, sunucuya erişilemiyor; hata metni kullanıcıya Türkçe            |
+| Giriş      | telefon/kasa       | parola/PIN politikası, | gösterilir.                                                                                                          |
+|            |                    | giriş, oturum kapatma  |                                                                                                                      |
+| SCR-02 İlk | Sistem yöneticisi; | Restoran adı, masa     | Adım adım ilerleme, kısa bağlama duyarlı yardım, zorunlu alan doğrulama, geri dönme, ayar önizlemesi ve kurulum      |
+| kurulum    | kasa               | adedi/numaraları, ilk  | sonrası kontrol listesi; yarıda kalırsa güvenli devam. Teknik terimler açıklamasız bırakılmaz.                       |
+| sihirbazı  |                    | yönetici, yerel saat   |                                                                                                                      |
+|            |                    | dilimi; adım özeti,    |                                                                                                                      |
+|            |                    | doğrula ve devam et    |                                                                                                                      |
+| SCR-03     | Garson/yönetici;   | Alan/masa kartları,    | Boş, serviste, taslak var, zamanlandı/bekliyor, mutfak gönderim/baskı bekliyor-hatalı, iptal kararı bekliyor; tüm    |
+| Masa planı | telefon ve         | masa arama, durum      | garsonlar tüm masaları görür. Son sunucu eşitleme zamanı/bağlantı durumu görünür; eski veriyle işlemde güncelleme    |
+| ve masa    | dokunmatik kasa    | filtreleri, masayı     | uyarısı çıkar.                                                                                                       |
+| listesi    |                    | açma veya açık         |                                                                                                                      |
+|            |                    | siparişe dönme         |                                                                                                                      |
+| SCR-04     | Garson/yönetici;   | Masa/sipariş başlığı,  | Taslak, kaydedilmemiş, kaydediliyor, kaydedildi, bekletildi, zamanlandı, gönderim/baskı durumu; fiyat/ödeme alanı    |
+| Sipariş /  | telefon ve         | kişi sayısı            | hiçbir rolde gösterilmez. Yönetici öğrenme modunu açtıysa garson bağlama duyarlı ipuçlarını görebilir veya adım adım |
+| işlem      | dokunmatik kasa    | (opsiyonel),           | sipariş rehberini başlatabilir. Hata/yeniden denemede aynı istek kimliği korunur; çift tıklama çift sipariş          |
+| ekranı     |                    | kategori-alt           | oluşturmaz. Eşzamanlı düzenlemede taslak korunur ve yenile/çakışmayı çöz sunulur.                                    |
+|            |                    | kategori-ürün tuşları, |                                                                                                                      |
+|            |                    | ürün arama, mevcut     |                                                                                                                      |
+|            |                    | kalemler ve yeni tur,  |                                                                                                                      |
+|            |                    | adet/not/modifier,     |                                                                                                                      |
+|            |                    | kaydet/gönder geri     |                                                                                                                      |
+|            |                    | bildirimi, öğrenme     |                                                                                                                      |
+|            |                    | ipuçları ve adım       |                                                                                                                      |
+|            |                    | paneli                 |                                                                                                                      |
+| SCR-05     | Sipariş girebilen  | Adet, tanımlı          | Yalnız gönderilmemiş kalem düzenlenebilir; gönderilmiş kalem düzenlemesi iptal talebine yönlendirir. Zorunlu seçenek |
+| Ürün       | rol; telefon/kasa  | seçenek/modifier,      | eksikliği gönderimi engeller ve öğrenme modu açıksa eksik adımı anlaşılır biçimde açıklar.                           |
+| seçeneğive |                    | mutfak notu, kalem/tur |                                                                                                                      |
+| kalem      |                    | seçimi, taslağı        |                                                                                                                      |
+| düzenleme  |                    | kaldırma;              |                                                                                                                      |
+|            |                    | seçenek/not/koltuk     |                                                                                                                      |
+|            |                    | ipuçları               |                                                                                                                      |
+| SCR-06     | Garson/yönetici;   | Kalem/grup/turu        | Bekletildi, zamanlandı, zamanı geldi, gönderim hazırlanıyor, gönderildi, zamanı geçti/gönderilemedi, iptal edildi;   |
+| Bekletmeve | telefon/kasa       | bekletme, “bu          | saat restoran yerel saati ve saat dilimi açık olmalı. Öğrenme modu bekletme/zamanlamanın mutfağa henüz iş            |
+| zamanlama  |                    | turdakileri beklet”,   | göndermediğini açıklar.                                                                                              |
+|            |                    | tarih-saat seçimi,     |                                                                                                                      |
+|            |                    | zaman değiştir/kaldır, |                                                                                                                      |
+|            |                    | şimdi gönder; bağlama  |                                                                                                                      |
+|            |                    | duyarlı yardım         |                                                                                                                      |
+| SCR-07     | Restoran           | Tüm masa durumları,    | Filtre/sıralama; alarmın okunmadı/incelemede/çözüldü durumu ve önerilen sonraki eylem; masa açma ve işlem            |
+| Yönetici   | yöneticisi; kasa   | son hareket, açık tur, | ayrıntısına geçiş. Her gösterge Normal/Uyarı/Kritik/Bilinmiyor, son ölçüm yaşı ve son hata/başarı zamanını sunar;    |
+| operasyon  |                    | bekletilmiş/zamanlanmı | tıklama SCR-19 tanılama ayrıntısına gider. Eski heartbeat yeşil kalmaz. AP sağlık sorgusu desteklenmiyorsa yalnız    |
+| panosu     |                    | ş işler, yazıcı        | yerel erişim/son görülen istemci bilgisi gösterilir ve AP kesin sağlıklıymış gibi sunulmaz. Göstergeler bilgi        |
+|            |                    | uyarıları ve bekleyen  | amaçlıdır; tanılama/onarım yetkisi vermez. Öğrenme modu varsayılan kapalıdır; yalnız restoran yöneticisi açıp        |
+|            |                    | iptal kararları;       | kapatabilir.                                                                                                         |
+|            |                    | garson öğrenme modu    |                                                                                                                      |
+|            |                    | anahtarı;              |                                                                                                                      |
+|            |                    | sunucu/uygulama+DB,    |                                                                                                                      |
+|            |                    | adisyon/mutfak         |                                                                                                                      |
+|            |                    | yazıcıları ve Windows  |                                                                                                                      |
+|            |                    | kuyrukları, yerel      |                                                                                                                      |
+|            |                    | LAN/AP/gateway ve      |                                                                                                                      |
+|            |                    | garson cihazları için  |                                                                                                                      |
+|            |                    | ışıklı bağlantı        |                                                                                                                      |
+|            |                    | göstergeleri           |                                                                                                                      |
+| SCR-08     | Restoran           | Tüm turlar, kalem      | Gönderilmiş kalem geçmişi silinemez; yönetici eylemleri rol/izin kontrolü ve denetim kaydıyla yapılır.               |
+| Sipariş ve | yöneticisi; kasa   | durumları, işlem       |                                                                                                                      |
+| masa       |                    | yapanlar, mutfak       |                                                                                                                      |
+| ayrıntısı  |                    | işleri, zamanlanmış    |                                                                                                                      |
+|            |                    | gönderiler, olay       |                                                                                                                      |
+|            |                    | geçmişi                |                                                                                                                      |
+| SCR-09     | Garson talep açar; | Talep gerekçesi,       | Bekliyor, onaylandı, reddedildi; çift karar engeli; onay sonrası ayrı mutfak iptal işi ve baskı durumu. Garson karar |
+| İptal      | restoran           | kalem/tur, talep eden, | veremez.                                                                                                             |
+| talepleri  | yöneticisi karar   | zaman; onayla/reddetve |                                                                                                                      |
+|            | verir;             | karar gerekçesi        |                                                                                                                      |
+|            | kasa/telefon       |                        |                                                                                                                      |
+| SCR-10     | Restoran           | Mutfak ve adisyon      | Bekliyor, gönderiliyor, yazıcıya iletildi, hata, sonucu belirsiz, tekrar baskı; belirsiz işte otomatik çift baskı    |
+| Yazıcılarv | yöneticisi/sistem  | cihazı,                | yok. Kullanıcıya anlaşılır çözüm adımları ve yöneticinin destek için dışa aktaracağı tanılama kaydı sunulur.         |
+| e yazdırma | yöneticisi; kasa   | çevrimiçi/erişim       |                                                                                                                      |
+| kuyruğu    |                    | durumu, iş kimliği,    |                                                                                                                      |
+|            |                    | çıktı türü, deneme ve  |                                                                                                                      |
+|            |                    | zaman, hata            |                                                                                                                      |
+|            |                    | kodu/açıklaması, son   |                                                                                                                      |
+|            |                    | başarılı iş, tekrar    |                                                                                                                      |
+|            |                    | baskı/şimdi dene       |                                                                                                                      |
+| SCR-11     | Sistem/restoran    | Masa ve sipariş/tur    | Fiyat/toplam/vergi/ödeme/PMS alanı yok; yazdırma masa kapatma veya mutfak gönderme yapmaz.                           |
+| Fiyatsız   | yöneticisi; kasa   | kapsamı, çıktı         |                                                                                                                      |
+| adisyon    |                    | önizlemesi, yazdır,    |                                                                                                                      |
+| önizleme/y |                    | yazdırma geçmişi       |                                                                                                                      |
+| azdırma    |                    |                        |                                                                                                                      |
+| SCR-12     | Sistem/restoran    | Rapor kategorileri ve  | Boş sonuç, geçersiz filtre, yükleniyor, uzun sorgu/arka plan, hata; etkin filtreler ve veri dönemi açıkça görünür;   |
+| Rapor      | yöneticisi;        | hazır raporlar,        | sonuç adetleri kaynak sipariş/audit kayıtlarıyla tutarlıdır. Fiyat/ödeme raporu yok; filtre ve çalıştırma audit'e    |
+| merkezi    | dokunmatik kasa    | arama/sık              | yazılır.                                                                                                             |
+|            |                    | kullanılanlar,         |                                                                                                                      |
+|            |                    | tarih/masa/garson/kate |                                                                                                                      |
+|            |                    | gori/ürün/durum        |                                                                                                                      |
+|            |                    | filtreleri,            |                                                                                                                      |
+|            |                    | çalıştır/temizle,      |                                                                                                                      |
+|            |                    | tablo/özet, kaynak     |                                                                                                                      |
+|            |                    | ayrıntısı, yazdır/dışa |                                                                                                                      |
+|            |                    | aktar                  |                                                                                                                      |
+| SCR-13     | Yerel sistem       | Kullanıcı/rol, olay    | Her olay sunucu sistem saatinden damgalı; salt okunur; saklama, yedekleme ve dışa aktarma yönetimi yalnız yerel      |
+| Denetim    | yöneticisi; kasa   | türü,                  | sistem yöneticisinde; restoran yöneticisi görüntüleyemez.                                                            |
+| günlüğü    |                    | nesne/masa/sipariş,    |                                                                                                                      |
+|            |                    | sonuç ve sunucu        |                                                                                                                      |
+|            |                    | tarih-saat aralığı     |                                                                                                                      |
+|            |                    | arama; önceki-yeni     |                                                                                                                      |
+|            |                    | değer ve olay zinciri; |                                                                                                                      |
+|            |                    | yetkili dışa aktarma   |                                                                                                                      |
+| SCR-14     | Yerel sistem       | Restoran bilgisi,      | Kullanımdaki masa silinmez; açık siparişte masa değişikliği ayrı ve denetimli işlem olur.                            |
+| Restoran/m | yöneticisi; kasa   | alanlar, masa          |                                                                                                                      |
+| asa/alan   |                    | numarası/adı/aktifliği |                                                                                                                      |
+| tanımları  |                    | ;                      |                                                                                                                      |
+|            |                    | ekle/düzenle/pasifleşt |                                                                                                                      |
+|            |                    | ir                     |                                                                                                                      |
+| SCR-15     | Yerel sistem       | Ana kategori, alt      | Taslak/aktif/pasif; kullanım geçmişi korunur; kategori veya ürün pasifleştirme açık siparişi silmez. Menü sürümü     |
+| Menü       | yöneticisi; kasa   | kategori, ürün, ad/fiş | sunucuda etkinleştirilir; istemcilerin güncel sürümü aldığı doğrulanır ve eski menü kullanan oturum uyarılır. Fiyat  |
+| yönetimi   |                    | adı, etkinlik,         | alanı kapsam dışıdır.                                                                                                |
+|            |                    | sıralama, modifier ve  |                                                                                                                      |
+|            |                    | mutfak                 |                                                                                                                      |
+|            |                    | istasyonu/yazıcı       |                                                                                                                      |
+|            |                    | eşlemesi; değişiklik   |                                                                                                                      |
+|            |                    | özeti, doğrula ve      |                                                                                                                      |
+|            |                    | yayınla                |                                                                                                                      |
+| SCR-16     | Yerel sistem       | Kullanıcı              | Varsayılan ret; kullanıcı başına tekil hesap; son etkin sistem yöneticisi kaldırılamaz; her kullanıcı/rol/izin       |
+| Kullanıcıv | yöneticisi; kasa   | adı/ad-soyad, kişisel  | değişikliği önce/sonra değerleriyle audit'e yazılır. Restoranlar arası hesap/rol eşitlemesi yoktur.                  |
+| e rol      |                    | PIN/parola oluşturma   |                                                                                                                      |
+| yönetimi   |                    | veya sıfırlama,        |                                                                                                                      |
+|            |                    | aktiflik/oturum        |                                                                                                                      |
+|            |                    | iptali, temel rol      |                                                                                                                      |
+|            |                    | atama, izin modülleri  |                                                                                                                      |
+|            |                    | (görüntüle/oluştur/düz |                                                                                                                      |
+|            |                    | enle/pasifleştir), POS |                                                                                                                      |
+|            |                    | eylem izinleri,        |                                                                                                                      |
+|            |                    | kapsamve değişiklik    |                                                                                                                      |
+|            |                    | önizlemesi             |                                                                                                                      |
+| SCR-17     | Yerel sistem       | Yazıcı adı/IP, işletim | Bağlı/erişilemiyor/hatalı; test çıktısı açıkça test diye işaretlenir; işletim sistemi ve kuyruk sürücü/bağlantı      |
+| Yazıcı ve  | yöneticisi; kasa   | sistemi kuyruk adı,    | eşleşmesi pilotta doğrulanır.                                                                                        |
+| istasyon   |                    | bağlantı türü, görev   |                                                                                                                      |
+| yapılandır |                    | (mutfak/adisyon), ürün |                                                                                                                      |
+| ması       |                    | yönlendirme, test      |                                                                                                                      |
+|            |                    | çıktısı                |                                                                                                                      |
+| SCR-18     | Yerel sistem       | USB ve yerel dizin     | Günlük arka plan işi; hedef yok/alan yetersiz/hata/başarılı; geri yükleme önizlemesi ve açık onay; işlem sonrası     |
+| Yedeklemev | yöneticisi;        | hedeflerinin durumu,   | sürüm, kayıt sayısı, audit ve hash zinciri doğrulaması.                                                              |
+| e geri     | sunucu/kasa        | son otomatik yedek     |                                                                                                                      |
+| yükleme    |                    | zamanı/sonucu, hedef   |                                                                                                                      |
+|            |                    | seçimi, günlük+manuel  |                                                                                                                      |
+|            |                    | toplam en fazla 15     |                                                                                                                      |
+|            |                    | kopya listesi, şimdi   |                                                                                                                      |
+|            |                    | yedekle, seçili        |                                                                                                                      |
+|            |                    | kopyayı geri yükle     |                                                                                                                      |
+| SCR-19     | Sistem yöneticisi; | Sunucu/uygulama/DB,    | Her adımın aşaması, süresi, sonucu, önem derecesi, ilk hata/son başarı zamanı ve olay kimliği görünür; varsayılan    |
+| Sistem     | kasa               | disk/saat, yerel       | tarama salt okunurdur. Uygun onarım yalnız yerel sistem yöneticisinin işlem bazlı açık onayı ve doğrulanmış ön       |
+| durumu ve  |                    | ağ/istemci heartbeat,  | yedekten sonra başlar. İnternet/otel ağı gerektirmez; sipariş servisi sağlık kontrolü gerçek hazır olma durumunu     |
+| bakım      |                    | Windows spooler ve iki | yansıtır.                                                                                                            |
+|            |                    | yazdırma kuyruğu,      |                                                                                                                      |
+|            |                    | yazıcı erişimi, yedek  |                                                                                                                      |
+|            |                    | hedefi/bütünlüğü ve    |                                                                                                                      |
+|            |                    | sürüm; sıralı          |                                                                                                                      |
+|            |                    | tanılamayı             |                                                                                                                      |
+|            |                    | başlat/durdur,         |                                                                                                                      |
+|            |                    | bulgu/öneri/onarım     |                                                                                                                      |
+|            |                    | planı, onaylı onarım,  |                                                                                                                      |
+|            |                    | onarım sonrası         |                                                                                                                      |
+|            |                    | doğrulama, geçmiş ve   |                                                                                                                      |
+|            |                    | güvenli dışa aktarım   |                                                                                                                      |
 
-#### 5.12.1 Ekran düğmeleri ve işlev davranışları
+#### 4.12.1 Ekran düğmeleri ve işlev davranışları
 
 Bu katalog, ekrandaki düğmenin tetikleyicisini, beklenen sonucunu ve operasyonel sınırını tanımlar. Ekran yerleşimi sipariş özeti, ürün arama, misafir/koltuk, menü kategorileri, ürün tuşları ve `Yazdır`/`Gönder` alanlarını uluslararası dokunmatik POS ergonomisine uygun olarak sunar. Fiyat, ödeme, indirim, vergi, kasa çekmecesi ve PMS işlemleri sistem kapsamı dışındadır.
 
-| Ekran | Görünür ana düğmeler/alanlar | Tetikleyici ve sonuç | Yetki, hata ve denetim kuralı |
-|---|---|---|---|
-| SCR-01 Giriş | `Giriş Yap`, `Yönetici Yardımı`, `Çıkış Yap` | Giriş, kullanıcı hesabını doğrular ve izin verilen ana ekrana yönlendirir; çıkış oturumu kapatır. Şifresini/PIN'ini unutan çalışan yerel sistem yöneticisinden sıfırlama ister. | E-posta, SMS veya internet üzerinden parola sıfırlama yoktur. Yönetici geçici kimlik bilgisini verir; ilk girişte yenisi belirlenir ve önceki oturumlar geçersiz kılınır. Başarısız denemeler audit'e yazılır, sırlar loglanmaz. |
-| SCR-02 İlk kurulum | `Geri`, `Devam`, `Kontrol Et`, `Kurulumu Tamamla` | Restoran adı, masa/alan ve saat dilimi doğrulanır; ilk sistem yöneticisi tek kullanımlık kurulum anahtarıyla oluşturulur; son adımda yerel sunucu kurulumu tamamlanır. | Kurulum yalnız sunucunun yerel ekranından başlatılır; varsayılan ortak yönetici parolası yoktur. İlk yönetici hesabı açılınca kurulum anahtarı ve ilk kurulum uç noktası geçersizleşir. |
-| SCR-03 Masa planı | Alan sekmesi, `Ara`, durum filtreleri, masa kartı, `Yeni Servis`, `Açık Siparişe Dön`, `Servisi Tamamla` | Masa kartı açık siparişe gider; boş masa `Yeni Servis` ile açılır; açık masa tekrar seçilince yeni sipariş açmak yerine mevcut servis sürdürülür. Tamamlama masa/servisi operasyonel olarak bitirir, hesap/ödeme kapatmaz. | Tüm garsonlar bütün masaları görür. `Servisi Tamamla` yalnız restoran yöneticisine açıktır ve neden/sonuç audit izi üretir; aynı masa için eşzamanlı ikinci servis açılmaz. |
-| SCR-04 Sipariş/işlem | Kategori/alt kategori, `Ürün Ara`, `Temizle`, ürün tuşu, misafir/kuver sayısı, `Koltuk Ekle`, `Koltuk Ata/Değiştir`, `Ürünü Paylaştır`, servis turu, `İşlemler`, `Mutfağa Gönder`, `Yardım`, `Adım Adım Rehber` | Ürün tuşu kalemi yeni taslak tura ekler. Arama açılır, sorgu uygulanır ve `Temizle` tüm menüyü geri getirir. Misafir sayısı check düzeyinde girilir/değiştirilir; koltuk numarası kalem düzeyinde seçilir, mevcut kalem taşınabilir veya paylaşılabilir ürün birden fazla koltuğa atanabilir. Kalem geçmişinde önceki tur `*`, bekletilmiş `BEKLETİLDİ`, iptal edilmiş `İPTAL` olarak ayırt edilir. `Mutfağa Gönder` kesintisiz servis akışı mantığıyla (Send and Stay) mevcut gönderilebilir kalemleri OS kuyruğuna verir; masa açık kalır ve kullanıcı aynı servis üzerinde çalışmaya devam eder. `Yardım` kısa bağlamsal ipuçlarını, `Adım Adım Rehber` sıralı öğrenme akışını açar. | `Masa Servisi` varsayılan işlem türüdür; başka servis türü tanımlı değilse tür seçici gösterilmez. Misafir sayısı isteğe bağlıdır; koltuk ataması varsayılan olarak isteğe bağlıdır ve menü/ürün sınıfı ayarından ekleme sırasında sorulabilir/zorunlu kılınabilir. Koltuk ve paylaşım değişiklikleri sipariş yetkisi olan garson veya yönetici tarafından yapılır ve audit'e yazılır. Gönderim çift dokunma/idempotency korumalıdır. Öğrenme modu kapalıysa eğitim düğmeleri görünmez; açıkken yalnız restoran yöneticisi modu kapatır. Yardım/rehber adımı sipariş verisini değiştirmez; gerçek işlem yine garsonun açık eylemiyle yapılır. |
-| SCR-05 Kalem/seçenek | `+`, `−`, `Seçenekleri Düzenle`, modifier seç/çıkar, `Not`, `Yardım`, `Koltuk Ata/Değiştir`, `Ürünü Paylaştır`, `Uygula`, `Taslaktan Kaldır`, `İptal Talebi` | Adet ve modifier/not değişikliği `Uygula` ile taslağa yansır; `Koltuk Ata/Değiştir` seçili kalemi yeni koltuğa taşır, `Ürünü Paylaştır` yalnız paylaşılabilir menü ürününü seçilen koltuklara bağlar. Taslak kalem kaldırılır; gönderilmiş kalem miktar/modifier olarak değiştirilemez ve yönetici onaylı iptal talebine yönelir; koltuk düzeltmesi audit'li yapılabilir. | Sıfır/negatif adet engellenir; zorunlu modifier eksikse gönderim kapalıdır. Gönderilmiş kalem kaldırma veya sessiz değiştirme yoktur; koltuk değişimi siparişin ürün adet sayısını değiştirmez. Öğrenme modu açıksa zorunlu modifier ve koltuk adımı kısa açıklamayla gösterilir. |
-| SCR-06 Bekletme/zamanlama | `Kalemi Beklet`, `Turu Beklet`, `Bekleyenleri Gönder`, `Bekletilenleri de Gönder`, `Seçileni Şimdi Gönder`, `Zaman Ata`, `Saati Değiştir`, `Zamanlamayı Kaldır`, `Gönderim Saatlerini Gör`, `Yardım` | Kalem bazlı bekletme sadece seçili ürünü; tur bekletme turun uygun kalemlerini etkiler. `Bekleyenleri Gönder` bekletilmemiş kalemleri gönderir; `Bekletilenleri de Gönder` tutulanları serbest bırakır; seçili gönderim o kalemleri yeni mutfak işi yapar. Zaman ata/değiştir/kaldır, sunucu zamanlayıcısındaki kalıcı işi günceller. | Uluslararası bekletme ve zamanlı ateşleme (Hold/Timed Fire) akışı uygulanır; bekletilen/zamanlanan kalem gönderilmedikçe mutfak işine dönüşmez. Otomatik tetikleyici aktörü `SİSTEM`, planı kuran kullanıcı ayrıca kayıtlıdır. Tüm değişiklikler audit'e yazılır. Öğrenme modu açıksa bekletme ve zamanlama sonucu, mutfağa gönderimle farkı açıklanır. |
-| SCR-07 Yönetici panosu | Durum filtresi, `Yenile`, `Masa Ayrıntısı`, `İptal Talepleri`, `Zamanlı İşler`, `Yazdırma Kuyruğu`, bağlantı ışıkları, `Garson Öğrenme Modu: Aç/Kapat` | Seçilen kart/listeden ilgili yönetim ekranına gider; `Yenile` sunucu ve cihaz heartbeat bilgilerini tekrar okur. Bağlantı göstergesi tıklanınca sistem yöneticisi yetkisi gerektiren SCR-19 ayrıntısına yönlendirilir; restoran yöneticisine yalnız operasyonel durum gösterilir. | Göstergeler veri yaşı eşiği geçince Bilinmiyor/Uyarı olur; erişilemeyen AP'nin durumu tahmin edilmez. Restoran yöneticisi onarım başlatamaz. Her operasyonel karar ve öğrenme modu değişikliği aktör/sunucu zamanı/eski-yeni değerle audit'e yazılır. |
-| SCR-08 Sipariş/masa ayrıntısı | Tur sekmeleri, kalem ayrıntısı, `Masa Taşı`, `Servisi Tamamla`, yazdırma/olay geçmişi | Tur ve kalem detayları açılır. `Masa Taşı`, açık siparişi hedef masaya aynı kimlik ve geçmişle taşır; eski ve yeni masa birlikte güncellenir. | Taşıma ve tamamlama restoran yöneticisine aittir; hedef masa boş değilse çakışma uyarısı verilir ve işlem yapılmaz; fiyat/check settlement yoktur. |
-| SCR-09 İptal talepleri | `Onayla ve Mutfağa Bildir`, `Reddet`, gerekçe alanı, `Detay` | Talep edilen gönderilmiş kalem/adet için karar verilir. Onay, ayrı iptal mutfak işi oluşturur; red ürünü etkin bırakır. | Yalnız restoran yöneticisi; gerekçe zorunlu; önceki gönderim değişmez. `İptal/VOID` ve `İade/RETURN` ayrıdır: iade/refund ve kapalı mali check işlevleri kapsam dışıdır. |
-| SCR-10 Yazdırma kuyruğu | `İş Ayrıntısı`, `Kontrollü Tekrar Dene`, `Tekrar Baskı`, `Yazıcı Testi` | OS kuyruğunun kabul/hata sonucu görüntülenir. `Kontrollü Tekrar Dene` aynı iş kimliği üzerinden yeniden dener; kullanıcı kaynaklı tekrar baskı ayrı iş olarak `TEKRAR BASKI` işaretini alır. | Belirsiz fiziksel çıktı otomatik çoğaltılmaz; yeniden deneme yetkili tarafından seçilir. OS kuyruğuna kabul fiziksel kağıt çıktısının kesin kanıtı olarak sunulmaz. |
-| SCR-11 Fiyatsız adisyon | Masa/tur kapsamı, `Önizle`, `Yazdır`, `Geri` | Önizleme seçilen gönderilmiş turların fiyatsız servis özetini gösterir; `Yazdır` yalnız adisyon OS kuyruğunu çalıştırır. | Restoran yöneticisi veya sistem yöneticisi; mutfak kuyruğunu, masa durumunu veya ödeme durumunu değiştirmez. |
-| SCR-12 Rapor merkezi | Rapor kategorisi, hazır raporlar/sık kullanılanlar, filtre alanları, `Filtreleri Temizle`, `Raporu Çalıştır`, `Yazdır`, `CSV/PDF İndir`, `Detay`, `Geri` | Seçilen rapora özgü filtreler uygulanır; filtre özeti ve veri dönemi doğrulanır; sonuç tablosu/ayrıntı açılır, çıktı hazırlanır. | Raporlar finansal olmayan operasyon verisidir; rol, tarih aralığı, rapor sürümü ve filtreler audit'e yazılır. Boş/hatalı sonuç ve uzun çalışma durumu açıklanır. |
-| SCR-13 Denetim günlüğü | Arama/filtre, `Olayı Aç`, `Dışa Aktar`, `Saklama Ayarı` | Olayın aktör, sunucu zamanı, önceki/yeni değer, iş kimliği ve sonuç ayrıntısı gösterilir; yetkili dışa aktarım yapılır. | Saklama ve dışa aktarım yalnız yerel sistem yöneticisinde; salt okunur olaylar değiştirilemez. |
-| SCR-14 Restoran/masa tanımları | `Ekle`, `Düzenle`, `Kaydet`, `Vazgeç`, `Pasifleştir` | Restoran, alan ve masa bilgisi doğrulanıp kaydedilir; pasifleştirme yeni kullanımını kapatır, geçmiş kayıtları silmez. | Yerel sistem yöneticisi; kullanılan masa/sipariş varken silme yok, değişiklik audit'e yazılır. |
-| SCR-15 Menü ve Modifier yönetimi | Kategori/alt kategori seçimi, `Ekle`, `Düzenle`, `Kaydet`, `Vazgeç`, `Sırala`, `Pasifleştir`, istasyon seçimi, koltukta paylaşılabilir, kalem eklerken koltuk sor, `Yeni Modifier Grubu Ekle`, `Grubu Düzenle/Sil`, `Zorunlu Kuralı Belirle (min/max)` | Ürün ve modifier bilgisi kaydedilir; ürün mutfak istasyonuna atanır; modifier grupları oluşturulup seçenekleri virgülle/alt alta eklenir; pasifleştirme yeni siparişte görünmesini kaldırır. | Yerel sistem yöneticisi; açık ve geçmiş siparişlerde kayıtlı ürün adı snapshot'ı korunur; zorunlu hazırlık seçenekleri dinamik yönetilir ve şefe gönderimde eksik seçim denetlenir; ürün sınıfında koltuk sorusu ve ürünün birden fazla koltuğa atanabilirliği ayarlanır; fiyat alanı yoktur. |
-| SCR-16 Kullanıcı/rol | `Kullanıcı Ekle`, `Düzenle`, `Rol Ata`, `İzinleri Gör/Düzenle`, `Erişim Sıfırla`, `Oturumları Kapat`, `Etkinleştir/Pasifleştir`, `Önizle`, `Kaydet`, `Vazgeç` | Sistem yöneticisi kullanıcıyı ekler, kişisel giriş bilgisini verir, rol/ek izin atar ve kaydetmeden önce erişim özetini inceler. | Yalnız yerel sistem yöneticisi; ortak hesap yok; son etkin sistem yöneticisi pasifleştirilemez; yetki değişikliği hemen uygulanır; aktif oturumlar kesilir; her işlem eski/yeni rol ve izinlerle audit'e girer. Garson talebi onaylayan kullanıcı olamaz. |
-| SCR-17 Yazıcı/istasyon | `Kuyruk Ekle/Düzenle`, `İstasyon Eşle`, `Test Baskısı`, `Kaydet` | OS kuyruğu seçilen mutfak/adisyon görevine bağlanır; ürünler istasyona göre yönlendirilir; test baskısı açıkça test işidir. | Yerel sistem yöneticisi; gerçek mutfak/adisyon işleri birbirine karışmaz; kuyruk ve ürün eşlemesi değişikliği audit'e yazılır. |
-| SCR-18 Yedek/geri yükleme | USB ve yerel dizin hedeflerinin durumu, hedef seçimi, `Şimdi Yedekle`, yedek listesi, `Doğrula`, `Geri Yüklemeyi Başlat`, `Vazgeç` | Her iki hedefteki günlük ve manuel yedekler listelenir; kaynak/hedef seçilerek doğrulama ve geri yükleme başlatılır; geri yükleme öncesi etki özeti gösterilir. | Yerel sistem yöneticisi; geri yükleme açık onay ve bütünlük kontrolü ister; her hedefte toplam günlük+manuel kopya sayısı en fazla 15'tir; başarısız işlem audit'e yazılır. |
-| SCR-19 Sistem durumu/bakım/tanı | `Durumu Yenile`, `Tanılamayı Başlat`, `Kontrolü Durdur`, `Bulguyu Aç`, `Önerilen Onarımı İncele`, `Ön Yedek Al ve Onarımı Onayla`, `Onarım Sonrası Doğrula`, `Tanılama Paketini Dışa Aktar`, `Bakım Paketini İçeri Al`, `Bakımı Başlat`, `Geri` | Sıralı tanılama çalışma/sürüm/sunucu saati → uygulama readiness → PostgreSQL salt-okunur sağlık sorgusu → disk/yerel+USB hedefi ve son yedek manifest/hash doğrulaması → LAN/gateway erişimi ve garson heartbeat/son eşitleme → Windows Print Spooler ve iki OS kuyruğu → mutfak/adisyon yazıcı erişimi → bekleyen/belirsiz iş incelemesi → canlı veriyi değiştirmeyen uçtan uca tutarlılık kontrollerini yürütür. Kontrol ilerlemesi, atlanan/bilinmeyen adımlar ve bulgular gösterilir; fiziksel test fişi ayrıca onaylanır ve `TEST/TANILAMA` olarak işaretlenir. | Yalnız yerel sistem yöneticisi başlatır, durdurur, geçmişi görüntüler ve dışa aktarır. Varsayılan salt okunurdur; gerçek sipariş/masa/menü/audit değiştirilmez, mutfağa gerçek sipariş gönderilmez. Her bulgu için neden, etkilenen işlev/kimlik, önem, çözüm, etki/önkoşul/geri alma adımı sunulur. İzinli, güvenli ve tekrarlanabilir onarım başına ayrı açık onay gerekir; doğrulanmış ön yedek olmadan, aktif servis/iş varken veya gerekli yedek hedefi doğrulanmadığında otomatik onarım başlatılmaz. Belirsiz baskı yeniden gönderilmez; başarısız doğrulamada sonraki onarım zinciri durur. Tüm aşamalar DB ve değiştirilemez audit/bakım izine yazılır. |
+| Ekran | Görünür ana düğmeler/alanlar | Tetikleyici ve sonuç                            | Yetki, hata ve denetim kuralı                                                          |
+| ----- | ---------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
+| SCR-0 | `Giriş Yap` ,                | Giriş, kullanıcı hesabını doğrular ve izin      | E-posta, SMS veya internet üzerinden parola sıfırlama                                  |
+|       |                              | verilen ana ekrana yönlendirir;                 |                                                                                        |
+| 1     | `Yönetici Yardımı` ,         | çıkış oturumu kapatır. Şifresini/PIN'ini unutan | yoktur. Yönetici geçici kimlik bilgisini verir; ilk                                    |
+|       |                              | çalışan yerel sistem                            |                                                                                        |
+| Giriş | `Çıkış Yap`                  | yöneticisinden sıfırlama ister.                 | girişte yenisi belirlenir ve önceki oturumlar geçersiz kılınır. Başarısız denemeler    |
+|       |                              |                                                 | audit'e yazılır, sırlar loglanmaz.                                                     |
+| SCR-0 | `Geri` , `Devam` ,           | Restoran adı, masa/alan ve saat dilimi          | Kurulum yalnız sunucunun yerel ekranından başlatılır;                                  |
+|       |                              | doğrulanır; ilk sistem yöneticisi tek           |                                                                                        |
+| 2 İlk | `Kontrol Et` ,               | kullanımlık kurulum anahtarıyla oluşturulur;    | varsayılan ortak yönetici parolası yoktur. İlk yönetici                                |
+|       |                              | son adımda yerel sunucu kurulumu                |                                                                                        |
+| kurul | `Kurulumu Tamamla`           | tamamlanır.                                     | hesabı açılınca kurulum anahtarı ve ilk kurulum uç noktası geçersizleşir.              |
+| um    |                              |                                                 |                                                                                        |
+| SCR-0 | Alan sekmesi, `Ara` , durum  | Masa kartı açık siparişe gider; boş masa        | Tüm garsonlar bütün masaları görür. `Servisi Tamamla`                                  |
+|       |                              | `Yeni Servis` ile açılır; açık masa             |                                                                                        |
+| 3     | filtreleri, masa kartı,      | tekrar seçilince yeni sipariş açmak yerine      | yalnız restoran yöneticisine açıktır ve neden/sonuç                                    |
+|       |                              | mevcut servis sürdürülür. Tamamlama             |                                                                                        |
+| Masa  | `Yeni Servis` ,              | masa/servisi operasyonel olarak bitirir,        | audit izi üretir; aynı masa için eşzamanlı ikinci servis açılmaz.                      |
+| planı | `Açık Siparişe Dön` ,        | hesap/ödeme kapatmaz.                           |                                                                                        |
+|       | `Servisi Tamamla`            |                                                 |                                                                                        |
+| SCR-0 | Kategori/alt kategori,       | Ürün tuşu kalemi yeni taslak tura ekler. Arama  | `Masa Servisi` varsayılan işlem türüdür; başka servis                                  |
+|       |                              | açılır, sorgu uygulanır ve                      |                                                                                        |
+| 4     | `Ürün Ara` , `Temizle` ,     | `Temizle` tüm menüyü geri getirir. Misafir      | türü tanımlı değilse tür seçici gösterilmez. Misafir                                   |
+|       |                              | sayısı check düzeyinde                          |                                                                                        |
+| Sipar | ürün tuşu, misafir/kuver     | girilir/değiştirilir; koltuk numarası kalem     | sayısı isteğe bağlıdır; koltuk ataması varsayılan                                      |
+|       |                              | düzeyinde seçilir, mevcut kalem                 |                                                                                        |
+| iş/iş | sayısı, `Koltuk Ekle` ,      | taşınabilir veya paylaşılabilir ürün birden     | olarak isteğe bağlıdır ve menü/ürün sınıfı ayarından                                   |
+|       |                              | fazla koltuğa atanabilir. Kalem                 |                                                                                        |
+| lem   | `Koltuk Ata/Değiştir` ,      | geçmişinde önceki tur `*` , bekletilmiş         | ekleme sırasında sorulabilir/zorunlu kılınabilir. Koltuk ve paylaşım değişiklikleri    |
+|       | `Ürünü Paylaştır` , servis   | `BEKLETİLDİ` , iptal edilmiş `İPTAL` olarak     | sipariş yetkisi olan garson veya yönetici tarafından yapılır ve audit'e yazılır.       |
+|       | turu, `İşlemler` ,           | ayırt edilir. `Mutfağa Gönder` kesintisiz       | Gönderim çift dokunma/idempotency korumalıdır. Öğrenme modu kapalıysa eğitim düğmeleri |
+|       | `Mutfağa Gönder` , `Yardım`  | servis akışı mantığıyla (Send and Stay) mevcut  | görünmez; açıkken yalnız restoran yöneticisi modu kapatır. Yardım/rehber adımı sipariş |
+|       | , `Adım Adım Rehber`         | gönderilebilir kalemleri OS kuyruğuna verir;    | verisini değiştirmez; gerçek işlem yine garsonun açık eylemiyle yapılır.               |
+|       |                              | masa açık kalırve kullanıcı aynı servis         |                                                                                        |
+|       |                              | üzerinde çalışmaya devam eder. `Yardım` kısa    |                                                                                        |
+|       |                              | bağlamsal ipuçlarını, `Adım Adım Rehber` sıralı |                                                                                        |
+|       |                              | öğrenme akışını açar.                           |                                                                                        |
+| SCR-0 | `+` , `−` ,                  | Adet ve modifier/not değişikliği `Uygula` ile   | Sıfır/negatif adet engellenir; zorunlu modifier eksikse                                |
+|       |                              | taslağa yansır;                                 |                                                                                        |
+| 5     | `Seçenekleri Düzenle` ,      | `Koltuk Ata/Değiştir` seçili kalemi yeni        | gönderim kapalıdır. Gönderilmiş kalem kaldırma veya                                    |
+|       |                              | koltuğa taşır, `Ürünü Paylaştır`                |                                                                                        |
+| Kalem | modifier seç/çıkar, `Not` ,  | yalnız paylaşılabilir menü ürününü seçilen      | sessiz değiştirme yoktur; koltuk değişimi siparişin                                    |
+|       |                              | koltuklara bağlar. Taslak kalem                 |                                                                                        |
+| /seçe | `Yardım` ,                   | kaldırılır; gönderilmiş kalem miktar/modifier   | ürün adet sayısını değiştirmez. Öğrenme modu açıksa                                    |
+|       |                              | olarak değiştirilemez ve                        |                                                                                        |
+| nek   | `Koltuk Ata/Değiştir` ,      | yönetici onaylı iptal talebine yönelir; koltuk  | zorunlu modifier ve koltuk adımı kısa açıklamayla gösterilir.                          |
+|       | `Ürünü Paylaştır` , `Uygula` | düzeltmesi audit'li yapılabilir.                |                                                                                        |
+|       | , `Taslaktan Kaldır` ,       |                                                 |                                                                                        |
+|       | `İptal Talebi`               |                                                 |                                                                                        |
+| SCR-0 | `Kalemi Beklet` ,            | Kalem bazlı bekletme sadece seçili ürünü; tur   | Uluslararası bekletme ve zamanlı ateşleme (Hold/Timed                                  |
+|       |                              | bekletme turun uygun kalemlerini                |                                                                                        |
+| 6     | `Turu Beklet` ,              | etkiler. `Bekleyenleri Gönder` bekletilmemiş    | Fire) akışı uygulanır; bekletilen/zamanlanan kalem                                     |
+|       |                              | kalemleri gönderir;                             |                                                                                        |
+| Bekle | `Bekleyenleri Gönder` ,      | `Bekletilenleri de Gönder` tutulanları serbest  | gönderilmedikçe mutfak işine dönüşmez. Otomatik                                        |
+|       |                              | bırakır; seçili gönderim o                      |                                                                                        |
+| tme/z | `Bekletilenleri de Gönder` , | kalemleri yeni mutfak işi yapar. Zaman          | tetikleyici aktörü `SİSTEM` , planı kuran kullanıcı                                    |
+|       |                              | ata/değiştir/kaldır, sunucu                     |                                                                                        |
+| amanl | `Seçileni Şimdi Gönder` ,    | zamanlayıcısındaki kalıcı işi günceller.        | ayrıca kayıtlıdır. Tüm değişiklikler audit'e yazılır. Öğrenme modu açıksa bekletme ve  |
+| ama   | `Zaman Ata` ,                |                                                 | zamanlama sonucu, mutfağa gönderimle farkı açıklanır.                                  |
+|       | `Saati Değiştir` ,           |                                                 |                                                                                        |
+|       | `Zamanlamayı Kaldır` ,       |                                                 |                                                                                        |
+|       | `Gönderim Saatlerini Gör` ,  |                                                 |                                                                                        |
+|       | `Yardım`                     |                                                 |                                                                                        |
+| SCR-0 | Durum filtresi, `Yenile` ,   | Seçilen kart/listeden ilgili yönetim ekranına   | Göstergeler veri yaşı eşiği geçince Bilinmiyor/Uyarı                                   |
+|       |                              | gider; `Yenile` sunucu ve cihaz                 |                                                                                        |
+| 7     | `Masa Ayrıntısı` ,           | heartbeat bilgilerini tekrar okur. Bağlantı     | olur; erişilemeyen AP'nin durumu tahmin edilmez.                                       |
+|       |                              | göstergesi tıklanınca sistem                    |                                                                                        |
+| Yönet | `İptal Talepleri` ,          | yöneticisi yetkisi gerektiren SCR-19            | Restoran yöneticisi onarım başlatamaz. Her operasyonel                                 |
+|       |                              | ayrıntısına yönlendirilir; restoran             |                                                                                        |
+| ici   | `Zamanlı İşler` ,            | yöneticisine yalnız operasyonel durum           | karar ve öğrenme modu değişikliği aktör/sunucu zamanı/eski-yeni değerle audit'e        |
+| panos | `Yazdırma Kuyruğu` ,         | gösterilir.                                     | yazılır.                                                                               |
+| u     | bağlantı ışıkları,           |                                                 |                                                                                        |
+|       | `Garson Öğrenme Modu: Aç/Kap |                                                 |                                                                                        |
+|       |  at`                         |                                                 |                                                                                        |
+| SCR-0 | Tur sekmeleri, kalem         | Tur ve kalem detayları açılır. `Masa Taşı` ,    | Taşıma ve tamamlama restoran yöneticisine aittir; hedef                                |
+|       |                              | açık siparişi hedef masaya aynı                 |                                                                                        |
+| 8     | ayrıntısı, `Masa Taşı` ,     | kimlik ve geçmişle taşır; eski ve yeni masa     | masa boş değilse çakışma uyarısı verilir ve işlem yapılmaz; fiyat/check settlement     |
+| Sipar | `Servisi Tamamla` ,          | birlikte güncellenir.                           | yoktur.                                                                                |
+| iş/ma | yazdırma/olay geçmişi        |                                                 |                                                                                        |
+| sa    |                              |                                                 |                                                                                        |
+| ayrın |                              |                                                 |                                                                                        |
+| tısı  |                              |                                                 |                                                                                        |
+| SCR-0 | `Onayla ve Mutfağa Bildir` , | Talep edilen gönderilmiş kalem/adet için karar  | Yalnız restoran yöneticisi; gerekçe zorunlu; önceki                                    |
+|       |                              | verilir. Onay, ayrı iptal                       |                                                                                        |
+| 9     | `Reddet` , gerekçe alanı,    | mutfak işi oluşturur; red ürünü etkin bırakır.  | gönderim değişmez. `İptal/VOID` ve `İade/RETURN` ayrıdır: iade/refund ve kapalı mali   |
+| İptal | `Detay`                      |                                                 | check işlevleri kapsam dışıdır.                                                        |
+| talep |                              |                                                 |                                                                                        |
+| leri  |                              |                                                 |                                                                                        |
+| SCR-1 | `İş Ayrıntısı` ,             | OS kuyruğunun kabul/hata sonucu görüntülenir.   | Belirsiz fiziksel çıktı otomatik çoğaltılmaz; yeniden                                  |
+|       |                              | `Kontrollü Tekrar Dene` aynı iş                 |                                                                                        |
+| 0     | `Kontrollü Tekrar Dene` ,    | kimliği üzerinden yeniden dener; kullanıcı      | deneme yetkili tarafından seçilir. OS kuyruğuna kabul                                  |
+|       |                              | kaynaklı tekrar baskı ayrı iş                   |                                                                                        |
+| Yazdı | `Tekrar Baskı` ,             | olarak `TEKRAR BASKI` işaretini alır.           | fiziksel kağıt çıktısının kesin kanıtı olarak sunulmaz.                                |
+| rma   | `Yazıcı Testi`               |                                                 |                                                                                        |
+| kuyru |                              |                                                 |                                                                                        |
+| ğu    |                              |                                                 |                                                                                        |
+| SCR-1 | Masa/tur kapsamı, `Önizle` , | Önizleme seçilen gönderilmiş turların fiyatsız  | Restoran yöneticisi veya sistem yöneticisi; mutfak                                     |
+|       |                              | servis özetini gösterir;                        |                                                                                        |
+| 1     | `Yazdır` , `Geri`            | `Yazdır` yalnız adisyon OS kuyruğunu            | kuyruğunu, masa durumunu veya ödeme durumunu değiştirmez.                              |
+| Fiyat |                              | çalıştırır.                                     |                                                                                        |
+| sız   |                              |                                                 |                                                                                        |
+| adisy |                              |                                                 |                                                                                        |
+| on    |                              |                                                 |                                                                                        |
+| SCR-1 | Rapor kategorisi, hazır      | Seçilen rapora özgü filtreler uygulanır; filtre | Raporlar finansal olmayan operasyon verisidir; rol,                                    |
+|       |                              | özeti ve veri dönemi                            |                                                                                        |
+| 2     | raporlar/sık kullanılanlar,  | doğrulanır; sonuç tablosu/ayrıntı açılır, çıktı | tarih aralığı, rapor sürümü ve filtreler audit'e yazılır. Boş/hatalı sonuç ve uzun     |
+| Rapor | filtre alanları,             | hazırlanır.                                     | çalışma durumu açıklanır.                                                              |
+| merke | `Filtreleri Temizle` ,       |                                                 |                                                                                        |
+| zi    | `Raporu Çalıştır` , `Yazdır` |                                                 |                                                                                        |
+|       | , `CSV/PDF İndir` , `Detay`  |                                                 |                                                                                        |
+|       | , `Geri`                     |                                                 |                                                                                        |
+| SCR-1 | Arama/filtre, `Olayı Aç` ,   | Olayın aktör, sunucu zamanı, önceki/yeni değer, | Saklama ve dışa aktarım yalnız yerel sistem                                            |
+|       |                              | iş kimliği ve sonuç ayrıntısı                   |                                                                                        |
+| 3     | `Dışa Aktar` ,               | gösterilir; yetkili dışa aktarım yapılır.       | yöneticisinde; salt okunur olaylar değiştirilemez.                                     |
+| Denet | `Saklama Ayarı`              |                                                 |                                                                                        |
+| im    |                              |                                                 |                                                                                        |
+| günlü |                              |                                                 |                                                                                        |
+| ğü    |                              |                                                 |                                                                                        |
+| SCR-1 | `Ekle` , `Düzenle` ,         | Restoran, alan ve masa bilgisi doğrulanıp       | Yerel sistem yöneticisi; kullanılan masa/sipariş varken                                |
+|       |                              | kaydedilir; pasifleştirme yeni                  |                                                                                        |
+| 4     | `Kaydet` , `Vazgeç` ,        | kullanımını kapatır, geçmiş kayıtları silmez.   | silme yok, değişiklik audit'e yazılır.                                                 |
+| Resto | `Pasifleştir`                |                                                 |                                                                                        |
+| ran/m |                              |                                                 |                                                                                        |
+| asa   |                              |                                                 |                                                                                        |
+| tanım |                              |                                                 |                                                                                        |
+| ları  |                              |                                                 |                                                                                        |
+| SCR-1 | Kategori/alt kategori        | Ürün ve modifier bilgisi kaydedilir; ürün       | Yerel sistem yöneticisi; açık ve geçmiş siparişlerde                                   |
+|       |                              | mutfak istasyonuna atanır; modifier             |                                                                                        |
+| 5     | seçimi, `Ekle` , `Düzenle` , | grupları oluşturulup seçenekleri virgülle/alt   | kayıtlı ürün adı snapshot'ı korunur; zorunlu hazırlık                                  |
+|       |                              | alta eklenir; pasifleştirme yeni                |                                                                                        |
+| Menüv | `Kaydet` , `Vazgeç` ,        | siparişte görünmesini kaldırır.                 | seçenekleri dinamik yönetilir ve şefe gönderimde eksik seçim denetlenir; ürün          |
+| e     | `Sırala` , `Pasifleştir` ,   |                                                 | sınıfında koltuk sorusu ve ürünün birden fazla koltuğa atanabilirliği ayarlanır; fiyat |
+| Modif | istasyon seçimi, koltukta    |                                                 | alanı yoktur.                                                                          |
+| ier   | paylaşılabilir, kalem        |                                                 |                                                                                        |
+| yönet | eklerken koltuk sor,         |                                                 |                                                                                        |
+| imi   | `Yeni Modifier Grubu Ekle` , |                                                 |                                                                                        |
+|       | `Grubu Düzenle/Sil` ,        |                                                 |                                                                                        |
+|       | `Zorunlu Kuralı Belirle (min |                                                 |                                                                                        |
+|       |  /max)`                      |                                                 |                                                                                        |
+| SCR-1 | `Kullanıcı Ekle` , `Düzenle` | Sistem yöneticisi kullanıcıyı ekler, kişisel    | Yalnız yerel sistem yöneticisi; ortak hesap yok; son                                   |
+|       |                              | giriş bilgisini verir, rol/ek                   |                                                                                        |
+| 6     | , `Rol Ata` ,                | izin atar ve kaydetmeden önce erişim özetini    | etkin sistem yöneticisi pasifleştirilemez; yetki değişikliği hemen uygulanır; aktif    |
+| Kulla | `İzinleri Gör/Düzenle` ,     | inceler.                                        | oturumlar kesilir; her işlem eski/yeni rol ve izinlerle audit'e girer. Garson talebi   |
+| nıcı/ | `Erişim Sıfırla` ,           |                                                 | onaylayan kullanıcı olamaz.                                                            |
+| rol   | `Oturumları Kapat` ,         |                                                 |                                                                                        |
+|       | `Etkinleştir/Pasifleştir` ,  |                                                 |                                                                                        |
+|       | `Önizle` , `Kaydet` ,        |                                                 |                                                                                        |
+|       | `Vazgeç`                     |                                                 |                                                                                        |
+| SCR-1 | `Kuyruk Ekle/Düzenle` ,      | OS kuyruğu seçilen mutfak/adisyon görevine      | Yerel sistem yöneticisi; gerçek mutfak/adisyon işleri                                  |
+|       |                              | bağlanır; ürünler istasyona göre                |                                                                                        |
+| 7     | `İstasyon Eşle` ,            | yönlendirilir; test baskısı açıkça test işidir. | birbirine karışmaz; kuyruk ve ürün eşlemesi değişikliği audit'e yazılır.               |
+| Yazıc | `Test Baskısı` , `Kaydet`    |                                                 |                                                                                        |
+| ı/ist |                              |                                                 |                                                                                        |
+| asyon |                              |                                                 |                                                                                        |
+| SCR-1 | USB ve yerel dizin           | Her iki hedefteki günlük ve manuel yedekler     | Yerel sistem yöneticisi; geri yükleme açık onay ve                                     |
+|       |                              | listelenir; kaynak/hedef seçilerek              |                                                                                        |
+| 8     | hedeflerinin durumu, hedef   | doğrulama ve geri yükleme başlatılır; geri      | bütünlük kontrolü ister; her hedefte toplam                                            |
+|       |                              | yükleme öncesi etki özeti                       |                                                                                        |
+| Yedek | seçimi, `Şimdi Yedekle` ,    | gösterilir.                                     | günlük+manuel kopya sayısı en fazla 15'tir; başarısız işlem audit'e yazılır.           |
+| /geri | yedek listesi, `Doğrula` ,   |                                                 |                                                                                        |
+| yükle | `Geri Yüklemeyi Başlat` ,    |                                                 |                                                                                        |
+| me    | `Vazgeç`                     |                                                 |                                                                                        |
+| SCR-1 | `Durumu Yenile` ,            | Sıralı tanılama çalışma/sürüm/sunucu saati →    | Yalnız yerel sistem yöneticisi başlatır, durdurur,                                     |
+|       |                              | uygulama readiness → PostgreSQL                 |                                                                                        |
+| 9     | `Tanılamayı Başlat` ,        | salt-okunur sağlık sorgusu → disk/yerel+USB     | geçmişi görüntüler ve dışa aktarır. Varsayılan salt                                    |
+|       |                              | hedefi ve son yedek manifest/hash               |                                                                                        |
+| Siste | `Kontrolü Durdur` ,          | doğrulaması → LAN/gateway erişimi ve garson     | okunurdur; gerçek sipariş/masa/menü/audit                                              |
+|       |                              | heartbeat/son eşitleme → Windows                |                                                                                        |
+| m     | `Bulguyu Aç` ,               | Print Spooler ve iki OS kuyruğu →               | değiştirilmez, mutfağa gerçek sipariş gönderilmez. Her                                 |
+|       |                              | mutfak/adisyon yazıcı erişimi →                 |                                                                                        |
+| durum | `Önerilen Onarımı İncele` ,  | bekleyen/belirsiz iş incelemesi → canlı veriyi  | bulgu için neden, etkilenen işlev/kimlik, önem, çözüm,                                 |
+|       |                              | değiştirmeyen uçtan uca                         |                                                                                        |
+| u/bak | ` Ön Yedek Al ve Onarımı     | tutarlılık kontrollerini yürütür. Kontrol       | etki/önkoşul/geri alma adımı sunulur. İzinli, güvenli                                  |
+|       | Onay                         | ilerlemesi, atlanan/bilinmeyen                  |                                                                                        |
+| ım/ta | la` ,                        | adımlar ve bulgular gösterilir; fiziksel test   | ve tekrarlanabilir onarım başına ayrı açık onay                                        |
+|       |                              | fişi ayrıca onaylanır ve                        |                                                                                        |
+| nı    | `Onarım Sonrası Doğrula` ,   | `TEST/TANILAMA` olarak işaretlenir.             | gerekir; doğrulanmış ön yedek olmadan, aktif servis/iş varken veya gerekli yedek       |
+|       | `Tanılama Paketini Dışa Akta |                                                 | hedefi doğrulanmadığında otomatik onarım başlatılmaz. Belirsiz baskı yeniden           |
+|       | r` ,                         |                                                 | gönderilmez; başarısız doğrulamada sonraki onarım zinciri durur. Tüm aşamalar DB ve    |
+|       | `Bakım Paketini İçeri Al` ,  |                                                 | değiştirilemez audit/bakım izine yazılır.                                              |
+|       | `Bakımı Başlat` , `Geri`     |                                                 |                                                                                        |
 
 **Kapsam uyarlaması:** Bu işlev kataloğu konaklama ve ödeme odaklı modülleri içermez. İndirim, fiyat, vergi, tahsilat, mali iade/ödeme kapatma, PMS, rezervasyon/bekleme listesi, personel vardiya kartı, stok/envanter ve KDS Alacarte kapsamı dışındadır. Hesap bölme (split-check) gibi ödeme odaklı işlemler de yer almaz. Aktif siparişi başka masaya taşıma operasyonu kapsamdadır.
 
@@ -350,18 +627,58 @@ Operasyonel raporlama sistemi; açık/tamamlanan servisler, ürün sipariş adet
 4. **Eylemler:** Yazdır, CSV indir, uygun raporlarda PDF kaydet, Filtrelere Dön, Kapat. Her rapor üretimi ve dışa aktarım kullanıcı, tarih, filtre ve rapor sürümüyle kaydedilir.
 5. **Arayüz durumları:** yükleniyor, sonuç bulundu, boş sonuç, filtre hatası, erişim/veri hatası, yazdırma/dışa aktarma bekliyor-hatalı. Geniş tarih aralıklı sorgularda yüklenme bildirimi, sayfalama ve gerekli olduğunda arka plan rapor işi kullanılır; yaşa göre sabit rapor sınırı uygulanmaz.
 
-| Alacarte raporu | Operasyonel Tanım / İşlev | Gösterilecek alanlar (finansal değer olmadan) | Yetki |
-|---|---|---|---|
-| Operasyon Özeti | Genel operasyon ve servis hacmi özeti | Açılan masa/sipariş, servis turu, kayıtlı misafir/kuver toplamı, mutfağa gönderilen ürün adedi, iptal/bekleyen kalem, bekletilen/zamanlanan kalem, yazdırma başarı/hata sayıları | Sistem/restoran yöneticisi |
-| Masa Hareketleri | Masa bazlı servis ve devir hareketleri | Masa/alan, servis oturumu sayısı, sipariş/tur ve ürün adedi, kayıtlı misafir/kuver sayısı, ilk açılış/son işlem, açık kalma süresi, tamamlanma. Masa devir süresi yalnız açılış-bitiş olayları varsa hesaplanır. | Sistem/restoran yöneticisi |
-| Ürün Adet Özeti/Detayı | Kategori ve ürün bazında mutfak sipariş adetleri | Kategori, alt kategori, ürün, sipariş adedi, mutfağa gönderilen adet, iptal adedi, etkin gönderim adedi; garson/masa/tur kırılımı. Fiyat, indirim, brüt/net satış yok. | Sistem/restoran yöneticisi |
-| Açık Siparişler | Anlık açık masa ve aktif servis listesi | Masa, sipariş ref, açan/son işlem yapan, açılış/son hareket zamanı, tur sayısı, taslak, yazdırma durumu, bekletilmiş/zamanlanmış kalem adedi | Sistem/restoran yöneticisi |
-| Tamamlanan Servis Oturumları | Tamamlanan servis oturumları geçmişi | Tamamlanma zamanı/işlemi, masa, sipariş ref, tur/ürün adetleri, tamamlayan kullanıcı; ödeme/hesap kapama yok | Sistem/restoran yöneticisi |
-| Bekletilen ve Zamanlı Kalemler | Bekletilen ve ileri saate planlanan siparişler | Ürün, adet, masa, bekleten, bekletme zamanı, planlı serbest bırakma, istasyon, durum, son işlem | Sistem/restoran yöneticisi |
-| Garson İşlem Günlüğü | Personel bazlı operasyon işlem günlüğü | Sıralı masa açma, ürün/tur ekleme, mutfağa gönderme, bekletme/zamanlama, iptal talebi/kararı, adisyon isteği, tekrar baskı; kullanıcı, masa, sipariş, zaman, sonuç | Sistem/restoran yöneticisi |
-| Sipariş/Masa Denetim Günlüğü | Sipariş ve masa bazlı denetim geçmişi | Tur/kalem değişiklikleri; önceki-yeni durum, aktör, zaman, gerekçe, yazdırma işi ve iptal bağlantısı | Sistem/restoran yöneticisi |
-| İptal ve Onaylar | Yönetici onaylı iptal ve void kayıtları | Kalem/adet, gerekçe, talep eden/karar veren, karar zamanı/sonucu, mutfak iptal fişi durumu; olay silinmez | Sistem/restoran yöneticisi |
-| Yazdırma Günlüğü | Mutfak ve adisyon yazdırma kuyruğu günlüğü | Fiş ID, çıktı türü, yazıcı, sipariş turu, isteyen, zaman, deneme, sonuç, tekrar baskı bağı | Sistem/restoran yöneticisi |
+| Alacarte raporu | Operasyonel Tanım / İşlev | Gösterilecek alanlar (finansal değer olmadan)                                                                             | Yetki |
+| --------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----- |
+| Operasyon Özeti | Genel operasyon ve servis | Açılan masa/sipariş, servis turu, kayıtlı misafir/kuver toplamı, mutfağa gönderilen ürün adedi, iptal/bekleyen kalem,     | Siste |
+|                 | hacmi özeti               | bekletilen/zamanlanan kalem, yazdırma başarı/hata sayıları                                                                | m/res |
+|                 |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
+| Masa            | Masa bazlı servis ve      | Masa/alan, servis oturumu sayısı, sipariş/tur ve ürün adedi, kayıtlı misafir/kuver sayısı, ilk açılış/son işlem, açık     | Siste |
+| Hareketleri     | devir hareketleri         | kalma süresi, tamamlanma. Masa devir süresi yalnız açılış-bitiş olayları varsa hesaplanır.                                | m/res |
+|                 |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
+| Ürün Adet       | Kategori ve ürün bazında  | Kategori, alt kategori, ürün, sipariş adedi, mutfağa gönderilen adet, iptal adedi, etkin gönderim adedi; garson/masa/tur  | Siste |
+| Özeti/Detayı    | mutfak sipariş adetleri   | kırılımı. Fiyat, indirim, brüt/net satış yok.                                                                             | m/res |
+|                 |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
+| Açık Siparişler | Anlık açık masa ve aktif  | Masa, sipariş ref, açan/son işlem yapan, açılış/son hareket zamanı, tur sayısı, taslak, yazdırma durumu,                  | Siste |
+|                 | servis listesi            | bekletilmiş/zamanlanmış kalem adedi                                                                                       | m/res |
+|                 |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
+| Tamamlanan      | Tamamlanan servis         | Tamamlanma zamanı/işlemi, masa, sipariş ref, tur/ürün adetleri, tamamlayan kullanıcı; ödeme/hesap kapama yok              | Siste |
+| Servis          | oturumları geçmişi        |                                                                                                                           | m/res |
+| Oturumları      |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
+| Bekletilen ve   | Bekletilen ve ileri saate | Ürün, adet, masa, bekleten, bekletme zamanı, planlı serbest bırakma, istasyon, durum, son işlem                           | Siste |
+| Zamanlı         | planlanan siparişler      |                                                                                                                           | m/res |
+| Kalemler        |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
+| Garson İşlem    | Personel bazlı operasyon  | Sıralı masa açma, ürün/tur ekleme, mutfağa gönderme, bekletme/zamanlama, iptal talebi/kararı, adisyon isteği, tekrar      | Siste |
+| Günlüğü         | işlem günlüğü             | baskı; kullanıcı, masa, sipariş, zaman, sonuç                                                                             | m/res |
+|                 |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
+| Sipariş/Masa    | Sipariş ve masa bazlı     | Tur/kalem değişiklikleri; önceki-yeni durum, aktör, zaman, gerekçe, yazdırma işi ve iptal bağlantısı                      | Siste |
+| Denetim Günlüğü | denetim geçmişi           |                                                                                                                           | m/res |
+|                 |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
+| İptal ve        | Yönetici onaylı iptal ve  | Kalem/adet, gerekçe, talep eden/karar veren, karar zamanı/sonucu, mutfak iptal fişi durumu; olay silinmez                 | Siste |
+| Onaylar         | void kayıtları            |                                                                                                                           | m/res |
+|                 |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
+| Yazdırma        | Mutfak ve adisyon         | Fiş ID, çıktı türü, yazıcı, sipariş turu, isteyen, zaman, deneme, sonuç, tekrar baskı bağı                                | Siste |
+| Günlüğü         | yazdırma kuyruğu günlüğü  |                                                                                                                           | m/res |
+|                 |                           |                                                                                                                           | toran |
+|                 |                           |                                                                                                                           | yönet |
+|                 |                           |                                                                                                                           | icisi |
 
 **Raporlama sınırları ve saklama:**
 
@@ -402,7 +719,7 @@ flowchart LR
 - İlk kullanım yardımı, restoran yöneticisi kontrollü Garson Öğrenme Modu, SCR-07 bağlantı ışıkları ve SCR-19 sıralı sistem tanılaması doğrudan arayüzde yerleşik olarak çalışır.
 
 
-### 5.13 Sistem akış şemaları
+### 4.13 Sistem akış şemaları
 
 #### Kurulum ve menü hazırlığı
 
@@ -498,7 +815,7 @@ stateDiagram-v2
 
 Bu akışlardaki “işletim sistemi kuyruğuna alındı” durumu fiziksel kâğıdın kesin çıktığı anlamına gelmez. Kuyruk kabulü, yazıcı/print server geri bildirimi ve fiziksel baskı teyidi ayrı durumlar olarak gösterilir; bunların hangi seviyede doğrulanabildiği Faz 0/4 pilotunda belirlenir.
 
-### 5.14 Uçtan uca servis senaryosu
+### 4.14 Uçtan uca servis senaryosu
 
 1. Garson giriş yapar, bütün masa planını görür ve boş masayı açar.
 2. Sistem yeni bir açık sipariş referansı oluşturur; garson gerekiyorsa misafir sayısını girer.
@@ -509,7 +826,7 @@ Bu akışlardaki “işletim sistemi kuyruğuna alındı” durumu fiziksel kâ�
 7. Restoran yöneticisi gerekirse ayrı adisyon yazıcısından fiyatsız servis özeti alır. Bu eylem mutfak gönderimi, ödeme veya masa kapatma değildir.
 8. İşletme politikasına göre yetkili servisi tamamlandı işaretler; kayıtlar ve yazdırma geçmişi saklanır.
 
-### 5.15 Sipariş bütünlüğü ve arıza davranışı
+### 4.15 Sipariş bütünlüğü ve arıza davranışı
 
 - **Servisi Tamamla önkoşulları:** Taslak kalem, bekletilmiş/zamanlanmış kalem, bekleyen iptal kararı veya sonucu belirsiz mutfak baskısı varsa servis kapatılamaz. Ekran engel listesini ve çözüm eylemlerini gösterir. Restoran yöneticisi her kalemi açıkça gönderir, kaldırır/iptal akışına alır veya zamanlamasını iptal eder; sistem bu işleri sessizce düşürmez. Servisi tamamlama ancak tüm açık işlerin durumu çözüldüğünde gerçekleşir.
 - **Eşzamanlı garson işlemleri:** Her masa/sipariş sürümlenir. Birden fazla garson aynı anda düzenlerse ilk başarılı sunucu kaydı sürümü ilerletir; eski sürümdeki ikinci gönderim reddedilir, kullanıcının taslağı korunur ve yenileme/çakışma çözümü istenir. Aynı masa için iki açık servis oluşması veritabanı kısıtıyla engellenir; gönderim/iptal kararı atomik ve tekrarlı isteğe dayanıklı yürütülür.
@@ -519,7 +836,7 @@ Bu akışlardaki “işletim sistemi kuyruğuna alındı” durumu fiziksel kâ�
 - **Denetim günlüğü bütünlüğü:** Uygulama katmanında olaylar eklemeli (append-only) tutulur; normal UI/API ile güncelleme/silme yoktur. Olaylar sıralı kimlik ve önceki olayın özetiyle hash-zincir kontrolüne tabi tutulur; yedek doğrulamasında zincir de kontrol edilir. Veritabanı/Linux işletim sistemi yöneticisi yetkileriyle doğrudan müdahale uygulama dışı ayrıcalık sayılır ve işletim sistemi erişimi sınırlandırılır.
 - **Operasyonel menü hazırlama seçenekleri:** Uluslararası masa servisi standartlarındaki modifier modeli uygulanır: her ürün için gruplandırılmış varsayılan, zorunlu ve isteğe bağlı seçenekler; minimum/maksimum adet; “ekstra”, “çıkar”, “yerine koy”, “sossuz/yanında” gibi hazırlama talimatları; gerekiyorsa pişme derecesi ve alerjen/diyet etiketleri. Zorunlu seçimler tamamlanmadan gönderim yapılamaz. Fiyatlı modifier, vergi ve toplam alanları Alacarte kapsamı dışındadır; mutfak fişinde seçilen talimatlar görünür. Menü yöneticisi bu verinin doğruluğundan sorumludur.
 
-### 5.16 Kullanıcı, rol ve yetkilendirme modeli
+### 4.16 Kullanıcı, rol ve yetkilendirme modeli
 
 Kullanıcı kimliği ile rol/işlem yetkisi birbirinden bağımsızdır: her çalışan kendi kişisel kimliğiyle oturum açar; rol tabanlı erişim kontrolü (RBAC), o kimliğe atanmış rol ve izinlere göre her eylemi denetler. Roller POS işlemlerini ve yönetim modüllerini ayrı ayrı sınırlandırır; örneğin garson sipariş ve servis yetkisine sahipken, yönetici iptal ve kritik operasyonları onaylayabilir. Kimlik doğrulamasında benzersiz çalışan numarası/PIN kullanılır; yetkili kullanıcı başka bir çalışanın onay gerektiren işlemini kendi kimliğiyle doğrular.
 
@@ -534,14 +851,14 @@ Kullanıcı kimliği ile rol/işlem yetkisi birbirinden bağımsızdır: her ça
 - **Sistem yöneticisi** yalnız kendi restoran kurulumunda kullanıcı/rol/izin, masa, menü/modifier, yazıcı, sistem ayarı, yedek/geri yükleme ve audit saklama/dışa aktarma işlemlerini yapar. Bu rol restoranlar arasında geçerli değildir.
 - **Restoran yöneticisi** günlük POS işlerini görebilir/yönetebilir; iptal talebini karara bağlar, servis/masa işlemlerini yönetir, fiyatsız adisyon ve operasyon raporlarını alır, yazıcı hatalarına müdahale eder. Sistem kullanıcı/rol veya yedek/audit saklama ayarlarını değiştiremez.
 - **Garson** tüm masaları görür; servis açar, taslak sipariş hazırlar, sipariş gönderir, kendi gönderilmemiş kalemlerini düzenler, bekletir/zamanlar ve gönderilmiş kalem için gerekçeli iptal talebi açar. Başka garsonun hesabına, yönetici ekranlarına, raporlara ve audit/yedek/menü ayarlarına erişemez; gönderilmiş kalemin iptalini onaylayamaz.
-- Müdür yokluğu için §5.8'de önerilen **vardiya iptal yetkilisi**, ana rolü yükseltilmiş ortak hesap değildir; yerel sistem yöneticisinin belirli kullanıcıya verdiği, yalnız iptal talebi kararı kapsamlı ayrıcalıktır. Yetki ataması ve kaldırılması audit'e yazılır. İşletme bu yetkiyi kabul etmedikçe yalnız restoran yöneticisi karar verebilir.
+- Müdür yokluğu için §4.8'de önerilen **vardiya iptal yetkilisi**, ana rolü yükseltilmiş ortak hesap değildir; yerel sistem yöneticisinin belirli kullanıcıya verdiği, yalnız iptal talebi kararı kapsamlı ayrıcalıktır. Yetki ataması ve kaldırılması audit'e yazılır. İşletme bu yetkiyi kabul etmedikçe yalnız restoran yöneticisi karar verebilir.
 - Yetkili onayı gereken eylemde ilk kullanıcı ve onaylayan ayrı kimlik alanlarında kaydedilir. Onaylayan tekrar kendi işlemini onaylayamaz; yetkisiz, devre dışı, oturumu süresi dolmuş veya bu restoran için kapsamı olmayan hesap onay veremez. Yöneticinin kimliği onay sırasında yeniden doğrulanır; parola/PIN ekranda/logda gösterilmez.
 - Kullanıcı/rol değişikliği ileriye dönük uygulanır; açık siparişin geçmiş aktörü değiştirilmez. Hesap devre dışı bırakıldığında yeni istekleri derhal reddedilir ve etkin oturumları iptal edilir. Son etkin sistem yöneticisi kaldırılamaz. Rol değişikliğinde önce/sonra izin özeti ve etkilenecek ekran/işlemler yöneticiye gösterilir.
 - Her restoran kurulumunda aynı başlangıç rol şablonları kullanılır; özelleştirilmiş izinler yalnız o yerel kurulumda geçerlidir. Başka restoranlara kullanıcı/rol eşitleme veya uzaktan merkezi rol yönetimi yoktur.
 
 **Rol/izin yönetimi akışı:** Sistem yöneticisi kullanıcıyı oluşturur → kişisel giriş bilgisini atar → temel rolü seçer → gerekiyorsa sınırlı ek izin verir → izin özetini inceler ve kaydeder. Yetki iptali/değişikliği aynı kullanıcı ve izin geçmişini koruyarak yapılır. İptal yetkilendirme akışı: garson talebi/gerekçeyi girer → restoran yöneticisi veya işletme onayıyla atanmış vardiya yetkilisi kendi hesabıyla yeniden doğrulanır → sistem rol, işlem kapsamı, aynı kişi olmama ve restoran kapsamını sunucuda doğrular → karar ve ayrı iptal yazdırma işi audit'e yazılır. Uygun onaylayan yoksa talep beklemede kalır.
 
-### 5.17 Kullanılabilirlik, Dayanıklılık ve Kalite Gereksinimleri
+### 4.17 Kullanılabilirlik, Dayanıklılık ve Kalite Gereksinimleri
 
 Sektörel saha deneyimleri ve lüks alakart restoran operasyonlarının gereksinimleri doğrultusunda Alacarte için aşağıdaki doğrulanabilir ürün koşulları belirlenmiştir:
 
@@ -549,18 +866,15 @@ Sektörel saha deneyimleri ve lüks alakart restoran operasyonlarının gereksin
 - **Garson öğrenme modu:** Restoran yöneticisi SCR-07'de restoran genelinde özelliğin kullanılabilirliğini açıp kapatır; değişiklik kullanıcı, sunucu zamanı ve önceki/yeni değerle audit'e yazılır. Mod açıkken garson SCR-04'te geçerli ekrana özgü kısa ipuçlarını görebilir veya adım adım rehberi başlatabilir, duraklatabilir, geri/ileri gidebilir, kapatıp `Yardım`'dan yeniden açabilir. Rehber masa seçimi → isteğe bağlı misafir/koltuk bilgisi → kategori/ürün → adet/modifier/not → sipariş özeti → beklet/zamanla/hemen gönder seçimi → sunucu kaydı ve mutfak kuyruğu sonucunu açıklar. Rehber kontrolü vurgular ama masa/ürün seçimini, sipariş kaydını veya mutfak gönderimini kullanıcı adına yapmaz. Mod kapalıysa ipuçları/rehber düğmeleri sunulmaz; modu kapatmak açık sipariş taslağını silmez.
 - Öğrenme modu yalnız sunum/yardım katmanıdır: kullanıcı yetkilerini genişletmez, erişim kısıtlarını atlamaz, sipariş/yazdırma işi kendiliğinden oluşturmaz ve PIN/parola ya da personel performans profili tutmaz. Kullanıcı her gerçek işlemi kendisi yapar; sunucu onayı olmadan başarı durumu gösterilmez.
 - **Cihazlar arası güncellik:** Sunucu veritabanı tek doğruluk kaynağıdır. Masa/check sürümü, menü sürümü ve son başarılı eşitleme istemci/yönetici ekranlarında görülebilir. Sunucu sürümünden geri kalan cihazda kaydetme/gönderme öncesi yenileme veya güvenli çakışma çözümü sunulur; eski istemci verisi sessizce yeniyi ezemez. Menü değişikliği taslakta doğrulanıp sunucudan yayınlanır; etkinleşme ve istemcilere ulaşma durumu izlenir.
-- **Performans ve dayanıklılık:** §10 Faz 3'teki 10 garson ve p95 süre hedefleri korunur. Pilot profilinde bu yük en az 15 dakika masa listesi, arama, ürün seçimi, sipariş kaydı/gönderimi, eşzamanlı masa düzenlemesi ve yönetici pano yenilemesini kapsar; hedefler isteklerin en az %99'unda başarılı yanıt, sipariş kaybı/mükerrerliği sıfır ve veri tutarlılığı %100'dür. İstemci eyleminden kullanıcıya görünen sonuca kadar gecikme ölçülür. Bunlar pilot kabul hedefidir; saha öncesi işletme onayıyla netleştirilir.
+- **Performans ve dayanıklılık:** Eşzamanlı 10 garson ve p95 süre hedefleri korunur. Pilot profilinde bu yük en az 15 dakika masa listesi, arama, ürün seçimi, sipariş kaydı/gönderimi, eşzamanlı masa düzenlemesi ve yönetici pano yenilemesini kapsar; hedefler isteklerin en az %99'unda başarılı yanıt, sipariş kaybı/mükerrerliği sıfır ve veri tutarlılığı %100'dür. İstemci eyleminden kullanıcıya görünen sonuca kadar gecikme ölçülür. Bunlar pilot kabul hedefidir; saha öncesi işletme onayıyla netleştirilir.
 - **Yazdırma belirsizliği:** Aynı istemci işlem anahtarının 10 kez yinelenmesi bir sipariş turu ve her hedef için en fazla bir özgün işletim sistemi yazdırma işi üretir. Kuyruk kabulünden sonra yanıt kaybı veya uygulama yeniden başlatma, iş sonucunu belirsiz gösterebilir; kendiliğinden ikinci fiziksel kopya vaat edilmez. Yetkili kontrollü tekrar aynı kaynak işine bağlanır ve `TEKRAR BASKI` olarak işaretlenir. İşletim sistemi (CUPS / Raw Socket) kuyruğuna kabul ile kâğıdın fiziksel olarak çıkması ayrı kanıt düzeyleridir.
 - **Raporların açıklığı ve tutarlılığı:** Hazır rapor adları, kısa “ne gösterir?” açıklaması, sık kullanılan tarih aralıkları ve aktif filtre özeti sağlanır. Rapor satır/adetleri sipariş ve audit kaynak sorgularıyla karşılaştırılır; iptal, tekrar baskı, saat dilimi ve tarih sınırı sayım kuralları açık olur. Uzun sorgu sessiz bekleme yerine ilerleme/arka plan durumu ve tamamlanınca sonuç bildirimi gösterir.
 - **Kurulum ve tanılama:** Kurulum ayarları tamamlanmadan önce özetlenip doğrulanır; kurulum sonrası sunucu/DB/LAN/yazıcı/USB yedek/saat kontrol listesi sunulur. Hata ekranı ilgili iş/cihaz/zaman kimliğini, son başarılı işlemi, anlaşılır nedeni ve güvenli sonraki adımı gösterir. Yerel sistem yöneticisi parola, PIN, oturum belirteci ve kurtarma sırrı içermeyen tanılama paketini manuel dışa aktarabilir; paket dışa aktarımı audit'e yazılır.
+- **Pilot kullanılabilirlik kapısı:** Daha önce sistemi kullanmamış en az 3 garson ve 1 restoran yöneticisiyle görev gözlemi yapılır. Garsonların en az %90'ı kısa başlangıç açıklamasından sonra masa açma → ürün/modifier seçme → mutfağa gönderme görevini yardımsız ve yanlış/mükerrer işlem olmadan tamamlamalıdır. Yönetici, hazır rapor şablonuyla tanımlı operasyon sorularını bulmalı ve yazıcı/bağlantı alarmının önerilen ilk adımını doğru anlamalıdır. Görev süresi ve hata sayısı kaydedilir; eşikler üretim pilotundan önce işletme tarafından onaylanır. Bu kapı performans veya entegrasyon testinin yerine geçmez.
+- **Öğrenme modu pilotu:** Aynı yeni garson kullanıcıları temel sipariş görevini mod kapalıyken ve yönetici açtıktan sonra bağlamsal yardım/adım adım rehberle tamamlar. İpuçlarının anlaşılırlığı, görev hataları ve tamamlanma süresi gözlemlenir; rehberin hiçbir sipariş işlemini kullanıcı adına yürütmediği doğrulanır.
+- **Öğrenme modu ayar kuralı:** Restoran seviyesindeki mod başlangıçta kapalıdır. Yalnız restoran yöneticisi SCR-07'den değiştirebilir; sistem yöneticisi ve garson ayarı değiştiremez. Yönetici modu kapatınca açık rehber tüm oturumlarda sonlandırılır, garson normal sipariş ekranına döner ve taslak/form değerleri korunur. Rehberin geçici adım durumu yalnız aktif istemcide tutulur; kalıcı kullanıcı puanı/izleme kaydı oluşturulmaz. Başarılı değişiklik ve yetkisiz değiştirme girişimi audit'e alınır.
 
-**Pilot kullanılabilirlik kapısı:** Daha önce sistemi kullanmamış en az 3 garson ve 1 restoran yöneticisiyle görev gözlemi yapılır. Garsonların en az %90'ı kısa başlangıç açıklamasından sonra masa açma → ürün/modifier seçme → mutfağa gönderme görevini yardımsız ve yanlış/mükerrer işlem olmadan tamamlamalıdır. Yönetici, hazır rapor şablonuyla tanımlı operasyon sorularını bulmalı ve yazıcı/bağlantı alarmının önerilen ilk adımını doğru anlamalıdır. Görev süresi ve hata sayısı kaydedilir; eşikler üretim pilotundan önce işletme tarafından onaylanır. Bu kapı performans veya entegrasyon testinin yerine geçmez.
-
-**Öğrenme modu pilotu:** Aynı yeni garson kullanıcıları temel sipariş görevini mod kapalıyken ve yönetici açtıktan sonra bağlamsal yardım/adım adım rehberle tamamlar. İpuçlarının anlaşılırlığı, görev hataları ve tamamlanma süresi gözlemlenir; rehberin hiçbir sipariş işlemini kullanıcı adına yürütmediği doğrulanır.
-
-**Öğrenme modu ayar kuralı:** Restoran seviyesindeki mod başlangıçta kapalıdır. Yalnız restoran yöneticisi SCR-07'den değiştirebilir; sistem yöneticisi ve garson ayarı değiştiremez. Yönetici modu kapatınca açık rehber tüm oturumlarda sonlandırılır, garson normal sipariş ekranına döner ve taslak/form değerleri korunur. Rehberin geçici adım durumu yalnız aktif istemcide tutulur; kalıcı kullanıcı puanı/izleme kaydı oluşturulmaz. Başarılı değişiklik ve yetkisiz değiştirme girişimi audit'e alınır.
-
-### 5.18 Sistem arıza tanılama ve güvenli onarım modülü
+### 4.18 Sistem arıza tanılama ve güvenli onarım modülü
 
 **Amaç ve erişim:** SCR-19 içindeki bu modül yerel sistem yöneticisinin açıkça başlattığı, adımları sırayla çalıştıran arıza tanılama aracıdır. Normal çalışma kendiliğinden onarım yapmaz. Restoran yöneticisinin SCR-07 bağlantı ışıkları yalnız gözlem ve operasyonel yönlendirme içindir; tanılama başlatma, teknik ayar değiştirme veya onarım yetkisi sağlamaz. Sistem restoran başına yerel kalır; merkezi yönetim/otel ağı/internet bağlantısı gerektirmez.
 
@@ -609,32 +923,42 @@ flowchart TD
 **Veri ve audit modeli:** `diagnostic_runs` çalıştıran aktör, sunucu başlangıç/bitiş zamanı, sürüm, genel sonuç ve durdurma bilgisini; `diagnostic_checks` sıra numarası, bileşen, durum, süre, olay kimliği ve maskeli kanıtı; `diagnostic_findings` kod, önem, etkilenen kayıt, neden/öneri ve durum geçişlerini; `repair_runs` onaylayan kimlik, ön yedek kimlikleri/manifest hash'leri, allowlist eylemi, onay, uygulama/geri alma sonucu ve son doğrulamayı tutar. İlişkili değişmez audit olayı her geçişi sunucu saatinde zincirler. DB erişim kesintisi için yerel bakım günlüğü aynı kimlikleri ve sunucu zamanını taşır; DB'ye aktarım mükerrer kayıt üretmez. Tanılama geçmişi de SCR-18 günlük yedek kapsamındadır; dışa aktarma/saklama yönetimi yerel sistem yöneticisindedir.
 
 
-## 6. Roller ve erişim kuralları
+## 5. Roller ve erişim kuralları
 
-| İşlem | Sistem yöneticisi | Restoran yöneticisi | Garson |
-|---|---:|---:|---:|
-| Restoran/masa yapılandırması | Evet (yalnız bu kurulum) | Hayır | Hayır |
-| Kullanıcı ve rol yönetimi | Evet (yalnız bu kurulum) | Hayır | Hayır |
-| Kategori/ürün yönetimi | Evet (yalnız bu kurulum) | Hayır | Hayır |
-| Restoran genelinde garson öğrenme modunu açma/kapatma | Hayır | Evet | Hayır |
-| Sistem tanılamasını başlatma/durdurma, bulgu geçmişi ve dışa aktarım | Evet (yalnız bu kurulum) | Hayır | Hayır |
-| Tanılama önerisini görüntüleme | Evet | Yalnız SCR-07 operasyonel uyarısı | Kendi cihaz bağlantı durumu |
-| Onarım planını onaylama/uygulama ve son doğrulama | Evet (işlem bazlı onay) | Hayır | Hayır |
-| Tüm masaları görme | Evet | Evet | Evet |
-| Sipariş oluşturma/gönderme | Evet | Evet | Evet |
-| Misafir sayısı ve koltuk atama/düzeltme | Evet | Evet | Evet (sipariş yetkisiyle) |
-| Servisi Tamamla / masayı boşalt | Hayır | Evet | Hayır |
-| Ürün/turu bekletme ve zamanlı gönderim planlama | Evet | Tüm masalarda görüntüleme, düzenleme, iptal ve şimdi gönderme | Kendi eklediği gönderilmemiş kalemleri bekletme, zamanlama, düzenleme/iptal; zamanlı işi şimdi gönderme |
-| Diğer garsonların bekletilmiş/zamanlanmış işlerini yönetme | Evet | Evet | Hayır; görüntüleme kapsamı ayrıca tanımlanır |
-| Gönderilmiş sipariş iptali | Politika yönetimi | Onay/red | Yalnız talep açma |
-| Fiyatsız adisyon yazdırma | Evet | Evet | Hayır |
-| Yazdırma kuyruğunu izleme/yeniden deneme | Evet | Evet | Kendi siparişinin durumunu görme |
-| Rapor alma | Evet | Evet | Hayır |
-| Denetim kaydını görüntüleme, saklama, yedekleme ve dışa aktarma | Evet (yalnız bu kurulum) | Hayır | Hayır |
+| İşlem                                     | Sistem yöneticisi |               Restoran yöneticisi |                                                                      Garson |
+| ----------------------------------------- | ----------------: | --------------------------------: | --------------------------------------------------------------------------: |
+| Restoran/masa yapılandırması              |   Evet (yalnız bu |                             Hayır |                                                                       Hayır |
+|                                           |          kurulum) |                                   |                                                                             |
+| Kullanıcı ve rol yönetimi                 |   Evet (yalnız bu |                             Hayır |                                                                       Hayır |
+|                                           |          kurulum) |                                   |                                                                             |
+| Kategori/ürün yönetimi                    |   Evet (yalnız bu |                             Hayır |                                                                       Hayır |
+|                                           |          kurulum) |                                   |                                                                             |
+| Restoran genelinde garson öğrenme modunu  |             Hayır |                              Evet |                                                                       Hayır |
+| açma/kapatma                              |                   |                                   |                                                                             |
+| Sistem tanılamasını başlatma/durdurma,    |   Evet (yalnız bu |                             Hayır |                                                                       Hayır |
+| bulgu geçmişi ve dışa aktarım             |          kurulum) |                                   |                                                                             |
+| Tanılama önerisini görüntüleme            |              Evet | Yalnız SCR-07 operasyonel uyarısı |                                                 Kendi cihaz bağlantı durumu |
+| Onarım planını onaylama/uygulama ve son   | Evet (işlem bazlı |                             Hayır |                                                                       Hayır |
+| doğrulama                                 |             onay) |                                   |                                                                             |
+| Tüm masaları görme                        |              Evet |                              Evet |                                                                        Evet |
+| Sipariş oluşturma/gönderme                |              Evet |                              Evet |                                                                        Evet |
+| Misafir sayısı ve koltuk atama/düzeltme   |              Evet |                              Evet |                                                   Evet (sipariş yetkisiyle) |
+| Servisi Tamamla / masayı boşalt           |             Hayır |                              Evet |                                                                       Hayır |
+| Ürün/turu bekletme ve zamanlı gönderim    |              Evet |        Tüm masalarda görüntüleme, |                 Kendi eklediği gönderilmemiş kalemleri bekletme, zamanlama, |
+| planlama                                  |                   |         düzenleme, iptal ve şimdi |                                 düzenleme/iptal; zamanlı işi şimdi gönderme |
+|                                           |                   |                          gönderme |                                                                             |
+| Diğer garsonların bekletilmiş/zamanlanmış |              Evet |                              Evet |                                Hayır; görüntüleme kapsamı ayrıca tanımlanır |
+| işlerini yönetme                          |                   |                                   |                                                                             |
+| Gönderilmiş sipariş iptali                | Politika yönetimi |                          Onay/red |                                                           Yalnız talep açma |
+| Fiyatsız adisyon yazdırma                 |              Evet |                              Evet |                                                                       Hayır |
+| Yazdırma kuyruğunu izleme/yeniden deneme  |              Evet |                              Evet |                                            Kendi siparişinin durumunu görme |
+| Rapor alma                                |              Evet |                              Evet |                                                                       Hayır |
+| Denetim kaydını görüntüleme, saklama,     |   Evet (yalnız bu |                             Hayır |                                                                       Hayır |
+| yedekleme ve dışa aktarma                 |          kurulum) |                                   |                                                                             |
 
 En az yetki ilkesi uygulanır. Yetki denetimi API/sunucu katmanında her istekte yapılır; ekranda düğme gizlemek yetkilendirme yerine geçmez. Kullanıcılar ortak hesap paylaşmaz. Kritik yönetim ve iptal kararları kullanıcı kimliğine bağlanır. Özel görev yetkisi gerektiğinde yeni bir kapsamlı rol açmak yerine sınırlı ek izin olarak atanır; izin verilmedikçe varsayılan ret sürer.
 
-## 7. Veri ve kayıt saklama planı
+## 6. Veri ve kayıt saklama planı
 
 Temel veri kümeleri:
 
@@ -655,7 +979,7 @@ Saklama ilkesi:
 - Check misafir/kuver sayısı, sipariş kaleminin koltuk numarası veya birden fazla koltuğa paylaşım ilişkisi ile değişikliklerin önceki/yeni değerleri saklanır; paylaşılan ürün sipariş ve adet raporunda tek sipariş kalemi olarak sayılır.
 - Kayıtlar silinmek yerine iş gereği durum geçişleri ve denetim olaylarıyla korunur.
 
-## 8. Uygulama yedeği ve geri yükleme
+## 7. Uygulama yedeği ve geri yükleme
 
 - Firma tarafından sağlanan USB bellek sunucuya bağlı tutulur; donanım satın alma paketine dahil değildir. Aynı günlük yedek sunucudaki veya sistem yöneticisinin belirlediği yerel dizindeki ikinci hedefe de yazılır.
 - Sistem her gün arka planda her iki hedefe yedek alır; her hedefte en fazla 15 günlük kopya tutulur. 16. kopyada o hedefin en eski kopyası döngüsel kaldırılır. Bir hedef başarısız olursa diğer hedefteki başarılı kopya korunur; hata yerel sistem yöneticisine bildirilir ve audit'e kaydedilir. USB'nin kaybı/değişimi işletmenin sorumluluğundadır.
@@ -666,125 +990,35 @@ Saklama ilkesi:
 - Otomatik günlük yedekleme için hedeflenen en kötü veri kaybı, son başarılı yedek yaşıyla sınırlıdır (yaklaşık 24 saat); çalıştırma saati ve tamamlanma durumu izlenir. Sunucu arızasında hizmete dönüş ve elektrik sürekliliği bu USB yedeğinden ayrı iş sürekliliği senaryolarıdır; ayrıca tasarlanacaktır.
 - Elle alınan kopyalar da günlük kopyalarla aynı hedef başına 15 kopya sınırına dahildir; yeni kopyada hedefin en eski kopyası kaldırılır ve işlem öncesi ekranda gösterilir. Yedekten geri yükleme provası kabul öncesi yapılır. Her hedefte kopya sayısı 15'i aşmaz; rapor tarih aralığı bu yedek döngüsünden bağımsızdır.
 
-## 9. Devreye Alma Fazları ve Saha Kurulumu
 
-> **Ayrıntılı Faz ve Dağıtım Dokümanı:**  
-> Projenin donanım hazırlığı, yerel kurulum adımları, pilot çalışma, devreye alma kontrol listesi ve 5 restorana yaygınlaştırma aşamalarının ayrıntılı faz planı için müstakil dokümana başvurunuz:  
-> 📄 [ALACARTE_UYGULAMA_VE_DEVREYE_ALMA_FAZLARI.md](./ALACARTE_UYGULAMA_VE_DEVREYE_ALMA_FAZLARI.md)
+## 8. Başlıca riskler ve önlemler
 
-Bu ana şartname belgesi, Alacarte Restoran Operasyon Sistemi'nin fonksiyonel kapsamını, ekran kataloğunu (SCR-01 - SCR-19), uluslararası alakart servis standartlarını, veri güvenliği ve denetim mimarisini tanımlar.
-
-## 10. Kabul senaryoları ve sistem doğrulama kriterleri
-
-- İnternet kablosu çıkarıldığında garson giriş, sipariş, mutfak baskısı ve yönetici görünümü çalışır.
-- Yerel kurulumda yalnız işletme imzalı bakım paketi yüklenir; imzası doğrulanmayan veya desteklenmeyen sürüm paketi uygulanmaz ve hata audit'e kaydedilir.
-- Kimlik bilgileri/parolalar açık metin saklanmaz; yanlış giriş sınırları kullanıcı hesabı bazında işler ve bir garson hesabının geçici kilidi diğer garsonların sipariş vermesini engellemez.
-- Telefon-sunucu trafiği yalnız yerel HTTPS/TLS kullanır; geçersiz/süresi dolmuş sertifika uyarısı atlanamaz, HTTP bağlantısında oturum veya parola gönderilmez.
-- Oturumun boşta kalma ve mutlak süre sonu sunucu tarafında uygulanır; parola/PIN değişikliği, çıkış ve hesap pasifleştirme eski oturumu geçersiz kılar.
-- Otel/misafir ağından sunucuya erişim mümkün değildir.
-- On garson aynı anda masa ve sipariş akışını kullanır; çift dokunma/yeniden deneme çift sipariş üretmez.
-- En az 15 dakikalık karma yükte p95 performans hedefleri ve %99 başarılı yanıt hedefi ölçülür; sistem ölçülen istek gecikmesi, hata sayısı, kuyruk yaşı ve son başarılı iş bilgisini yönetici tanılamasında gösterir.
-- Bütün garsonlar tüm masa listesini görebilir.
-- Boş masa açılır; servisteki masa seçilince mevcut açık siparişe dönülür.
-- Aynı açık masaya iki garson eşzamanlı eriştiğinde kalemler kaybolmaz/çiftlenmez; çakışan iptal veya masa kapatma işlemi ikinci kez sonuçlanmaz.
-- Bir cihazda masa/sipariş değişikliği yapıldığında aynı LAN'daki diğer açık oturumlar güncel check sürümünü p95 2 saniye içinde görür; bağlantısı kesilip dönen istemci 5 saniye içinde güncellenir veya açık hata/yenileme eylemi gösterir. Eski sürüm sessizce yeni kaydı ezemez.
-- Sistem yöneticisi, restoran yöneticisi ve garson için kullanıcı/rol izin matrisi uygulanır; her rolün yetkisiz API ve ekran eylemleri sunucuda reddedilir, reddedilme audit'e yazılır.
-- Her çalışan kendi hesabıyla giriş yapar; paylaşılan garson hesabı reddedilir. PIN/parola sıfırlama, hesabı pasifleştirme ve etkin oturumları iptal etme beklenen erişim kesme sonucunu verir.
-- İzin değişikliği kaydedildiğinde sonraki isteklerde derhal geçerlidir; açık geçmiş siparişlerdeki aktör değişmez; önceki/yeni rol ve izin farkı audit'te görünür.
-- Yönetici onayı gereken iptal işleminde talep sahibi kendi talebini onaylayamaz; onaylayan kimlik, gerekçe ve talep eden kimlik ayrı kaydedilir. Vardiya iptal yetkilisi izni işletmece etkinleştirilmemişse sadece restoran yöneticisi karar verebilir; yetkili yoksa talep beklemede kalır.
-- Masa durumu sipariş turu ve mutfak yazdırma durumunu ayırt eder; sunucuya kaydedilmeyen işlem gönderildi olarak gösterilmez.
-- Ürün seçimi, not/modifier ve adet bilgisi doğru sipariş turuna eklenir.
-- Misafir/kuver sayısı check düzeyinde girilip değiştirilir; koltuk ekleme, kalemi koltuğa atama ve başka koltuğa taşıma doğru kalır ve audit'te eski/yeni değer görünür.
-- Paylaşılabilir ürün iki veya daha fazla koltuğa atanabilir; bu atama mutfak fişinde gösterilir ancak ürün sipariş adedini/rapor sayısını çoğaltmaz. Paylaşılabilir olmayan ürün paylaştırılamaz; koltuk sorusu ayarı kapalıyken koltuk vermeden sipariş gönderilebilir.
-- Misafir sayısı ile kullanılan koltuklar tutarsızsa sistem sessizce sayıyı değiştirmez; farkı gösterir ve yetkiliye düzeltme olanağı verir.
-- Zorunlu modifier seçilmeden gönderim engellenir; varsayılan/isteğe bağlı/limitli seçimler doğru kaydedilir; alerjen ve diyet etiketleri seçilen üründe, sipariş özeti ve mutfak çıktısında görünür; fiyat alanı oluşturulmaz.
-- Bekletilen kalemler masa/sipariş özetinde görünür, ancak yönetici/garson serbest bırakana veya planlı saat gelene kadar mutfak yazdırma kuyruğuna girmez.
-- Garson bir kalemi veya seçili ürün grubunu restoranın yerel saatine göre ileri bir zamana planlar; planlı gönderim, garson cihazı kapalıyken de sunucudan tam bir kez tetiklenir.
-- Bekletilmiş/zamanlanmış işin saati gönderimden önce değiştirilebilir veya iş iptal edilebilir; işlem yapan kullanıcı ve zaman denetim kaydında görünür.
-- Garson kendi planlarını görüp yönetir; restoran yöneticisi tüm masaların planlarını görüp düzenleyebilir, iptal edebilir veya hemen gönderebilir. Garson gönderilmiş kalemi yönetici onayı olmadan iptal edemez.
-- Planlı saat geldiğinde sunucu/yazıcı kapalıysa iş “zamanı geçti/gönderilemedi” durumuna düşer; sessiz kayıp veya varsayılan otomatik geç gönderim olmaz. Yönetici müdahalesi sonrasında yalnız bir mutfak işi oluşturulur.
-- Kategori ve ürün mutfak yazıcısına doğru yönlendirilir.
-- Aynı sipariş gönderme anahtarı 10 kez yinelendiğinde bir servis turu ve her hedefe en fazla bir özgün Windows spool işi oluşur; kuyruk kabulünden sonraki uygulama yeniden başlatma/yanıt kaybında otomatik ikinci kopya çıkmaz, iş sonucu belirsiz olarak görünür.
-- Mutfak gönderimi ve yönetici adisyon baskısı ayrı eylem/iş olarak çalışır: biri diğerinin yazdırma işini veya masa/ödeme durum geçişini başlatmaz.
-- Mutfağa yeni servis turu gönderildiğinde önceki turun kalemleri tekrar basılmaz.
-- Her mutfak fişinde miktar (1 dahil), masa, sipariş/tur referansı, gönderen garson, zaman, istasyon, ürün adı ve varsa modifier/not bulunur; fiyat, toplam, vergi, ödeme ve PMS/oda bilgisi bulunmaz.
-- Yazıcı kapalı/kâğıtsızken sipariş verisi kaybolmaz; durum arayüzde anlaşılır.
-- Garson gönderilmiş sipariş için gerekçeli iptal talebi oluşturabilir; yönetici onayı olmadan iptal tamamlanmaz.
-- İptal onayı/red, kullanıcı, zaman ve gerekçe bilgisiyle denetim kaydına düşer; onaylı mutfak iptali ayrı çıktı oluşturur.
-- İptal çıktısı `İPTAL / VOID` olarak belirgin görünür ve orijinal fişe bağlanır; taslak kalem kaldırma iptal fişi çıkarmaz. Tekrar baskı ilk iş referansı ve `TEKRAR BASKI` işareti taşır, sipariş/adet sayılarını değiştirmez.
-- Yönetici adisyon yazdırır; adisyon mutfak siparişinden ayrıdır ve fiyat/toplam/vergi/ödeme/PMS alanı içermez.
-- Yönetici bulunmadığında gönderilmiş sipariş iptal talebi beklemede kalır; garson kendi talebini onaylayamaz ve iptal fişi çıkmaz.
-- Servisi Tamamla; taslak, bekletilmiş/zamanlanmış ürün, bekleyen iptal veya sonucu belirsiz baskı varken işlemi engeller ve çözülmesi gereken kayıtları gösterir.
-- Adisyon yalnız gönderilmiş turlardaki etkin kalemleri içerir; iptaller ayrı durumla gösterilir ve etkin adet hesabına girmez. Adisyon çıktısı tahsilat veya mali belge izlenimi oluşturmaz.
-- Tekrar baskı ilk baskıdan farklı işaretlenir; yazdırma hatası yeni sipariş olarak işlenmez.
-- Türkçe karakterler hem mutfak hem adisyon yazıcısında doğru çıkar.
-- Günlük yedek aynı gün USB ve yerel dizin hedefine alınır; hedeflerden biri kullanılamadığında diğer hedefte başarılı kopya korunur. Her hedefin 15 kopya sınırı bağımsız doğrulanır.
-- Firma tarafından sağlanan USB bellekten veya yerel dizinden yeni/boş sunucuya geri yükleme denenir.
-- Şifreli yedek ve audit arşivi için ayrı kurtarma anahtarıyla yeni sunucuya geri yükleme/manifest doğrulaması yapılır; anahtar olmadan veya yanlış anahtarla mevcut verinin üzerine yazılmadığı doğrulanır.
-- Raporlar veritabanında mevcut olan tüm tarihsel kaynak kayıtlardan yeniden üretilebilir; sabit bir 5 yıllık rapor sınırı yoktur.
-- Sunucu yeniden başlatıldığında siparişler ve yazdırma geçmişi korunur.
-- Ubuntu Linux sunucu yeniden başlatma/elektrik sonrası açılışında Docker daemon (`restart: unless-stopped`) ile PostgreSQL, uygulama, zamanlayıcı ve yazdırma işçisi yönetici oturumu açılmasını beklemeden otomatik başlar; servis hazır olmadan kullanıcıya çevrimiçi durum gösterilmez. Bekleyen zamanlı işler bir kez çalışır, geçmiş mutfak turları tekrar basılmaz.
-- Bağlantı, uygulama, PostgreSQL, Linux CUPS / ağ yazdırma kuyruğu, mutfak/adisyon yazıcısı, disk/USB yedek ve sunucu saati arızaları ayrı ayrı oluşturulur; SCR-19 doğru bileşeni, ilk hata/son başarı zamanını ve uygulanabilir sonraki adımı gösterir. Hiçbir bileşen hazır değilken sistem yanlış biçimde çevrimiçi/başarılı gösterilmez.
-- Sıralı tanılama app readiness, DB salt-okunur sorgusu, yerel+USB yedek/manifest, LAN-gateway/garson heartbeat, CUPS ve ayrı yazıcı kuyrukları ile iş referansı tutarlılığını aşama aşama kaydeder; çalıştırma/adım/bulgu PostgreSQL'den yeniden açılır ve sunucu tarihiyle görünür.
-- Her kontrol arızası için doğru aşama, bileşen, önem, olay kimliği, zaman, etkilenen işlev, çözüm adımı ve `Bilinmiyor/Atlandı` durumu doğrulanır; eski garson heartbeat'i veya ölçümü yeşil kalmaz.
-- Tanılama gerçek sipariş/masa/menü/audit verisini değiştirmez ve mutfağa gerçek sipariş yollamaz. Fiziksel test fişi ayrıca onaylanır ve `TEST/TANILAMA` olarak belirgin basılır.
-- Onaysız UI/API onarım isteği reddedilir. USB veya yerel hedeflerden biri yok/bozuksa, manifest doğrulanmıyorsa ya da aktif sipariş/yazdırma/zamanlama varsa otomatik onarım başlamaz; kullanıcıya manuel çözüm sunulur.
-- İzinli her onarım öncesi iki hedefte yeni, manifest/hash doğrulanmış yedek ve işlem bazlı sistem yöneticisi onayı audit'te bulunur; 15 kopya döngüsünde silinecek kopya önceden gösterilir. Aynı repair_id tekrarında işlem çoğalmaz; timeout sonrası kör tekrar yapılmaz.
-- Onarım sonrası ilgili kontroller tekrarlanır; başarısız/Belirsiz doğrulamada zincir durur, bulgu güncellenir, yönetici bilgilendirilir ve yalnız tanımlı güvenli geri alma adımı izlenir.
-- Sipariş/menü/audit verisi, DB şeması, restore, Linux/ağ/yazıcı yapılandırması, belirsiz yazdırma ve zamanlı iş serbest bırakma otomatik onarım allowlist'inde bulunmaz.
-- SCR-07 sunucu/DB, CUPS/adisyon ve mutfak kuyruğu, ağın gerçekten gözlemlenebilen kısmı ve garson cihazı durumlarını ayrı gösterir; veri yaşı/son kontrol görünür, eski ölçüm Bilinmiyor/Uyarı olur ve restoran yöneticisi teknik onarım yapamaz.
-- Yerel sistem yöneticisinin dışa aktardığı tanılama paketi olay/iş kimliklerini içerir, parola/PIN/oturum/kurtarma sırrı içermez ve dışa aktarım audit'e kaydedilir.
-- Yeni personel pilotunda en az 3 garsonun %90'ı ve 1 restoran yöneticisi belirlenen temel görevleri kısa başlangıç açıklamasından sonra yardımsız, yanlış/mükerrer işlem olmadan tamamlar; görev süresi ve hata sayısı kaydedilir. Görev eşikleri işletmece onaylanır.
-- Öğrenme modu kabulinde restoran yöneticisi modu açar; garsonda hem bağlamsal ipucu hem adım adım rehber görünür. Adımları ileri/geri/atla/kapat ve yeniden aç davranışları çalışır; kapatma açık taslak ve alanları korur. Mod açıkken rehber kullanıcı yerine hiçbir kalem eklemez, sipariş kaydetmez veya mutfağa göndermez.
-- Garson ve sistem yöneticisi öğrenme modu ayarını değiştiremez; doğrudan yetkisiz API isteği de reddedilir. Restoran yöneticisinin aç/kapat işlemi eski/yeni değer ve sunucu zamanıyla audit'e yazılır. Yönetici kapattığında açık rehberler sona erer ve garsonlar normal sipariş ekranında kalır.
-- Raporlar için sabit görev örneklerinde kaynak sipariş/audit sorgularıyla satır ve adet farkı sıfırdır; aktif filtreler, saat dilimi ve veri dönemi rapor çıktısında görünür. Yönetici test görevlerindeki rapor sorusunu en geç 3 dakika içinde doğru şablon ve filtreyle bulur; bu kullanılabilirlik hedefi pilot öncesi işletmece onaylanır.
-- Menü değişikliği taslakta doğrulama/önizleme sonrası tek sunucu sürümü olarak yayınlanır; tüm bağlı istemciler bu sürümü alır, çevrimdışı kalan cihaz yeniden bağlanınca günceller veya eski sürüm uyarısı verir.
-- Masa/kalem/tur yaşam döngüsü, kullanıcı-yetki ve menü değişiklikleri, iptal/onay, yazdırma/tekrar baskı, rapor dışa aktarımı ve yedekleme/geri yükleme dahil tüm kritik akışlar kullanıcı kimliği/adı ve sunucu zaman damgasıyla denetim günlüğünde bulunur; kayıtlar değiştirilemez ve yedek geri yüklemede korunur.
-- Misafir sayısı, koltuk ekleme/atama/taşıma/paylaşma değişiklikleri ve geri yükleme/anahtar doğrulama eylemleri kullanıcı/sonuç/zaman damgasıyla audit'te bulunur.
-- SCR-01–SCR-19 ekranlarının her biri Türkçe metinle, kendisine ait rol kısıtlarıyla ve normal/boş/yükleniyor/hata/bağlantı kesildi durumlarıyla prototip ve uygulamada kontrol edilir; garson telefonu ve kasa dokunmatik görünümü ayrı cihaz boyutlarında incelenir.
-- 5.12.1 ekran kataloğundaki her düğme için yetkili/yetkisiz, önkoşul sağlandı/sağlanmadı, başarı/hata, vazgeçme/geri dönme ve audit kaydı kabul senaryoları tamamlanır; görünür her düğmenin bir tanımlı işlevi ve sonucu bulunur.
-- Ekran akışlarında hiçbir yerde fiyat/ödeme/tahsilat/PMS/oda hesabı alanı gösterilmez; masa ve sipariş işlemlerinin sonuçları kullanıcı tarafından anlaşılır ve sunucu tarafından doğrulanır.
-
-## 11. Başlıca riskler ve önlemler
-
-| Risk | Önlem |
-|---|---|
-| Wi-Fi yazıcı modelinde Wi-Fi'ın opsiyonel olması veya bulut servisine bağımlılık | Tam SKU/aksesuar listesini satın almadan doğrulamak; yerel ağ protokolüyle prototip yapmak; Ethernet yedeği |
-| Kablosuz kapsama veya kanal yoğunluğu | Restoran alanında saha ölçümü, sabit AP, istemci izolasyonu ve kapsama testi |
-| Sunucu arızasının restoranı durdurması | Ayrı sunucu arızası/iş sürekliliği senaryosu hazırlanır; uygulama yedeği tek başına hizmet sürekliliği sağlamaz |
-| USB yedek belleğinin arızası/kaybı veya dolması | Günlük yedek sonucu/alanı izlenir; hata yerel sistem yöneticisine bildirilir; ek yedek kopya gereksinimi ayrı karar olarak değerlendirilir |
-| Elektrik kesintisi | Elektrik altyapısının restoran sunucusuna kesintisiz enerji sağladığı saha testiyle doğrulanır |
-| Yazıcıya gönderildiği halde kağıt çıkmaması | Donanım seçimi ve satın alma öncesi kabulünde incelenir; uygulama işletim sistemi kuyruğunun durumunu gösterir ve belirsiz durumda çift baskı riskini kullanıcıya bildirir |
-| Sipariş tekrarının iki kayıt oluşturması | İstemci işlem anahtarı/idempotency ve veritabanı bütünlüğü |
-| Otomatik tanılamanın yanlış pozitif bulgu veya onarımın servis/veri kesintisi yaratması | Varsayılan salt-okunur çalışma; dar allowlist; iki hedefte manifest/hash doğrulanmış ön yedek; işlem başına yeniden doğrulamalı sistem yöneticisi onayı; aktif iş kilidi; onarım sonrası kontrol ve başarısızlıkta duruş; veri/şema/ ağ/yazıcı değişikliği ve otomatik restore kapsam dışı |
-| Personel öğrenme güçlüğü, teknik arıza teşhisi gecikmeleri veya terminal/menü güncellik uyumsuzlukları | Basit ve tutarlı görev akışları; sürüm/eşitleme göstergesi; SCR-19 olay kimlikli tanılama ve çözüm adımları; ilk kullanım ve çoklu istemci kabul ölçütleri (§5.17) |
-| Rapor sonuçlarının anlaşılmaması veya birbiriyle tutarsız görünmesi | Tanımlı ölçüm sözlüğü, aktif filtre/dönem özeti, kaynak kayıt karşılaştırması ve rapor görevi kullanılabilirlik kabulü (§5.17) |
-| Tarihsel verinin zamanla büyümesi | Veri hacmi ölçümü, indeksleme, sayfalama/arka plan raporu, yedek kapasite planı ve gerektiğinde onaylı arşiv politikası; eski raporlara sessiz yaş filtresi koymama |
-| Karmaşık POS arayüzlerinin operasyonel zorluk yaratması | Uluslararası fine-dining standartlarında, sade, dokunmatik ergonomisine uygun ve Alacarte'a özgü ekranlar tasarlamak |
-
-## 12. Sabit kararlar ve ayrıca yürütülecek işler
-
-Bu bölümdeki maddeler kullanıcı tarafından seçilmiş ürün kurallarını ve ayrıca yürütülecek işleri gösterir; kullanıcı tarafından verilmiş kararlar açık seçim gibi yorumlanmamalıdır.
-
-1. Yazıcı marka/modeli ve print server uyumu donanım seçimi/satın alma öncesi kabul kapsamında sonuçlandırılır; uygulama planında Linux CUPS / Ağ yazdırma köprüsü (ESC/POS raw socket) kullanımı sabittir.
-2. USB bellek firma tarafından sağlanır; yedeğin USB'ye ve yerel sunucu/dizin hedefine (`/var/lib/alacarte/backups` ve `/mnt/usb/alacarte/backups`) alınması, her hedefte en fazla 15 kopya tutulması sabittir. USB kayıp/değişim işletme sorumluluğudur.
-3. Veri saklama, arşivleme, silme/anonimleştirme yetkisi yerel sistem yöneticisindedir ve audit'lenir.
-4. Sunucu arızası ve hizmete dönüş (yedek sunucu/onarım, RTO) ayrıca iş sürekliliği çalışmasında kararlaştırılır.
-5. Sunucu işletim sistemi Ubuntu Linux (24.04 LTS) ve Docker Compose mimarisi olarak sabittir. Sistem saat dilimi Kıbrıs (`Asia/Nicosia`) olarak ayarlanmıştır.
-6. Uluslararası restoran standartlarındaki operasyonel menü seçenekleri bu sistemde yer almalıdır: modifier grupları, varsayılan/isteğe bağlı/zorunlu seçenekler, adet/limit, ekle/çıkar/yerine koy ve mevcutsa alerjen/diyet bilgisi. Fiyatlı seçenekler kapsam dışıdır.
-7. Merkezi/uzaktan yönetim ve restoranlar arasında ağ erişimi istenmemektedir; her yerel sistem yöneticisi kendi restoran kurulumunu yönetir.
-8. Zamanlı iş planlanan sunucu saatinde yürütülür; teknik arıza nedeniyle o anda yürütülemezse otomatik geç gönderilmez, yönetici açık eylem seçer. Kuyruk hata/tekrar baskı kuralları §5.9 ve donanım kabul planında tanımlıdır.
-9. Yönetici bulunmadığında gönderilmiş sipariş iptal talebi beklemede kalır; yalnız yetkili yönetici kararıyla yürürlüğe girer.
-
-## 13. Standartlar ve Teknik İlkeler
-
-- Uluslararası 5 Yıldızlı Otel ve Fine-Dining Alakart Masa Servis Standartları
-- ESC/POS Termal Yazıcı Standartları ve Ağ İletişim Protokolleri
-- Linux CUPS ve Raw Socket Yazdırma Mimarisi
-- OWASP Güvenli Kimlik Doğrulama ve Oturum Yönetimi İlkeleri
-- Yerel İzolasyonlu Ağ (Air-Gapped LAN) Güvenlik Prensipleri
-
----
-
-**Planın tamamlanma ölçütü:** gereksinim ve açık kararlar onaylanmış; SCR-01–SCR-19'un özgün ve etkileşimli prototipi cihaz/rol/hata durumlarıyla kabul edilmiş; uluslararası standartlarda mutfak/adisyon çıktıları ve SCR-12 rapor arayüzü/kataloğu örnek verilerle incelenmiş; yazıcı modeli ve bağlantı testi, yerel kurulum, operasyon akışları, veri yaşam döngüsü ve geri yükleme politikası işletme tarafından kabul edilmiş olmalıdır. Bu dokümanda ekran envanteri ve süreç akışları tanımlanmıştır; bu ölçütlerin tamamının gerçekleştiği anlamına gelmez.
-
+| Risk                                            | Önlem                                                                                                                         |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Wi-Fi yazıcı mode linde Wi-F i'ın opsi yonel    | Tam SKU/aksesuar listesini satın almadan doğrulamak; yerel ağ protokolüyle prototip yapmak; Ethernet yedeği                   |
+| olması veya bulut serv isine bağı mlılık        |                                                                                                                               |
+| Kabl osuz kaps ama veya kanal yoğu nluğu        | Restoran alanında saha ölçümü, sabit AP, istemci izolasyonu ve kapsama testi                                                  |
+| Sunucu arız asının rest oranı durd urması       | Ayrı sunucu arızası/iş sürekliliği senaryosu hazırlanır; uygulama yedeği tek başına hizmet sürekliliği sağlamaz               |
+| USB yedek bell eğinin arız ası/ kaybı veya dolm | Günlük yedek sonucu/alanı izlenir; hata yerel sistem yöneticisine bildirilir; ek yedek kopya gereksinimi ayrı karar olarak    |
+| ası                                             | değerlendirilir                                                                                                               |
+| Elek trik kesi ntisi                            | Elektrik altyapısının restoran sunucusuna kesintisiz enerji sağladığı saha testiyle doğrulanır                                |
+| Yazı                                            | Donanım seçimi ve satın alma öncesi kabulünde incelenir; uygulama işletim sistemi kuyruğunun durumunu gösterirve belirsiz     |
+|                                                 | durumda çift baskı riskini kullanıcıya                                                                                        |
+| cıya gönd eril diği halde kağıtçıkm aması       | bildirir                                                                                                                      |
+| Sipa riş tekr arının iki kayıt oluş turm ası    | İstemci işlem anahtarı/idempotency ve veritabanı bütünlüğü                                                                    |
+| Otom                                            | Varsayılan salt-okunur çalışma; dar allowlist; iki hedefte manifest/hash doğrulanmış ön yedek; işlem başına yeniden           |
+|                                                 | doğrulamalı sistem yöneticisi onayı; aktif iş                                                                                 |
+| atik tanı lama nın yanlış pozi tif bulgu veya   | kilidi; onarım sonrası kontrol ve başarısızlıkta duruş; veri/şema/ ağ/yazıcı değişikliği ve otomatik restore                  |
+| onarımın serv                                   |                                                                                                                               |
+| is/v eri kesi ntisi yara tması                  | kapsam dışı                                                                                                                   |
+| Pers onelöğre nme güçlüğü, teknik arıza teşh    | Basit ve tutarlı görev akışları; sürüm/eşitleme göstergesi; SCR-19 olay kimlikli tanılama ve çözüm adımları; ilk              |
+| isi geci kmel                                   |                                                                                                                               |
+| eri veya term inal /menü günc ellik uyum suzl   | kullanım ve çoklu istemci kabul ölçütleri (§4.17)                                                                             |
+| ukları                                          |                                                                                                                               |
+| Rapor sonuçlarının anlaşılm aması veya birb     | Tanımlı ölçüm sözlüğü, aktif filtre/dönem özeti, kaynak kayıt karşılaştırması ve rapor görevi kullanılabilirlik               |
+| iriyle tuta rsız                                |                                                                                                                               |
+| görü nmesi                                      | kabulü (§4.17)                                                                                                                |
+| Tari hsel veri nin zama nla büyü mesi           | Veri hacmi ölçümü, indeksleme, sayfalama/arka plan raporu, yedek kapasite planı ve gerektiğinde onaylı arşiv politikası; eski |
+|                                                 | raporlara sessiz yaş filtresi koymama                                                                                         |
+| Karm aşık POS arayüzle rinin oper asyo nel      | Uluslararası fine-dining standartlarında, sade, dokunmatik ergonomisine uygun ve Alacarte'a özgü ekranlar tasarlamak          |
+| zorluk yara tması                               |                                                                                                                               |

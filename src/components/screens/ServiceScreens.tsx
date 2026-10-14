@@ -3067,7 +3067,7 @@ export function ServiceScreensView(props: ServiceScreensProps) {
         {/* MICROS Simphony TSR Container */}
         <div className="overflow-hidden rounded-2xl border border-[#4c5c5b] bg-[#354243] shadow-2xl">
           {/* Top TSR Control Bar */}
-          <div className="grid grid-cols-2 gap-1 bg-[#455352] p-1.5 sm:grid-cols-3 lg:grid-cols-7">
+          <div className="grid grid-cols-2 gap-1 bg-[#455352] p-1.5 sm:grid-cols-4 lg:grid-cols-8">
             {/* 1. Product Search */}
             <div className="flex items-center gap-1.5 rounded bg-[#202c2d] px-2.5 py-1.5">
               <span className="text-xs text-[#73d8c6]">⌕</span>
@@ -3541,39 +3541,70 @@ export function ServiceScreensView(props: ServiceScreensProps) {
             </div>
 
             {/* RIGHT ACTION STRIP (col-span-2) */}
-            <div className="flex flex-col gap-1.5 bg-[#53605f] p-1.5 lg:col-span-2">
+            <div className="flex flex-col gap-1.5 bg-[#455251] p-1.5 lg:col-span-2 overflow-y-auto max-h-[calc(100vh-220px)]">
+              {/* PRIMARY ACTION: SEND TO KITCHEN FIRST & ALWAYS VISIBLE */}
+              <button
+                type="button"
+                disabled={busyAction === "send-kitchen" || draftCount === 0}
+                onClick={handleSendRoundToKitchen}
+                className={`flex flex-col justify-center rounded-xl border-2 p-2.5 text-left shadow-lg transition ${
+                  draftCount > 0
+                    ? "border-[#73d8c6] bg-gradient-to-r from-[#20534b] to-[#2d6f64] text-white hover:brightness-110 animate-pulse"
+                    : "border-[#536563] bg-[#293635] text-[#9aaead] opacity-65"
+                } disabled:opacity-50`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-black tracking-wider uppercase text-[#73d8c6]">
+                    MUTFAK FİŞİ ({draftCount} KALEM)
+                  </span>
+                  {draftCount > 0 && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-[#73d8c6] text-[#10221f] text-[9px] font-black">
+                      HAZIR
+                    </span>
+                  )}
+                </div>
+                <span className="text-sm font-black text-white mt-0.5">
+                  {busyAction === "send-kitchen"
+                    ? "GÖNDERİLİYOR..."
+                    : "🚀 MUTFAĞA GÖNDER →"}
+                </span>
+                <small className="mt-0.5 font-mono text-[8px] opacity-75 text-[#c4ede5]">
+                  Key: {roundIdempotencyKey.slice(0, 14)}
+                </small>
+              </button>
+
               <button
                 type="button"
                 onClick={() => onNavigate("SCR-05")}
-                className="flex flex-1 flex-col justify-center rounded border border-[#798582] bg-[#384544] p-2.5 text-left transition hover:brightness-110"
+                className="flex flex-col justify-center rounded border border-[#798582] bg-[#384544] p-2 text-left transition hover:brightness-110"
               >
                 <span className="text-[9px] font-bold text-[#73d8c6]">SCR-05</span>
                 <span className="text-xs font-extrabold text-[#f0f5f3]">
                   KALEM SEÇENEKLERİ
                 </span>
                 <small className="mt-0.5 text-[9px] text-[#9aaead]">
-                  Adet, Modifier, Koltuk, Paylaşım
+                  Adet, Modifier, Koltuk
                 </small>
               </button>
 
               <button
                 type="button"
                 onClick={() => onNavigate("SCR-06")}
-                className="flex flex-1 flex-col justify-center rounded border border-[#798582] bg-[#384544] p-2.5 text-left transition hover:brightness-110"
+                className="flex flex-col justify-center rounded border border-[#798582] bg-[#384544] p-2 text-left transition hover:brightness-110"
               >
                 <span className="text-[9px] font-bold text-[#efc97b]">SCR-06</span>
                 <span className="text-xs font-extrabold text-[#f0f5f3]">
                   BEKLET / ZAMANLA
                 </span>
                 <small className="mt-0.5 text-[9px] text-[#9aaead]">
-                  Kalemi/Turu Tut, Saat Ata
+                  Kalemi/Turu Tut
                 </small>
               </button>
 
               <button
                 type="button"
                 onClick={() => onNavigate("SCR-09")}
-                className="flex flex-1 flex-col justify-center rounded border border-[#754541] bg-[#452c2a] p-2.5 text-left transition hover:brightness-110"
+                className="flex flex-col justify-center rounded border border-[#754541] bg-[#452c2a] p-2 text-left transition hover:brightness-110"
               >
                 <span className="text-[9px] font-bold text-[#ffc0b5]">SCR-09</span>
                 <span className="text-xs font-extrabold text-[#ffc7be]">
@@ -3587,14 +3618,14 @@ export function ServiceScreensView(props: ServiceScreensProps) {
               <button
                 type="button"
                 onClick={() => onNavigate("SCR-11")}
-                className="flex flex-1 flex-col justify-center rounded border border-[#798582] bg-[#384544] p-2.5 text-left transition hover:brightness-110"
+                className="flex flex-col justify-center rounded border border-[#798582] bg-[#384544] p-2 text-left transition hover:brightness-110"
               >
                 <span className="text-[9px] font-bold text-[#8dc4e9]">SCR-11</span>
                 <span className="text-xs font-extrabold text-[#f0f5f3]">
                   FİYATSIZ ADİSYON
                 </span>
                 <small className="mt-0.5 text-[9px] text-[#9aaead]">
-                  80mm Servis Özeti Önizle
+                  80mm Servis Özeti
                 </small>
               </button>
 
@@ -3603,14 +3634,14 @@ export function ServiceScreensView(props: ServiceScreensProps) {
                 type="button"
                 disabled={busyAction === "reorder-round" || !activeSession}
                 onClick={() => handleReorderRound()}
-                className="flex flex-1 flex-col justify-center rounded border border-[#49605b] bg-[#243d39] p-2.5 text-left transition hover:brightness-110 disabled:opacity-50"
+                className="flex flex-col justify-center rounded border border-[#49605b] bg-[#243d39] p-2 text-left transition hover:brightness-110 disabled:opacity-50"
               >
                 <span className="text-[9px] font-bold text-[#73d8c6]">MICROS RE-ORDER</span>
                 <span className="text-xs font-extrabold text-[#bdf0e4]">
                   {busyAction === "reorder-round" ? "⟳ KOPYALANIYOR..." : "⟲ TURU TEKRARLA"}
                 </span>
                 <small className="mt-0.5 text-[9px] text-[#9aaead]">
-                  Son turun kalemlerini yeni tura al
+                  Son turun kalemleri
                 </small>
               </button>
 
@@ -3618,33 +3649,14 @@ export function ServiceScreensView(props: ServiceScreensProps) {
               <button
                 type="button"
                 onClick={() => setShowReprintModal(true)}
-                className="flex flex-1 flex-col justify-center rounded border border-[#665637] bg-[#3b3325] p-2.5 text-left transition hover:brightness-110"
+                className="flex flex-col justify-center rounded border border-[#665637] bg-[#3b3325] p-2 text-left transition hover:brightness-110"
               >
                 <span className="text-[9px] font-bold text-[#efc97b]">DUPLICATE PRINT</span>
                 <span className="text-xs font-extrabold text-[#f2d38f]">
                   🖨️ FİŞİ TEKRAR BAS
                 </span>
                 <small className="mt-0.5 text-[9px] text-[#c9b78b]">
-                  Kopya mutfak fişi çıkar
-                </small>
-              </button>
-
-              <button
-                type="button"
-                disabled={busyAction === "send-kitchen"}
-                onClick={handleSendRoundToKitchen}
-                className="flex flex-1 flex-col justify-center rounded border-2 border-[#d9fbf0] bg-[#c8f0e6] p-3 text-left text-[#18332e] shadow-lg transition hover:brightness-105 disabled:opacity-50"
-              >
-                <span className="text-[9px] font-black tracking-wider uppercase">
-                  MUTFAK-WINDOWS ({draftCount} KALEM)
-                </span>
-                <span className="text-sm font-black">
-                  {busyAction === "send-kitchen"
-                    ? "GÖNDERİLİYOR..."
-                    : "MUTFAĞA GÖNDER →"}
-                </span>
-                <small className="mt-0.5 font-mono text-[8px] opacity-80">
-                  Key: {roundIdempotencyKey.slice(0, 14)}
+                  Kopya mutfak fişi
                 </small>
               </button>
             </div>

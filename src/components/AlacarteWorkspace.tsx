@@ -341,32 +341,32 @@ export function AlacarteWorkspace({
       {/* MAIN WORKSPACE */}
       <div className="min-w-0 flex flex-col min-h-dvh">
         {/* TOPBAR */}
-        <header className="sticky top-0 z-30 h-16 border-b border-[#344647] bg-[#131d1e]/95 backdrop-blur px-4 lg:px-6 flex items-center justify-between gap-3 no-print">
-          <div className="flex items-center gap-3 min-w-0">
+        <header className="sticky top-0 z-30 min-h-16 py-2 border-b border-[#344647] bg-[#131d1e]/95 backdrop-blur px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2.5 no-print">
+          <div className="flex items-center gap-2.5 min-w-0">
             <button
               type="button"
               onClick={() => setMobileNavOpen((v) => !v)}
-              className="lg:hidden px-2.5 py-1.5 rounded-lg border border-[#344647] bg-[#202f30] text-sm"
+              className="lg:hidden px-2.5 py-1.5 rounded-lg border border-[#344647] bg-[#202f30] text-sm shrink-0"
               aria-label="Ekran Kataloğunu Aç"
             >
               ☰
             </button>
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-[#244440] border border-[#386e65] text-[#73d8c6] font-extrabold text-xs">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="px-2 py-0.5 rounded bg-[#244440] border border-[#386e65] text-[#73d8c6] font-extrabold text-xs shrink-0">
                   {activeScreenDef.id}
                 </span>
-                <span className="font-bold text-sm truncate">
+                <span className="font-bold text-xs sm:text-sm truncate">
                   {activeScreenDef.title}
                 </span>
               </div>
-              <div className="text-xs text-[#9aaead] hidden sm:block truncate">
+              <div className="text-[11px] text-[#9aaead] hidden md:block truncate">
                 {activeScreenDef.description}
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 flex-wrap justify-end">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end flex-wrap sm:flex-nowrap">
             {/* Yanıp Sönen Demo Rozeti */}
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-950/90 border border-red-500/80 text-red-200 text-xs font-black tracking-wider uppercase demo-blinking-badge shrink-0 shadow-md">
               <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping inline-block" />
@@ -377,7 +377,7 @@ export function AlacarteWorkspace({
             {initialData.config?.learningModeEnabled && (
               <span
                 onClick={() => handleNavigate("SCR-04")}
-                className="cursor-pointer hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-[#705e37] bg-[#393321] text-[#f1db9f]"
+                className="cursor-pointer hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-[#705e37] bg-[#393321] text-[#f1db9f] shrink-0"
                 title="Restoran Yöneticisi tarafından Garson Öğrenme Modu etkinleştirildi"
               >
                 🎓 Öğrenme Modu Açık
@@ -385,7 +385,7 @@ export function AlacarteWorkspace({
             )}
 
             {/* Sync & Server Clock */}
-            <div className="hidden xl:flex flex-col items-end text-xs text-[#9aaead] font-mono">
+            <div className="hidden 2xl:flex flex-col items-end text-xs text-[#9aaead] font-mono shrink-0">
               <span>
                 Sunucu Saati: <b className="text-[#f0f5f3]">{serverClock || "19:42:00"}</b>
               </span>
@@ -398,26 +398,33 @@ export function AlacarteWorkspace({
             <button
               type="button"
               onClick={() => setPhonePreviewMode((v) => !v)}
-              className={`px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition ${
+              className={`px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                 phonePreviewMode
                   ? "border-[#58b7a6] bg-[#73d8c6] text-[#10221f]"
                   : "border-[#344647] bg-[#202f30] text-[#f0f5f3] hover:bg-[#263738]"
               }`}
               title="Dokunmatik Kasa (18.5 inç) ve Garson El Terminali (Telefon) görünümü arasında geçiş yap"
             >
-              {phonePreviewMode ? "📱 Garson Telefonu (390px)" : "🖥️ Kasa / Tam Ekran"}
+              {phonePreviewMode ? "📱 Telefon" : "🖥️ Kasa"}
             </button>
-
-            <button type="button" onClick={handleLogout} className="px-2.5 py-1.5 rounded-lg border border-[#344647] bg-[#202f30] text-xs font-semibold">Oturumu kapat</button>
 
             <button
               type="button"
               onClick={handleRefresh}
               disabled={isPending}
-              className="px-2.5 py-1.5 rounded-lg border border-[#344647] bg-[#202f30] hover:bg-[#263738] text-xs font-semibold"
+              className="px-2.5 py-1.5 rounded-lg border border-[#344647] bg-[#202f30] hover:bg-[#263738] text-xs font-semibold shrink-0 whitespace-nowrap"
               title="Sunucu Veritabanından Yenile"
             >
-              {isPending ? "⟳ Yenileniyor..." : "↻ Eşitle"}
+              {isPending ? "⟳ ..." : "↻ Eşitle"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="px-2.5 py-1.5 rounded-lg border border-red-900/60 bg-[#251b1b] hover:bg-[#332020] text-red-200 text-xs font-semibold shrink-0 whitespace-nowrap"
+              title="Oturumu Kapat"
+            >
+              Çıkış
             </button>
           </div>
         </header>

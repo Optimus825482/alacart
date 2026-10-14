@@ -3,11 +3,48 @@ set -e
 
 echo "=== [A LA CARTE] Container Başlatılıyor ==="
 
-# Ortam ve PATH Güvencesi
+# 0. Ortam ve PATH Güvencesi
 export HOME="${HOME:-/home/nextjs}"
 export PATH="/app/node_modules/.bin:$PATH"
 
-# 1. PostgreSQL Veritabanı Hazırlık Kontrolü
+# 1. DATABASE_URL Protokol ve Tırnak Temizliği (Sanitization)
+# Tırnakları, boşlukları ve Windows satır sonlarını temizle
+DATABASE_URL=$(echo "$DATABASE_URL" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'"'"']//' -e 's/["'"'"']$//')
+
+case "$DATABASE_URL" in
+  postgresql://*|postgres://*)
+    # Geçerli protokol
+    ;;
+  //*)
+    DATABASE_URL="postgresql:$DATABASE_URL"
+    ;;
+  *)
+    if [ -n "$DB_USER" ] && [ -n "$DB_PASSWORD" ] && [ -n "$DB_NAME" ]; then
+      echo ">> DATABASE_URL protokolü eksik veya hatalı; DB_USER/DB_PASSWORD ile postgresql:// oluşturuluyor..."
+      DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST:-alacarte-db}:5432/${DB_NAME}?schema=public"
+    elif [ -n "$DATABASE_URL" ]; then
+      echo ">> DATABASE_URL başına postgresql:// ekleniyor..."
+      DATABASE_URL="postgresql://${DATABASE_URL}"
+    else
+      DATABASE_URL="postgresql://${DB_USER:-alacarte}:${DB_PASSWORD:-alacarte}@${DB_HOST:-alacarte-db}:5432/${DB_NAME:-alacarte}?schema=public"
+    fi
+    ;;
+esac
+export DATABASE_URL
+
+# 2. Scheduler Worker Ayırıcı Kontrolü
+# Eğer konteyner scheduler için başlatıldıysa migrate/seed yapmadan doğrudan çalıştır
+if echo "$*" | grep -q "scheduled-worker"; then
+  echo "=== [A LA CARTE] Scheduler Worker Başlatılıyor ==="
+  echo ">> Veritabanı bekleniyor (${DB_HOST:-alacarte-db}:5432)..."
+  until nc -z -v -w3 ${DB_HOST:-alacarte-db} 5432 2>/dev/null; do
+    sleep 2
+  done
+  echo ">> Veritabanı hazır, zamanlayıcı başlatılıyor..."
+  exec "$@"
+fi
+
+# 3. PostgreSQL Veritabanı Hazırlık Kontrolü
 echo ">> Veritabanı bağlantısı doğrulanıyor..."
 max_retries=30
 counter=0
@@ -24,13 +61,13 @@ done
 
 echo ">> Veritabanı aktif ve hazır!"
 
-# 2. Prisma Şemasını Veritabanına Senkronize Et (db push)
+# 4. Prisma Şemasını Veritabanına Senkronize Et (db push)
 echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
 ./node_modules/.bin/prisma db push --schema=prisma/schema.prisma --accept-data-loss || {
   echo "UYARI: Prisma db push sırasında hata oluştu, devam ediliyor..."
 }
 
-# 3. Veri Kontrolü ve Otomatik İlk Kurulum (Bootstrap / Seed)
+# 5. Veri Kontrolü ve Otomatik İlk Kurulum (Bootstrap / Seed)
 echo ">> Veritabanı veri durumu doğrulanıyor..."
 existing_data=$(node -e '
 const { PrismaClient } = require("@prisma/client");

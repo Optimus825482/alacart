@@ -13,9 +13,9 @@ services:
     container_name: alacarte-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER:?DB_USER must be set in Coolify}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in Coolify}
-      POSTGRES_DB: ${DB_NAME:?DB_NAME must be set in Coolify}
+      POSTGRES_USER: ${DB_USER:-alacarte}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-alacarte}
+      POSTGRES_DB: ${DB_NAME:-alacarte}
       POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
       TZ: Asia/Nicosia
     volumes:
@@ -26,7 +26,7 @@ services:
           - alacarte-db
           - alacarte-postgres
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:?DB_USER must be set in Coolify} -d ${DB_NAME:?DB_NAME must be set in Coolify}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-alacarte} -d ${DB_NAME:-alacarte}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -54,7 +54,10 @@ services:
     container_name: alacarte-web
     restart: unless-stopped
     environment:
-      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set in Coolify with the alacarte-db host}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${DB_USER:-alacarte}:${DB_PASSWORD:-alacarte}@alacarte-db:5432/${DB_NAME:-alacarte}?schema=public}
+      DB_USER: ${DB_USER:-alacarte}
+      DB_PASSWORD: ${DB_PASSWORD:-alacarte}
+      DB_NAME: ${DB_NAME:-alacarte}
       SCHEDULER_SECRET: ${SCHEDULER_SECRET:-alacarte_demo_super_secret_scheduler_token_32chars}
       DB_HOST: alacarte-db
       NODE_ENV: production
@@ -109,10 +112,12 @@ services:
       dockerfile: Dockerfile
     container_name: alacarte-scheduler
     restart: unless-stopped
-    entrypoint: ["tsx"]
-    command: ["scripts/scheduled-worker.ts"]
+    command: ["tsx", "scripts/scheduled-worker.ts"]
     environment:
-      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set in Coolify with the alacarte-db host}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${DB_USER:-alacarte}:${DB_PASSWORD:-alacarte}@alacarte-db:5432/${DB_NAME:-alacarte}?schema=public}
+      DB_USER: ${DB_USER:-alacarte}
+      DB_PASSWORD: ${DB_PASSWORD:-alacarte}
+      DB_NAME: ${DB_NAME:-alacarte}
       DB_HOST: alacarte-db
       NODE_ENV: production
       TZ: Asia/Nicosia

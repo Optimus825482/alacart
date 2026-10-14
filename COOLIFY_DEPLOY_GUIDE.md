@@ -12,7 +12,7 @@ Bu proje; **Coolify** üzerinde tek bir `docker-compose.yaml` ile hem **Next.js 
   * `alacarte-db`: PostgreSQL 16 Alpine, kalıcı disk (`alacarte_pgdata`), sağlık kontrolü (`pg_isready`).
   * `alacarte-app`: Next.js 16 uygulaması, Traefik reverse proxy etiketleri (`alacarte.erkanerdem.online`), SSL ve HTTP->HTTPS yönlendirmesi.
 * **[Dockerfile](file:///d:/merit/alacarte/Dockerfile)**: Multi-stage, hafif ve güvenli Alpine tabanlı üretim imajı.
-* **[docker-entrypoint.sh](file:///d:/merit/alacarte/docker-entrypoint.sh)**: Konteyner açıldığında veritabanını bekler, `prisma db push` ile tabloları otomatik oluşturur ve veritabanı boşsa `seed.ts` ile başlangıç menülerini yükler.
+* **[docker-entrypoint.sh](file:///d:/merit/alacarte/docker-entrypoint.sh)**: Konteyner açılışında DB bağlantısını ve şemayı hazırlar. Seed varsayılan olarak kapalıdır; açıkça etkinleştirilen seed yalnız boş veritabanında çalışır.
 * **[.env.coolify](file:///d:/merit/alacarte/.env.coolify)**: Coolify paneline girilecek çevre değişkenleri.
 
 ---
@@ -20,21 +20,14 @@ Bu proje; **Coolify** üzerinde tek bir `docker-compose.yaml` ile hem **Next.js 
 ## 2. Coolify Üzerinde Dağıtım (Adım Adım)
 
 ### Yöntem A: Git Deposu Üzerinden (Önerilen)
-1. Bu projeyi GitHub / GitLab / Gitea deponuza push edin:
-   ```bash
-   git add .
-   git commit -m "feat: Coolify Docker Compose deployment files"
-   git push origin main
-   ```
-2. Coolify panelinizde **"New Resource"** ➔ **"Public/Private Repository"** seçin.
-3. Projenizin Git adresini girin.
-4. **Build Pack** olarak **`Docker Compose`** seçin.
-5. **Environment Variables** bölümüne [.env.coolify](file:///d:/merit/alacarte/.env.coolify) içindeki değerleri ekleyin:
-   * `DB_USER=alacarte_user`
-   * `DB_PASSWORD=AlacarteSecret2026!`
-   * `DB_NAME=alacarte_db`
-6. **Domains / FQDN** alanına `https://alacarte.erkanerdem.online` yazın.
-7. **"Deploy"** butonuna basın.
+1. Coolify'de repository kaynağını ve **Docker Compose** dağıtımını seçin.
+2. Compose dosyasının bulunduğu kök dizini bağlayın.
+3. Coolify Secret/Environment bölümünde `DB_USER`, güçlü ve benzersiz `DB_PASSWORD`, `DB_NAME`, `DATABASE_URL` ve benzersiz en az 32 karakterlik `SCHEDULER_SECRET` tanımlayın. `DATABASE_URL` uygulama içinden `alacarte-db:5432` hostunu kullanmalı; paroladaki özel karakterler URL-encode edilmelidir. Repo içindeki veya eski `.env.coolify` dosyasındaki bilinen parolayı kullanmayın.
+4. `ALACARTE_COOKIE_SECURE=true` bırakın. `SEED_ON_START=false` ve `ALLOW_DESTRUCTIVE_SEED=false` değerleri standart dağıtımda kapalı kalmalıdır.
+5. `https://alacarte.erkanerdem.online` alan adını tanımlayıp deploy edin. PostgreSQL portunu dışarı yayınlamayın.
+6. İlk demo hesabı gerekiyorsa seed sırlarını (admin/manager/waiter parolaları ve PIN'leri ile setup anahtarı) Coolify Secret olarak ekleyin; `SEED_ON_START=true` ve `ALLOW_DESTRUCTIVE_SEED=true` değerlerini yalnız boş demo DB'nin ilk açılışında geçici olarak açın. Seed dosyası yıkıcıdır; mevcut veritabanında tekrar çalıştırılmaz. Seed tamamlanınca bu iki değişkeni hemen `false` yapıp yeniden deploy edin.
+
+Mevcut PostgreSQL volume kullanılıyorsa DB parolası rotasyonu yalnızca Compose'daki `DB_PASSWORD` ve `DATABASE_URL` değerlerini değiştirmekle tamamlanmaz; PostgreSQL rol parolası da Coolify'den kontrollü bakımda eşzamanlı değiştirilmelidir. Aksi halde uygulama veritabanına bağlanamaz.
 
 ---
 
@@ -45,16 +38,21 @@ Bu proje; **Coolify** üzerinde tek bir `docker-compose.yaml` ile hem **Next.js 
 
 ---
 
-## 3. Otomatik İlk Açılış Akışı (Sıfır Manuel İşlem)
-Konteyner ilk çalıştığında `docker-entrypoint.sh` devreye girer:
+## 3. İlk Açılış Akışı
+Konteyner başladığında `docker-entrypoint.sh` devreye girer:
 1. `alacarte-db` konteynerının hazır olmasını bekler.
 2. `npx prisma db push` komutunu çalıştırarak tüm tabloları (Alakartlar, Masalar, Hiyerarşik Kategoriler, Menü Öğeleri, Siparişler vb.) PostgreSQL üzerinde anında oluşturur.
-3. Veritabanının boş olduğunu tespit ederse `npx tsx prisma/seed.ts` scriptini çalıştırarak İtalyan, Balık, Steakhouse alakartlarını ve örnek zengin menüyü veritabanına yükler.
+3. Seed varsayılan olarak çalışmaz. Yalnız yukarıdaki iki açık seed anahtarı verilirse ve veritabanında restoran/kullanıcı kaydı yoksa örnek menü ve hesapları yükler.
 4. Uygulamayı 3000 portunda başlatır.
 5. Coolify Traefik; `http://alacarte.erkanerdem.online` isteklerini otomatik olarak uygulamaya yönlendirir ve Let's Encrypt SSL sertifikasını üretir.
 
 ---
 
 ## 4. Canlılık Kontrolü (Healthcheck)
-Uygulama içinde `/api/health` rotası tanımlanmıştır. Coolify veya Traefik bu endpoint üzerinden uygulamanın ve veritabanının ayakta olduğunu doğrular:
-* `GET https://alacarte.erkanerdem.online/api/health` ➔ `{"status": "ok", "database": "connected"}`
+`/api/health` yalnızca `{ "status": "ok" }` veya hata durumunda HTTP 503 ve `{ "status": "error" }` döndürür. İç yapılandırma, restoran, kullanıcı, yazıcı veya audit bilgisi yayımlamaz.
+
+## 5. Demo kapsamı ve gerçek donanım sınırı
+
+Coolify dağıtımı web demosudur; restoranın kapalı LAN'ına ve fiziksel yazıcılara bağlanmaz. Sipariş/çıktı kayıtları uygulama içinde incelenebilir, ancak yazdırma işleri **PENDING** kalır ve kullanıcıya fiziksel çıktının teslim edildiği söylenmez. Yedekleme, geri yükleme ve fiziksel cihaz onarımı için doğrulanmış gerçek adaptör/backup hedefi bu dağıtımda bulunmadığından işlemler engellenir. Ağ, yazıcı ve OS spooler göstergeleri ölçülemiyorsa “Bilinmiyor” olarak kalır.
+
+Bu nedenle Coolify demo, kapalı restoran ağına kurulacak üretim sürümünün saha kabulünü veya yazıcı/USB yedek testini karşılamaz. Demo için tutulan Docker/Coolify topolojisi, planın yerel restoran dağıtım hedefinden ayrı değerlendirilir.

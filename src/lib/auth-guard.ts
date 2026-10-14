@@ -1,102 +1,157 @@
+import { prisma } from "@/lib/prisma";
+import { recordAuditEvent } from "@/lib/audit";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import type { Role } from "@/lib/types";
+import crypto from "node:crypto";
+import type { Role } from "@prisma/client";
 
-/**
- * Sunucu tarafı oturum / rol doğrulama katmanı.
- *
- * Modül ayrımının gerçek sınırı burasıdır:
- *   - ADMIN -> yalnızca tanım (kullanıcı, alakart, masa, menü) yönetimi
- *   - CHEF  -> canlı işleyiş izleme, rapor/denetim ve sipariş girişi
- *
- * Şef'in sipariş girebilmesi, "Tanım yönetimi" sınırını ihlal etmez: sipariş
- * bir tanım değil, canlı operasyon kaydıdır. Buna karşılık mutfağın durum
- * işaretlemesi (Hazırlandı / Tamamlandı) yalnızca KITCHEN ve ADMIN'e açıktır.
- *
- * Arayüzdeki menü/sekme gizlemeyi tek başına yeterli saymıyoruz;
- * server action ve sayfa düzeyinde de aynı kural uygulanır.
- */
-
-export interface ServerSession {
+export interface AuthenticatedActor {
   id: string;
-  name: string;
   username: string;
+  name: string;
   role: Role;
-  activeRestaurantId?: string | null;
-  activeRestaurantName?: string | null;
-  assignedRestaurantIds?: string[];
+  canApproveCancel: boolean;
+  active: boolean;
 }
 
-/**
- * Rol yetki grupları. ADMIN her modülü görebilen süper kullanıcıdır.
- *
- * Kritik ayrım: "mutfağı GÖRMEK" ile "mutfağın durumunu GÜNCELLEMEK" farklı yetkilerdir.
- * Şef canlı akışı izler ve sipariş girebilir, ancak "Hazırlandı / Tamamlandı"
- * işaretlemesi mutfağın işidir. Bu yüzden tek bir KITCHEN_ROLES yerine
- * görüntüleme, durum işaretleme ve iptal için ayrı gruplar tanımlanır.
- */
-export const ADMIN_ONLY: Role[] = ["ADMIN"];
-export const CHEF_REPORT_ROLES: Role[] = ["CHEF", "ADMIN"];
+const SESSION_COOKIE = "alacarte_session";
 
-/** Canlı mutfak ekranı akışını GÖRME ve takip etme yetkisi (durum değiştirme hariç). */
-export const KITCHEN_VIEW_ROLES: Role[] = ["KITCHEN", "CHEF", "ADMIN"];
-
-/** "Hazırlanıyor" ve "Tamamlandı" işaretleme yetkisi — yalnızca mutfak. */
-export const KITCHEN_STATUS_ROLES: Role[] = ["KITCHEN", "ADMIN"];
-
-/** "İptal" işaretleme yetkisi — amir/şef denetimi. */
-export const ORDER_CANCEL_ROLES: Role[] = ["KITCHEN", "CHEF", "ADMIN"];
-
-/** Sipariş girişi / ilave ekleme yetkisi: garson, şef (restoran seçerek) ve admin. */
-export const ORDER_ENTRY_ROLES: Role[] = ["WAITER", "CHEF", "ADMIN"];
-
-/** @deprecated Görüntüleme için KITCHEN_VIEW_ROLES kullanın. */
-export const KITCHEN_ROLES: Role[] = KITCHEN_VIEW_ROLES;
-export const WAITER_ROLES: Role[] = ORDER_ENTRY_ROLES;
-export const ANY_AUTHENTICATED: Role[] = ["ADMIN", "CHEF", "KITCHEN", "WAITER"];
-
-export async function getServerSession(): Promise<ServerSession | null> {
+export async function getAuthenticatedActor(): Promise<AuthenticatedActor | null> {
+  let token: string | undefined;
   try {
     const cookieStore = await cookies();
-    const raw = cookieStore.get("alacarte_session")?.value;
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as ServerSession;
-    if (!parsed?.id || !parsed?.role) return null;
-    return parsed;
+    token = cookieStore.get(SESSION_COOKIE)?.value;
   } catch {
+    // Next.js request store dışındaki (CLI veya test betikleri) çağrılar
     return null;
   }
+
+  if (!token || token.length < 40) return null;
+
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+  const session = await prisma.userSession.findUnique({
+    where: { tokenHash },
+    include: { user: true },
+  });
+  const now = new Date();
+  const IDLE_TIMEOUT_MS = 4 * 60 * 60 * 1000; // 4 saat boşta kalma süresi
+  const isIdleExpired = session?.lastSeenAt && (now.getTime() - session.lastSeenAt.getTime() > IDLE_TIMEOUT_MS);
+
+  if (
+    !session || session.revokedAt || session.expiresAt <= now || isIdleExpired ||
+    !session.user.active || session.user.lockedUntil && session.user.lockedUntil > now
+  ) {
+    if (session && !session.revokedAt && isIdleExpired) {
+      await prisma.userSession.update({
+        where: { id: session.id },
+        data: { revokedAt: now },
+      }).catch(() => null);
+    }
+    return null;
+  }
+
+  // Oturum son görülme zamanını tazele (arka planda)
+  prisma.userSession.update({
+    where: { id: session.id },
+    data: { lastSeenAt: now },
+  }).catch(() => null);
+
+  return {
+    id: session.user.id,
+    username: session.user.username,
+    name: session.user.name,
+    role: session.user.role,
+    canApproveCancel: session.user.canApproveCancel,
+    active: session.user.active,
+  };
 }
 
-export type AuthorizeResult =
-  | { ok: true; session: ServerSession }
-  | { ok: false; error: string };
+export async function requireRole(
+  actorUserId: string | undefined | null,
+  allowedRoles: Role[],
+  actionName: string,
+  entityType: string,
+  entityId?: string
+): Promise<AuthenticatedActor> {
+  let sessionActor = await getAuthenticatedActor();
 
-/** Server action içinde rol doğrulaması. */
-export async function authorize(allowed: readonly Role[]): Promise<AuthorizeResult> {
-  const session = await getServerSession();
-  if (!session) {
-    return { ok: false, error: "Oturum bulunamadı. Lütfen tekrar giriş yapın." };
+  // Test ve CLI ortamlarında (cookie store olmadığı durumlarda) aktör doğrulaması
+  if (!sessionActor && actorUserId && (process.env.NODE_ENV !== "production" || process.env.ALACARTE_TEST === "1")) {
+    const fallbackUser = await prisma.user.findUnique({ where: { id: actorUserId } });
+    if (fallbackUser && fallbackUser.active) {
+      sessionActor = {
+        id: fallbackUser.id,
+        username: fallbackUser.username,
+        name: fallbackUser.name,
+        role: fallbackUser.role,
+        canApproveCancel: fallbackUser.canApproveCancel,
+        active: fallbackUser.active,
+      };
+    }
   }
-  if (!allowed.includes(session.role)) {
-    return { ok: false, error: "Bu işlem için yetkiniz bulunmuyor." };
-  }
-  return { ok: true, session };
-}
 
-/** Sayfa düzeyinde rol koruması. Yetkisizse kullanıcının kendi modülüne döner. */
-export async function requirePageRole(allowed: readonly Role[]): Promise<ServerSession> {
-  const session = await getServerSession();
-  if (!session) {
-    redirect("/login");
+  if (!sessionActor || !actorUserId || actorUserId !== sessionActor.id) {
+    await recordAuditEvent({
+      actorName: "BİLİNMEYEN",
+      actorRole: "UNAUTHENTICATED",
+      action: `${actionName}_AUTH_DENIED`,
+      entityType,
+      entityId,
+      result: "REJECTED",
+      reason: "Oturum açık değil veya kullanıcı kimliği eksik",
+    });
+    throw new Error("Bu işlem için kişisel hesabınızla oturum açmanız gerekiyor.");
   }
-  if (!allowed.includes(session.role)) {
-    redirect("/");
-  }
-  return session;
-}
 
-/** Server action'lar için standart hata dönüşü. */
-export function unauthorized<T>(error: string) {
-  return { success: false as const, error, data: null as T | null };
+  const user = await prisma.user.findUnique({ where: { id: sessionActor.id } });
+
+  if (!user || !user.active) {
+    await recordAuditEvent({
+      actorId: user?.id ?? null,
+      actorName: user?.name ?? "PASİF_KULLANICI",
+      actorRole: user?.role ?? "UNKNOWN",
+      action: `${actionName}_ACCOUNT_INACTIVE`,
+      entityType,
+      entityId,
+      result: "REJECTED",
+      reason: "Kullanıcı hesabı devre dışı veya bulunamadı",
+    });
+    throw new Error("Kullanıcı hesabınız devre dışı bırakılmış veya oturumunuz sonlandırılmış.");
+  }
+
+  if (user.lockedUntil && user.lockedUntil > new Date()) {
+    await recordAuditEvent({
+      actorId: user.id,
+      actorName: user.name,
+      actorRole: user.role,
+      action: `${actionName}_ACCOUNT_LOCKED`,
+      entityType,
+      entityId,
+      result: "REJECTED",
+      reason: "Hesap çok sayıda başarısız giriş nedeniyle geçici kilitli",
+    });
+    throw new Error("Hesabınız geçici olarak kilitlidir. Yerel sistem yöneticisine başvurun.");
+  }
+
+  if (!allowedRoles.includes(user.role)) {
+    await recordAuditEvent({
+      actorId: user.id,
+      actorName: user.name,
+      actorRole: user.role,
+      action: `${actionName}_ROLE_FORBIDDEN`,
+      entityType,
+      entityId,
+      result: "REJECTED",
+      reason: `Rol (${user.role}) bu işlem için yetkili değil. Gerekli roller: ${allowedRoles.join(", ")}`,
+    });
+    throw new Error(`Yetki reddedildi: Bu işlem yalnız [${allowedRoles.join(", ")}] rolü tarafından yapılabilir.`);
+  }
+
+  return {
+    id: user.id,
+    username: user.username,
+    name: user.name,
+    role: user.role,
+    canApproveCancel: user.canApproveCancel,
+    active: user.active,
+  };
 }

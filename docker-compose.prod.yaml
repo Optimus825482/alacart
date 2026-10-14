@@ -1,0 +1,112 @@
+version: "3.8"
+
+# ==============================================================================
+# Merit A La Carte - Ubuntu Linux Standalone Production Docker Compose
+# Mimarisi: Kapalı LAN (Yerel Ağ), Bağımsız PostgreSQL 16 + Next.js 16 + Scheduler
+# Saat Dilimi: Asia/Nicosia (Kıbrıs / KKTC)
+# İşletim Sistemi: Ubuntu Linux 24.04 LTS
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. PostgreSQL 16 Veritabanı Servisi
+  # ----------------------------------------------------------------------------
+  alacarte-db:
+    image: postgres:16-alpine
+    container_name: alacarte-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-alacarte_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-AlacarteProd2026!}
+      POSTGRES_DB: ${DB_NAME:-alacarte_db}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
+      TZ: Asia/Nicosia
+    volumes:
+      - alacarte_pgdata:/var/lib/postgresql/data
+    networks:
+      - alacarte_lan
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-alacarte_admin} -d ${DB_NAME:-alacarte_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    command: >
+      postgres
+      -c max_connections=150
+      -c shared_buffers=256MB
+      -c effective_cache_size=768MB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=4MB
+
+  # ----------------------------------------------------------------------------
+  # 2. Next.js 16 A La Carte Web Uygulaması
+  # ----------------------------------------------------------------------------
+  alacarte-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: alacarte-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-alacarte_admin}:${DB_PASSWORD:-AlacarteProd2026!}@alacarte-db:5432/${DB_NAME:-alacarte_db}?schema=public
+      DB_HOST: alacarte-db
+      NODE_ENV: production
+      DEPLOYMENT_MODE: on-prem-standalone
+      PORT: 3000
+      NEXT_TELEMETRY_DISABLED: 1
+      TZ: Asia/Nicosia
+      ALACARTE_COOKIE_SECURE: "false" # Kapalı LAN HTTP/HTTPS yerel erişim
+      SCHEDULER_SECRET: ${SCHEDULER_SECRET:-c89a71f021e90ef818da29487b1c41097268d871bfa98e2101}
+      SEED_ON_START: ${SEED_ON_START:-false}
+      ALLOW_DESTRUCTIVE_SEED: ${ALLOW_DESTRUCTIVE_SEED:-false}
+    volumes:
+      - /var/lib/alacarte/backups:/var/lib/alacarte/backups
+      - /mnt/usb/alacarte/backups:/mnt/usb/alacarte/backups
+    depends_on:
+      alacarte-db:
+        condition: service_healthy
+    networks:
+      - alacarte_lan
+
+  # ----------------------------------------------------------------------------
+  # 3. Zamanlanmış Sipariş ve Arka Plan Görev İşçisi (Scheduler Worker)
+  # ----------------------------------------------------------------------------
+  alacarte-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: alacarte-scheduler
+    restart: unless-stopped
+    entrypoint: ["npx"]
+    command: ["tsx", "scripts/scheduled-worker.ts"]
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-alacarte_admin}:${DB_PASSWORD:-AlacarteProd2026!}@alacarte-db:5432/${DB_NAME:-alacarte_db}?schema=public
+      DB_HOST: alacarte-db
+      NODE_ENV: production
+      TZ: Asia/Nicosia
+      SCHEDULER_SECRET: ${SCHEDULER_SECRET:-c89a71f021e90ef818da29487b1c41097268d871bfa98e2101}
+      SCHEDULER_POLL_MS: 2000
+    depends_on:
+      alacarte-db:
+        condition: service_healthy
+    networks:
+      - alacarte_lan
+
+# ==============================================================================
+# Kalıcı Veri Alanları (Volumes) & Yerel Ağ (Network)
+# ==============================================================================
+volumes:
+  alacarte_pgdata:
+    driver: local
+
+networks:
+  alacarte_lan:
+    driver: bridge

@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "npx tsx scripts/e2e-full-test.ts",
+    "verify": "npx tsx scripts/verify-alacarte-system.ts",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio"

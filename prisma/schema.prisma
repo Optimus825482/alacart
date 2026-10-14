@@ -8,209 +8,594 @@ datasource db {
 }
 
 enum Role {
-  ADMIN     // Sistem Yöneticisi (Tüm sistem tanımları, kullanıcılar, genel ayarlar)
-  CHEF      // Şef Modülü (Tüm alakartlar arası geçiş, canlı mutfak ekranı, tarih filtreli PDF/Excel raporlar, audit)
-  KITCHEN   // Mutfak Modülü (Sadece görevli olduğu alakartın canlı mutfak ekranı ve adisyon yazıcısı)
-  WAITER    // Garson Modülü (Görevli olduğu alakartın mobil sipariş terminali ve masa yönetimi)
+  SYSTEM_ADMIN       // Yerel Sistem Yöneticisi (SCR-02, SCR-13..19, kurulum, menü, kullanıcı, yedek, audit, tanılama)
+  RESTAURANT_MANAGER // Restoran Yöneticisi (SCR-07..12, operasyon panosu, iptal kararı, fiyatsız adisyon, raporlar, öğrenme modu anahtarı)
+  WAITER             // Garson (SCR-03..06, masa planı, sipariş, koltuk/modifier, beklet/zamanla, iptal talebi)
 }
 
-enum TableStatus {
-  EMPTY
-  OCCUPIED
+enum TableOperationalStatus {
+  EMPTY              // Boş
+  IN_SERVICE         // Serviste
+  DRAFT_PENDING      // Yeni sipariş gönderilecek (Taslak var)
+  SCHEDULED_PENDING  // Zamanlandı / Bekletildi
+  PRINT_PENDING      // Mutfak çıktısı bekliyor
+  PRINT_WARNING      // Mutfak çıktısı hatalı / sonucu belirsiz
+  CANCEL_PENDING     // İptal kararı bekliyor
 }
 
-enum OrderStatus {
-  PENDING      // Mutfakta bekliyor / Yeni sipariş
-  PREPARING    // Mutfakta hazırlanıyor (ocakta)
-  COMPLETED    // Mutfakta tamamlandı (servise hazır)
-  CANCELLED    // İptal edildi
+enum ServiceSessionStatus {
+  OPEN
+  COMPLETED
 }
 
-model User {
-  id           String             @id @default(uuid())
-  name         String             // Ad Soyad
-  username     String             @unique // Giriş Kullanıcı Adı
-  password     String             @default("1234") // Şifre (Giriş için)
-  pin          String?            // Hızlı PIN kodu (isteğe bağlı)
-  role         Role               @default(WAITER)
-  active       Boolean            @default(true)
-  orders       Order[]
-  assignedTo   RestaurantUser[]
-  auditLogs    AuditLog[]
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+enum RoundStatus {
+  DRAFT
+  HELD
+  SCHEDULED
+  OVERDUE
+  SENT
+  CANCELLED
 }
 
-model Restaurant {
-  id           String             @id @default(uuid())
-  name         String             // örn: "The Roof Garden", "The Steak House", "Blue Sea", "Mandarin", "Bella Merit"
-  code         String             @unique // örn: "ROOF_GARDEN", "STEAK_HOUSE", "BLUE_SEA", "MANDARIN", "BELLA_MERIT"
+enum ItemStatus {
+  DRAFT
+  HELD
+  SCHEDULED
+  OVERDUE
+  SENT
+  CANCEL_REQUESTED
+  CANCELLED
+}
+
+enum CancelRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PrintJobType {
+  KITCHEN_ORDER
+  KITCHEN_VOID
+  PRICELESS_CHECK
+  TEST_PRINT
+  REPORT_PRINT
+}
+
+enum PrintJobStatus {
+  PENDING
+  SENDING
+  SUBMITTED_TO_OS_QUEUE
+  ERROR
+  UNCERTAIN
+  REPRINTED
+}
+
+enum BackupTargetType {
+  USB
+  LOCAL_DIR
+}
+
+enum DiagnosticStatus {
+  PENDING
+  RUNNING
+  PASSED
+  WARNING
+  FAILED
+  UNKNOWN
+  SKIPPED
+  STOPPED
+}
+
+model RestaurantConfig {
+  id                   String   @id @default("local-restaurant-config")
+  name                 String   @default("Merit Garden · A La Carte")
+  code                 String   @default("MERIT_GARDEN_LOCAL")
+  description          String?  @default("Yerel kapalı LAN restoran operasyon sistemi (İnternet, PMS ve ödeme bağlantısız)")
+  timezone             String   @default("Asia/Nicosia")
+  setupCompleted       Boolean  @default(true)
+  setupKeyHash         String?
+  learningModeEnabled  Boolean  @default(false) // Yalnız RESTORAN YÖNETİCİSİ SCR-07'den değiştirebilir
+  shiftCancelDelegate  Boolean  @default(false) // İşletme vardiya iptal yetkilisi politikası açık mı?
+  menuVersion          Int      @default(1)
+  retentionDays        Int      @default(1825)  // Varsayılan 5 yıl saklama politikası (rapor sorgu sınırı değildir)
+  usbBackupPath        String   @default("/mnt/usb/alacarte/backups")
+  localBackupPath      String   @default("/var/lib/alacarte/backups")
+  maxBackupCopies      Int      @default(15)    // Her hedefte en fazla 15 kopya (günlük + manuel)
+  appVersion           String   @default("1.0.0")
+  dbSchemaVersion      String   @default("db-19")
+  hardwareTopologyJson String   @default("{}")
+  certificateValidTo   DateTime @default(dbgenerated("(NOW() + interval '1 year')"))
+  serverStartedAt      DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Area {
+  id           String            @id @default(uuid())
+  name         String            @unique // örn: "Salon", "Teras", "Bahçe"
   description  String?
-  themeKey     String             @default("DEFAULT") // Özel renk ve stil teması anahtarı
-  primaryColor String             @default("#eab308") // Ana tema rengi
-  accentColor  String             @default("#ca8a04") // İkincil renk
-  coverImage   String?            // Restoran kapak görseli
-  active       Boolean            @default(true)
-  
+  displayOrder Int               @default(0)
+  active       Boolean           @default(true)
   tables       RestaurantTable[]
-  categories   Category[]
-  orders       Order[]
-  users        RestaurantUser[]
-  auditLogs    AuditLog[]
-
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-}
-
-model RestaurantUser {
-  id           String      @id @default(uuid())
-  userId       String
-  restaurantId String
-  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, restaurantId])
-  @@index([restaurantId])
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
 }
 
 model RestaurantTable {
-  id           String       @id @default(uuid())
-  name         String       // örn: "Masa 1", "Teras 04", "VIP Panoramik"
-  capacity     Int          @default(4)
-  status       TableStatus  @default(EMPTY)
-  restaurantId String
-  restaurant   Restaurant   @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  orders       Order[]
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id             String                 @id @default(uuid())
+  number         Int                    @unique
+  name           String                 @unique // örn: "Masa 01"
+  capacity       Int                    @default(4)
+  status         TableOperationalStatus @default(EMPTY)
+  active         Boolean                @default(true)
+  version        Int                    @default(1)
+  lastActivityAt DateTime?
+  areaId         String
+  area           Area                   @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  sessions       ServiceSession[]
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
 
-  @@index([restaurantId])
+  @@index([areaId])
   @@index([status])
 }
 
+model User {
+  id                    String                @id @default(uuid())
+  name                  String
+  username              String                @unique
+  passwordHash          String
+  pinHash               String?
+  role                  Role                  @default(WAITER)
+  active                Boolean               @default(true)
+  mustChangePassword    Boolean               @default(false)
+  failedLoginCount      Int                   @default(0)
+  lockedUntil           DateTime?
+  canApproveCancel      Boolean               @default(false) // Vardiya iptal yetkilisi izni
+  permissionsJson       String                @default("{}")
+  sessionVersion        Int                   @default(1)
+  lastHeartbeatAt       DateTime?
+  lastDeviceInfo        String?
+  lastSyncedMenuVersion Int                   @default(1)
+  sessions              UserSession[]
+  openedSessions        ServiceSession[]      @relation("SessionOpenedBy")
+  completedSessions     ServiceSession[]      @relation("SessionCompletedBy")
+  createdRounds         ServiceRound[]        @relation("RoundCreatedBy")
+  sentRounds            ServiceRound[]        @relation("RoundSentBy")
+  createdItems          OrderItem[]           @relation("ItemCreatedBy")
+  cancelRequests        CancellationRequest[] @relation("CancelRequestedBy")
+  cancelDecisions       CancellationRequest[] @relation("CancelDecidedBy")
+  auditLogs             AuditLog[]
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+}
+
+model UserSession {
+  id          String    @id @default(uuid())
+  tokenHash   String    @unique
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceLabel String    @default("Restoran Terminali")
+  ipAddress   String    @default("192.168.10.1")
+  createdAt   DateTime  @default(now())
+  lastSeenAt  DateTime  @default(now())
+  expiresAt   DateTime
+  revokedAt   DateTime?
+
+  @@index([userId])
+}
+
+model PrinterQueue {
+  id               String           @id @default(uuid())
+  name             String           @unique // "Adisyon-USB", "Mutfak-Windows"
+  role             String           // "RECEIPT" | "KITCHEN"
+  osQueueName      String           // Windows Spooler kuyruk adı
+  connectionType   String           // "USB_DIRECT" | "ETHERNET_PRINT_SERVER_BRIDGE"
+  deviceModel      String           @default("Epson TM-T20III (011)")
+  printServerModel String?          // "DIGITUS DN-13003-2"
+  bridgeApModel    String?          // "TP-Link TL-WA801N (Client/Bridge)"
+  routerModel      String?          // "TP-Link Archer AX23"
+  status           String           @default("ONLINE") // "ONLINE" | "WARNING" | "OFFLINE" | "PILOT_PENDING"
+  spoolerStatus    String           @default("RUNNING")
+  pendingJobCount  Int              @default(0)
+  lastCheckedAt    DateTime         @default(now())
+  lastSuccessAt    DateTime?
+  lastErrorMessage String?
+  active           Boolean          @default(true)
+  stations         KitchenStation[]
+  printJobs        PrintJob[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model KitchenStation {
+  id             String       @id @default(uuid())
+  name           String       @unique // "SICAK MUTFAK", "SOĞUK / MEZE", "IZGARA", "TATLI / BAR"
+  code           String       @unique // "SICAK", "SOGUK", "IZGARA", "TATLI"
+  printerQueueId String
+  printerQueue   PrinterQueue @relation(fields: [printerQueueId], references: [id], onDelete: Restrict)
+  active         Boolean      @default(true)
+  displayOrder   Int          @default(0)
+  menuItems      MenuItem[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
 model Category {
-  id           String       @id @default(uuid())
-  name         String       // örn: "Yiyecekler", "İçecekler", "Başlangıçlar", "Soğuk Başlangıçlar"
+  id           String     @id @default(uuid())
+  name         String
   description  String?
-  displayOrder Int          @default(0)
-  active       Boolean      @default(true)
-  
-  // Hiyerarşik Kategori Ağacı (Self-relation)
+  displayOrder Int        @default(0)
+  active       Boolean    @default(true)
   parentId     String?
-  parent       Category?    @relation("SubCategories", fields: [parentId], references: [id], onDelete: Cascade)
-  children     Category[]   @relation("SubCategories")
-
-  // Belirli bir alakarta özel menü veya null (tüm alakartlar)
-  restaurantId String?
-  restaurant   Restaurant?  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  
+  parent       Category?  @relation("SubCategories", fields: [parentId], references: [id], onDelete: Cascade)
+  children     Category[] @relation("SubCategories")
   items        MenuItem[]
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
-  @@index([restaurantId])
   @@index([parentId])
 }
 
 model MenuItem {
-  id           String       @id @default(uuid())
-  name         String       // örn: "Wagyu Ribeye", "Pekin Ördeği", "Burrata", "Levrek Buğulama"
-  description  String?      // Özellikler, pişme bilgisi, garnitür detayı
-  allergens    String?      // Alerjen uyarıları
-  imageUrl     String?      // Yiyecek/İçecek fotoğrafı URL veya base64
-  defaultNotes String?      // Özel Pişirme / Servis Notu Varsayılanları (örn: "Az Pişmiş, Orta Pişmiş, İyi Pişmiş, Sosu Ayrı" veya "Buzlu, Limonlu, Şekersiz")
-  active       Boolean      @default(true)
-  displayOrder Int          @default(0)
-
-  categoryId   String
-  category     Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  orderItems   OrderItem[]
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id             String                  @id @default(uuid())
+  name           String
+  receiptName    String                  // Fişte görünen ad
+  description    String?
+  allergens      String?                 // Örn: "Gluten, Süt, Deniz Ürünü"
+  dietaryTags    String?                 // Örn: "Vegan, Glutensiz, Şefin Önerisi"
+  productClass   String                  @default("STANDARD") // "STANDARD" | "BEVERAGE" | "SHAREABLE"
+  askSeatOnAdd   Boolean                 @default(false)      // Ürün eklendiğinde koltuk numarası sor
+  isShareable    Boolean                 @default(false)      // Birden fazla koltuğa paylaştırılabilir
+  status         String                  @default("ACTIVE")   // "ACTIVE" | "DRAFT" | "PASSIVE"
+  active         Boolean                 @default(true)
+  is86ed         Boolean                 @default(false)      // MICROS Menu Item Availability (86 / Tükendi)
+  availableCount Int?                                         // MICROS Count Available (Kalan porsiyon sayacı)
+  displayOrder   Int                     @default(0)
+  menuVersion    Int                     @default(1)
+  categoryId     String
+  category       Category                @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  stationId      String
+  station        KitchenStation          @relation(fields: [stationId], references: [id], onDelete: Restrict)
+  modifierGroups MenuItemModifierGroup[]
+  orderItems     OrderItem[]
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
 
   @@index([categoryId])
+  @@index([stationId])
 }
 
-model Order {
-  id                 String            @id @default(uuid())
-  orderNumber        Int               @default(autoincrement())
-  status             OrderStatus       @default(PENDING)
-  notes              String?           // Masaya özel genel not
-  
-  restaurantId       String
-  restaurant         Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  
-  tableId            String
-  table              RestaurantTable   @relation(fields: [tableId], references: [id], onDelete: Cascade)
+model ModifierGroup {
+  id           String                  @id @default(uuid())
+  name         String                  @unique // "Pişme Derecesi", "Hazırlama Tercihi", "Garnitür / Sos"
+  required     Boolean                 @default(false)
+  minSelect    Int                     @default(0)
+  maxSelect    Int                     @default(3)
+  displayOrder Int                     @default(0)
+  active       Boolean                 @default(true)
+  options      ModifierOption[]
+  menuItems    MenuItemModifierGroup[]
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+}
 
-  waiterId           String
-  waiter             User              @relation(fields: [waiterId], references: [id], onDelete: Cascade)
+model ModifierOption {
+  id           String        @id @default(uuid())
+  groupId      String
+  group        ModifierGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  name         String        // "Az pişmiş", "Orta pişmiş", "İyi pişmiş", "Soğansız", "Sos ayrı"
+  qualifier    String        @default("DEFAULT") // "DEFAULT" | "ADD" | "REMOVE" | "SUBSTITUTE" | "SIDE"
+  isDefault    Boolean       @default(false)
+  displayOrder Int           @default(0)
+  active       Boolean       @default(true)
 
-  items              OrderItem[]
-  
-  // Düzenleme / Güncelleme / Revizyon Takibi
-  isUpdated          Boolean           @default(false)   // Sipariş sonradan garson tarafından güncellendi / ilave eklendi mi?
-  revision           Int               @default(1)       // Sipariş revizyon numarası (1: İlk sipariş, 2+: Güncellenmiş)
-  lastModifiedAt     DateTime?                           // Garson tarafından son düzenlenme / güncellenme anı
+  @@index([groupId])
+}
 
-  // Detaylı Zaman Damgaları (Zaman/Süre Raporları ve Audit için)
-  preparingStartedAt DateTime?         // Mutfakta "Hazırlanıyor" dendiği an
-  printedAt          DateTime?         // Termal fiş basılma anı
+model MenuItemModifierGroup {
+  id              String        @id @default(uuid())
+  menuItemId      String
+  modifierGroupId String
+  menuItem        MenuItem      @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  modifierGroup   ModifierGroup @relation(fields: [modifierGroupId], references: [id], onDelete: Cascade)
 
-  // İPTAL BİLGİLERİ (Garson tarafından iptal edilen siparişler)
-  cancelledAt         DateTime?   // İptal edildiği an
-  cancellationReason  String?     // İptal sebebi (örn: "Müşteri vazgeçti")
-  kitchenNotifiedAt   DateTime?   // Mutfağa iptal bildirimi gönderildi
-  kitchenAckedAt      DateTime?   // Mutfak bildirimi gördü / onayladı
-  completedAt        DateTime?         // Mutfakta "Tamamlandı" dendiği an
-  createdAt          DateTime          @default(now()) // Garsonun siparişi mutfağa fırlattığı an
-  updatedAt          DateTime          @updatedAt
+  @@unique([menuItemId, modifierGroupId])
+}
 
-  @@index([restaurantId, status])
-  @@index([tableId])
-  @@index([waiterId])
-  @@index([status, createdAt])
+model ServiceSession {
+  id             String                @id @default(uuid())
+  referenceCode  String                @unique // Örn: "A-2026-000184"
+  tableId        String
+  table          RestaurantTable       @relation(fields: [tableId], references: [id], onDelete: Restrict)
+  status         ServiceSessionStatus  @default(OPEN)
+  guestCount     Int                   @default(2)
+  seatCount      Int                   @default(2)
+  serviceType    String                @default("MASA_SERVISI")
+  version        Int                   @default(1)
+  notes          String?
+  openedById     String
+  openedBy       User                  @relation("SessionOpenedBy", fields: [openedById], references: [id], onDelete: Restrict)
+  completedById  String?
+  completedBy    User?                 @relation("SessionCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
+  openedAt       DateTime              @default(now())
+  lastActivityAt DateTime              @default(now())
+  completedAt    DateTime?
+  rounds         ServiceRound[]
+  items          OrderItem[]
+  cancelRequests CancellationRequest[]
+  printJobs      PrintJob[]
+
+  @@index([tableId, status])
+  @@index([status, openedAt])
+}
+
+model ServiceRound {
+  id              String                @id @default(uuid())
+  sessionId       String
+  session         ServiceSession        @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  roundNumber     Int
+  status          RoundStatus           @default(DRAFT)
+  idempotencyKey  String?               @unique
+  holdEntireRound Boolean               @default(false)
+  isRush          Boolean               @default(false)      // MICROS Rush Order Flag (Acil / Öncelikli Fiş)
+  scheduledAt     DateTime?
+  scheduledById   String?
+  overdueAt       DateTime?
+  sentAt          DateTime?
+  createdById     String
+  createdBy       User                  @relation("RoundCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  sentById        String?
+  sentBy          User?                 @relation("RoundSentBy", fields: [sentById], references: [id], onDelete: SetNull)
+  items           OrderItem[]
+  cancelRequests  CancellationRequest[]
+  printJobs       PrintJob[]
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  @@index([sessionId, roundNumber])
+  @@index([status, scheduledAt])
 }
 
 model OrderItem {
-  id          String      @id @default(uuid())
-  orderId     String
-  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  
-  menuItemId  String
-  menuItem    MenuItem    @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  id                  String                @id @default(uuid())
+  sessionId           String
+  session             ServiceSession        @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  roundId             String
+  round               ServiceRound          @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  menuItemId          String
+  menuItem            MenuItem              @relation(fields: [menuItemId], references: [id], onDelete: Restrict)
+  productNameSnapshot String
+  receiptNameSnapshot String
+  stationNameSnapshot String
+  allergensSnapshot   String?
+  quantity            Int                   @default(1)
+  seatNumber          Int?
+  sharedSeatsJson     String?               // Örn: "[1,2,3]" — paylaşım ürün adedini çoğaltmaz
+  modifiersJson       String                @default("[]") // Seçilen modifier listesi
+  kitchenNote         String?
+  isRush              Boolean               @default(false)      // MICROS Rush Item Flag (Acil Kalem)
+  status              ItemStatus            @default(DRAFT)
+  scheduledAt         DateTime?
+  scheduledById       String?
+  overdueAt           DateTime?
+  sentAt              DateTime?
+  cancelledAt         DateTime?
+  createdById         String
+  createdBy           User                  @relation("ItemCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  cancelRequests      CancellationRequest[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
 
-  quantity    Int         @default(1)
-  itemNotes   String?     // örn: "Az pişmiş", "Buzsuz", "Glutensiz"
-  status      OrderStatus @default(PENDING)
-  createdAt   DateTime    @default(now())
-
-  @@index([orderId])
-  @@index([menuItemId])
+  @@index([sessionId])
+  @@index([roundId])
+  @@index([status])
 }
 
-// ==========================================
-// AUDIT LOG (DENETİM İZİ TAKİP SİSTEMİ)
-// ==========================================
+model CancellationRequest {
+  id                String              @id @default(uuid())
+  referenceCode     String              @unique // Örn: "VOID-2026-0042"
+  sessionId         String
+  session           ServiceSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  roundId           String
+  round             ServiceRound        @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  orderItemId       String
+  orderItem         OrderItem           @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  requestedQuantity Int                 @default(1)
+  reasonCategory    String              // Örn: "Misafir tercihini değiştirdi", "Yanlış ürün girildi"
+  explanation       String
+  status            CancelRequestStatus @default(PENDING)
+  requestedById     String
+  requestedBy       User                @relation("CancelRequestedBy", fields: [requestedById], references: [id], onDelete: Restrict)
+  requestedAt       DateTime            @default(now())
+  decidedById       String?
+  decidedBy         User?               @relation("CancelDecidedBy", fields: [decidedById], references: [id], onDelete: SetNull)
+  decisionNote      String?
+  decidedAt         DateTime?
+  voidPrintJobId    String?
+
+  @@index([status, requestedAt])
+  @@index([sessionId])
+}
+
+model PrintJob {
+  id                     String          @id @default(uuid())
+  jobCode                String          @unique // Örn: "K-000391" veya "P-2045"
+  jobType                PrintJobType
+  status                 PrintJobStatus  @default(SUBMITTED_TO_OS_QUEUE)
+  printerQueueId         String
+  printerQueue           PrinterQueue    @relation(fields: [printerQueueId], references: [id], onDelete: Restrict)
+  stationName            String?
+  sessionId              String?
+  session                ServiceSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  roundId                String?
+  round                  ServiceRound?   @relation(fields: [roundId], references: [id], onDelete: SetNull)
+  cancelRequestId        String?
+  idempotencyKey         String?         @unique
+  isReprint              Boolean         @default(false)
+  originalJobId          String?
+  attemptCount           Int             @default(1)
+  contentSnapshot        String          // 80mm ESC/POS metin anlık görüntüsü (fiyatsız)
+  scopeDescription       String?         // Örn: "Tur 01" veya "Tüm gönderilmiş turlar"
+  sessionVersionSnapshot Int?
+  requestedById          String?
+  actorName              String
+  errorCode              String?
+  errorMessage           String?
+  submittedAt            DateTime?
+  completedAt            DateTime?
+  createdAt              DateTime        @default(now())
+
+  @@index([status, createdAt])
+  @@index([sessionId])
+  @@index([printerQueueId])
+}
+
 model AuditLog {
-  id           String      @id @default(uuid())
-  userId       String?
-  user         User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  userName     String      // İşlemi yapan kullanıcının adı
-  userRole     String      // İşlemi yapanın rolü (ADMIN, CHEF, KITCHEN, WAITER)
-  
-  action       String      // Örn: "LOGIN", "LOGOUT", "ORDER_CREATED", "STATUS_PREPARING", "STATUS_COMPLETED", "ORDER_PRINTED", "MENU_CREATED"
-  entity       String      // Örn: "Order", "User", "MenuItem", "Table", "Restaurant"
-  entityId     String?     // İlgili kaydın ID'si
-  details      String?     // İşlem detayları (Örn: "Masa 1 için 3 kalem sipariş oluşturuldu")
-  
-  restaurantId String?
-  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
+  id              String   @id @default(uuid())
+  sequenceNumber  Int      @default(autoincrement())
+  serverTimestamp DateTime @default(now())
+  timezone        String   @default("Asia/Nicosia")
+  traceId         String   @default(uuid())
+  actorId         String?
+  actor           User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorName       String   // Kullanıcı adı veya "SİSTEM"
+  actorRole       String   // "SYSTEM_ADMIN", "RESTAURANT_MANAGER", "WAITER", "SİSTEM"
+  deviceSession   String?
+  action          String   // Örn: "LOGIN_SUCCESS", "ROUND_SENT_TO_KITCHEN", "CANCEL_REQUEST_CREATED", "CANCEL_APPROVED", "LEARNING_MODE_TOGGLED"
+  entityType      String   // Örn: "ServiceSession", "ServiceRound", "OrderItem", "PrintJob", "BackupRecord", "DiagnosticRun"
+  entityId        String?
+  result          String   @default("SUCCESS") // "SUCCESS" | "REJECTED" | "WARNING" | "ERROR"
+  reason          String?
+  beforeValueJson String?
+  afterValueJson  String?
+  details         String?
+  prevHash        String   @default("GENESIS")
+  entryHash       String
 
-  createdAt    DateTime    @default(now())
-
-  @@index([restaurantId])
-  @@index([userId])
+  @@index([serverTimestamp])
+  @@index([actorId])
   @@index([action])
+  @@index([entityType, entityId])
+}
+
+model BackupRecord {
+  id                     String           @id @default(uuid())
+  backupCode             String
+  targetType             BackupTargetType
+  targetPath             String
+  triggerType            String           @default("AUTO_DAILY") // "AUTO_DAILY" | "MANUAL" | "PRE_REPAIR" | "PRE_RESTORE"
+  appVersion             String           @default("1.0.0")
+  dbSchemaVersion        String           @default("db-19")
+  recordCountSummaryJson String           @default("{}")
+  manifestHash           String
+  encryptedKeyVersion    String           @default("KEY-2026-V1")
+  fileSizeBytes          Int              @default(48234496)
+  status                 String           @default("SUCCESS") // "SUCCESS" | "FAILED" | "ROTATED_OUT"
+  verified               Boolean          @default(true)
+  verifiedAt             DateTime         @default(now())
+  rotatedOutAt           DateTime?
+  createdById            String?
+  actorName              String           @default("SİSTEM")
+  errorMessage           String?
+  createdAt              DateTime         @default(now())
+
+  @@index([targetType, status, createdAt])
+}
+
+model DiagnosticRun {
+  id             String              @id @default(uuid())
+  runCode        String              @unique // Örn: "DIAG-2026-0012"
+  initiatedById  String
+  actorName      String
+  appVersion     String              @default("1.0.0")
+  overallStatus  DiagnosticStatus    @default(PASSED)
+  stoppedByUser  Boolean             @default(false)
+  summaryText    String?
+  startedAt      DateTime            @default(now())
+  completedAt    DateTime?
+  checks         DiagnosticCheck[]
+  findings       DiagnosticFinding[]
+  repairs        RepairRun[]
+}
+
+model DiagnosticCheck {
+  id               String           @id @default(uuid())
+  runId            String
+  run              DiagnosticRun    @relation(fields: [runId], references: [id], onDelete: Cascade)
+  stepOrder        Int
+  component        String
+  title            String
+  status           DiagnosticStatus
+  severity         String           @default("INFO") // "INFO" | "WARNING" | "CRITICAL"
+  durationMs       Int              @default(42)
+  eventCode        String
+  firstErrorAt     DateTime?
+  lastSuccessAt    DateTime?
+  maskedEvidence   String
+  affectedFunction String
+  nextActionText   String
+  startedAt        DateTime         @default(now())
+  completedAt      DateTime         @default(now())
+
+  @@index([runId, stepOrder])
+}
+
+model DiagnosticFinding {
+  id                    String        @id @default(uuid())
+  runId                 String
+  run                   DiagnosticRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  findingCode           String
+  severity              String        // "WARNING" | "CRITICAL"
+  component             String
+  title                 String
+  evidenceText          String
+  probableCause         String
+  confidenceLevel       String        @default("Yüksek (%90)")
+  userExplanation       String
+  manualSteps           String
+  allowlistRepairAction String?       // Allowlist içindeyse örn: "CLEAR_STALE_HEARTBEAT_CACHE" veya "REBIND_SPOOLER_MONITOR"
+  repairPrerequisites   String?
+  repairImpact          String?
+  rollbackMethod        String?
+  status                String        @default("OPEN") // "OPEN" | "IN_REVIEW" | "RESOLVED" | "MANUAL_REQUIRED"
+  createdAt             DateTime      @default(now())
+
+  @@index([runId])
+}
+
+model RepairRun {
+  id                String        @id @default(uuid())
+  repairId          String        @unique // Tekil idempotent repair_id
+  diagnosticRunId   String
+  diagnosticRun     DiagnosticRun @relation(fields: [diagnosticRunId], references: [id], onDelete: Cascade)
+  findingId         String?
+  allowlistAction   String
+  approvedById      String
+  approverName      String
+  usbBackupId       String
+  localBackupId     String
+  usbManifestHash   String
+  localManifestHash String
+  status            String        @default("COMPLETED") // "COMPLETED" | "FAILED" | "UNCERTAIN" | "ROLLED_BACK"
+  beforeStateJson   String
+  afterStateJson    String
+  postVerifyPassed  Boolean       @default(true)
+  resultSummary     String
+  startedAt         DateTime      @default(now())
+  completedAt       DateTime      @default(now())
+}
+
+model ReportExecution {
+  id           String   @id @default(uuid())
+  reportCode   String
+  reportTitle  String
+  reportVersion String  @default("v1.0")
+  filtersJson  String
+  rowCount     Int      @default(0)
+  exportFormat String   @default("VIEW") // "VIEW" | "PRINT" | "CSV" | "PDF"
+  executedById String
+  actorName    String
+  executedAt   DateTime @default(now())
+
+  @@index([executedAt])
 }

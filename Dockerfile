@@ -1,8 +1,9 @@
 # ==========================================
 # 1. Base Image
 # ==========================================
-FROM node:20-alpine AS base
-RUN apk add --no-cache libc6-compat openssl curl netcat-openbsd
+FROM node:24-alpine AS base
+RUN apk add --no-cache libc6-compat openssl curl netcat-openbsd tzdata
+ENV TZ=Asia/Nicosia
 WORKDIR /app
 
 # ==========================================
@@ -50,6 +51,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/src ./src
+COPY --from=builder /app/scripts ./scripts
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
 RUN chmod +x ./docker-entrypoint.sh

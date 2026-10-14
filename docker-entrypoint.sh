@@ -28,49 +28,22 @@ npx prisma generate || { echo "HATA: Prisma generate başarısız oldu!"; exit 1
 echo ">> Prisma veritabanı şeması aktarılıyor (prisma db push)..."
 npx prisma db push --skip-generate || { echo "HATA: Prisma db push başarısız oldu!"; exit 1; }
 
-# 4. Mevcut Şifreleri Hash'le (düz metin -> bcrypt migrasyon)
-echo ">> Şifre güvenlik migrasyonu kontrol ediliyor..."
-node -e "
-const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcryptjs');
-const prisma = new PrismaClient();
-async function migratePasswords() {
-  const users = await prisma.user.findMany({ select: { id: true, password: true } });
-  let migrated = 0;
-  for (const user of users) {
-    // bcrypt hash'leri \\\$2a\\\$ veya \\\$2b\\\$ ile başlar
-    if (user.password && !user.password.startsWith('\$2a\$') && !user.password.startsWith('\$2b\$')) {
-      const hashed = await bcrypt.hash(user.password, 12);
-      await prisma.user.update({ where: { id: user.id }, data: { password: hashed } });
-      migrated++;
-    }
-  }
-  if (migrated > 0) {
-    console.log('>> ' + migrated + ' kullanıcının şifresi bcrypt ile hash\\'lendi.');
-  } else {
-    console.log('>> Tüm şifreler zaten güvenli (bcrypt hash\\'li).');
-  }
-}
-migratePasswords().finally(() => prisma.\$disconnect());
-" || echo "Şifre migrasyonu tamamlandı veya atlandı."
-
-# 5. Başlangıç Tohum (Seed) Verileri
-echo ">> Başlangıç verileri kontrol ediliyor..."
-node -e "
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-async function check() {
-  const restCount = await prisma.restaurant.count();
-  const restCatCount = await prisma.category.count({ where: { restaurantId: { not: null } } });
-  if (restCount < 5 || restCatCount === 0) {
-    console.log('>> Alakart restoranlara özel menüler ve kullanıcılar yükleniyor (seed)...');
-    require('child_process').execSync('npx tsx prisma/seed.ts', { stdio: 'inherit' });
-  } else {
-    console.log('>> Veritabanında restorana özel menüler mevcut (' + restCatCount + ' kategori), seed adımı atlandı.');
-  }
-}
-check().finally(() => prisma.\$disconnect());
-" || echo "Seed adımı tamamlandı veya atlandı."
+# Seed yalnızca açıkça etkinleştirilirse ve seed dosyasının yıkıcı çalışması ayrıca onaylanırsa yürütülür.
+if [ "${SEED_ON_START:-false}" = "true" ]; then
+  if [ "${ALLOW_DESTRUCTIVE_SEED:-false}" != "true" ]; then
+    echo "HATA: SEED_ON_START=true için ALLOW_DESTRUCTIVE_SEED=true zorunludur."
+    exit 1
+  fi
+  existing_data=$(node -e "const {PrismaClient}=require('@prisma/client');const p=new PrismaClient();Promise.all([p.restaurantConfig.count(),p.user.count()]).then(([c,u])=>process.stdout.write(String(c+u))).finally(()=>p.\$disconnect())")
+  if [ "$existing_data" != "0" ]; then
+    echo ">> Seed atlandı: mevcut restoran veya kullanıcı verisi bulundu; veri korunuyor."
+  else
+    echo ">> Boş veritabanı tespit edildi; açıkça etkinleştirilen ilk kurulum seed'i çalışıyor..."
+    npx tsx prisma/seed.ts
+  fi
+else
+  echo ">> Seed devre dışı; mevcut restoran verisi korunuyor."
+fi
 
 echo "=== [A LA CARTE] Uygulama Başlatılıyor (Port 3000) ==="
 exec "$@"

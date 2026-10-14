@@ -3,21 +3,9 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    // Veritabanı bağlantı testi
     await prisma.$queryRaw`SELECT 1`;
-    return NextResponse.json({
-      status: "ok",
-      app: "alacarte",
-      time: new Date().toISOString(),
-      database: "connected",
-    });
-  } catch (error: any) {
-    return NextResponse.json(
-      {
-        status: "error",
-        message: error.message,
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ status: "ok" }, { headers: { "Cache-Control": "no-store" } });
+  } catch {
+    return NextResponse.json({ status: "error" }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 }

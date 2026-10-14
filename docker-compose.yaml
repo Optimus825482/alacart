@@ -15,17 +15,17 @@ services:
     container_name: alacarte-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER:-alacarte_user}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-AlacarteSecret2026!}
-      POSTGRES_DB: ${DB_NAME:-alacarte_db}
+      POSTGRES_USER: ${DB_USER:?DB_USER must be set in Coolify}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in Coolify}
+      POSTGRES_DB: ${DB_NAME:?DB_NAME must be set in Coolify}
       POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
-      TZ: Europe/Istanbul
+      TZ: Asia/Nicosia
     volumes:
       - alacarte_pgdata:/var/lib/postgresql/data
     networks:
       - alacarte_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-alacarte_user} -d ${DB_NAME:-alacarte_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:?DB_USER must be set in Coolify} -d ${DB_NAME:?DB_NAME must be set in Coolify}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -53,12 +53,26 @@ services:
     container_name: alacarte-web
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://${DB_USER:-alacarte_user}:${DB_PASSWORD:-AlacarteSecret2026!}@alacarte-db:5432/${DB_NAME:-alacarte_db}?schema=public
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set in Coolify with the alacarte-db host}
+      SCHEDULER_SECRET: ${SCHEDULER_SECRET:?Set a unique 32+ character scheduler secret in Coolify}
       DB_HOST: alacarte-db
       NODE_ENV: production
+      DEPLOYMENT_MODE: coolify-demo
       PORT: 3000
       NEXT_TELEMETRY_DISABLED: 1
-      TZ: Europe/Istanbul
+      TZ: Asia/Nicosia
+      ALACARTE_COOKIE_SECURE: "true"
+      SEED_ON_START: ${SEED_ON_START:-false}
+      ALLOW_DESTRUCTIVE_SEED: ${ALLOW_DESTRUCTIVE_SEED:-false}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-}
+      SEED_ADMIN_PIN: ${SEED_ADMIN_PIN:-}
+      SEED_MANAGER_PASSWORD: ${SEED_MANAGER_PASSWORD:-}
+      SEED_MANAGER_PIN: ${SEED_MANAGER_PIN:-}
+      SEED_WAITER_PASSWORD: ${SEED_WAITER_PASSWORD:-}
+      SEED_WAITER_PIN: ${SEED_WAITER_PIN:-}
+      SEED_SETUP_KEY: ${SEED_SETUP_KEY:-}
+    volumes:
+      - alacarte_backups:/var/lib/alacarte/backups
     depends_on:
       alacarte-db:
         condition: service_healthy
@@ -87,11 +101,34 @@ services:
       - "traefik.http.routers.alacarte-http.entrypoints=http"
       - "traefik.http.routers.alacarte-http.middlewares=alacarte-redirect"
 
+  alacarte-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: alacarte-scheduler
+    restart: unless-stopped
+    entrypoint: ["npx"]
+    command: ["tsx", "scripts/scheduled-worker.ts"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set in Coolify with the alacarte-db host}
+      DB_HOST: alacarte-db
+      NODE_ENV: production
+      TZ: Asia/Nicosia
+      SCHEDULER_SECRET: ${SCHEDULER_SECRET:?Set a unique 32+ character scheduler secret in Coolify}
+      SCHEDULER_POLL_MS: 2000
+    depends_on:
+      alacarte-db:
+        condition: service_healthy
+    networks:
+      - alacarte_network
+
 # ==============================================================================
 # Kalıcı Veri Alanları (Volumes)
 # ==============================================================================
 volumes:
   alacarte_pgdata:
+    driver: local
+  alacarte_backups:
     driver: local
 
 # ==============================================================================

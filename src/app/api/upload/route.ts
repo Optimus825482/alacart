@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
-import { cookies } from 'next/headers';
+import { getAuthenticatedActor } from "@/lib/auth-guard";
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('alacarte_session');
-    if (!sessionCookie?.value) {
-      return NextResponse.json({ success: false, error: 'Yetkisiz erişim.' }, { status: 401 });
+    const actor = await getAuthenticatedActor();
+    if (!actor) {
+      return NextResponse.json({ success: false, error: "Oturum gerekli." }, { status: 401 });
+    }
+    if (!["SYSTEM_ADMIN", "RESTAURANT_MANAGER"].includes(actor.role)) {
+      return NextResponse.json({ success: false, error: "Bu işlem için yetkiniz yok." }, { status: 403 });
     }
 
     const formData = await req.formData();
@@ -29,13 +31,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Geçersiz dosya formatı.' }, { status: 400 });
     }
 
-    // Basit MIME kontrolü
-    if (!file.type.startsWith("image/")) {
-      return NextResponse.json({ success: false, error: "Lütfen yalnızca geçerli bir resim dosyası seçin (PNG, JPG, WEBP)." }, { status: 400 });
-    }
-
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const signatures: Record<string, boolean> = {
+      ".jpg": buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff,
+      ".jpeg": buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff,
+      ".png": buffer.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])),
+      ".gif": buffer.subarray(0, 3).toString("ascii") === "GIF",
+      ".webp": buffer.length >= 12 && buffer.subarray(0, 4).toString("ascii") === "RIFF" && buffer.subarray(8, 12).toString("ascii") === "WEBP",
+    };
+    if (!signatures[fileExt]) {
+      return NextResponse.json({ success: false, error: "Dosyanın içeriği seçilen görsel biçimiyle eşleşmiyor." }, { status: 400 });
+    }
 
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });

@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ALACARTE · Tüm Rollerin Cihaz Üzerinde Görselleri ve 80mm Termal Çıktı Örnekleri</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101819;
+      --panel: #192526;
+      --panel2: #202f30;
+      --line: #344647;
+      --text: #f0f5f3;
+      --muted: #9aaead;
+      --teal: #73d8c6;
+      --gold: #efc97b;
+      --red: #f18d83;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(19, 29, 30, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      padding: 16px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #91ead8, #4bad9b);
+      color: #10201e;
+      font-weight: 900;
+      font-size: 20px;
+      display: grid;
+      place-items: center;
+    }
+    .nav-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      text-decoration: none;
+      color: var(--text);
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      padding: 8px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: 0.15s;
+    }
+    .chip:hover, .chip.primary {
+      background: var(--teal);
+      color: #10201e;
+      border-color: var(--teal);
+    }
+    main {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+    .section {
+      margin-bottom: 42px;
+    }
+    .section-head {
+      border-left: 4px solid var(--teal);
+      padding-left: 14px;
+      margin-bottom: 18px;
+    }
+    .section-head small {
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .section-head h2 {
+      margin: 4px 0;
+      font-size: 22px;
+    }
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+    .card-img-wrap {
+      position: relative;
+      background: #0b1112;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.25s ease;
+    }
+    .card-img-wrap:hover img {
+      transform: scale(1.02);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 800;
+      background: #244440;
+      color: var(--teal);
+      border: 1px solid #386e65;
+    }
+    .card-body {
+      padding: 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card-body h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    .card-body p {
+      margin: 0;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .receipt-paper {
+      background: #f9faf8;
+      color: #111615;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      padding: 18px;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      border-top: 5px dashed #cbd5d1;
+      border-bottom: 5px dashed #cbd5d1;
+      margin-top: 10px;
+    }
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.88);
+      display: none;
+      place-items: center;
+      padding: 24px;
+      cursor: zoom-out;
+    }
+    #lightbox.show {
+      display: grid;
+    }
+    #lightbox img {
+      max-width: 95vw;
+      max-height: 92vh;
+      border-radius: 14px;
+      border: 2px solid var(--teal);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">A</div>
+      <div>
+        <div style="font-weight:900;letter-spacing:0.08em;font-size:15px">ALACARTE · CİHAZ VE ÇIKTI GÖRSEL GALERİSİ</div>
+        <div style="font-size:12px;color:var(--muted)">Garson Mobil PWA · Restoran Yöneticisi Dokunmatik Kasa · Sistem Yöneticisi · 80mm Epson TM-T20III Fiş Örnekleri</div>
+      </div>
+    </div>
+    <nav class="nav-chips">
+      <a href="#garson-pwa" class="chip">📱 1. Garson Mobil PWA (3 Ekran)</a>
+      <a href="#yonetici-kasa" class="chip">🖥️ 2. Restoran Yöneticisi Kasa (3 Ekran)</a>
+      <a href="#sistem-yoneticisi" class="chip">🛠️ 3. Sistem Yöneticisi (2 Ekran)</a>
+      <a href="#termal-ciktilar" class="chip">🧾 4. Adisyon & Mutfak 80mm Çıktıları (2 Fiş)</a>
+      <a href="index.html" class="chip primary">← 19 Ekran Canlı Prototipe Dön</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 1. GARSON MOBİL PWA -->
+    <section class="section" id="garson-pwa">
+      <div class="section-head">
+        <small>ROL 1 · GARSON MOBİL EL TERMİNALİ (PWA · KAPALI LAN WI-FI)</small>
+        <h2>Garson Mobil Cihaz (PWA) Ekran Görselleri</h2>
+        <p>Garsonların restoran kapalı Wi-Fi ağında (TP-Link Archer AX23) cep telefonlarından tam ekran (Standalone PWA + Wake Lock) kullandığı servis ekranları.</p>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('01_garson_mobil_pwa_masa_plani_scr03.jpg')">
+            <img src="01_garson_mobil_pwa_masa_plani_scr03.jpg" alt="Garson Mobil PWA Masa Planı SCR-03" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">SCR-03 · MASA PLANI (MOBİL PWA)</span></div>
+            <h3>1. Garson Mobil Masa Planı ve Durum Rozetleri</h3>
+            <p>Salon (16 masa) ve Teras (8 masa) görünümü, ikon+metin+renk durum rozetleri, üstte <code>Wake Lock Açık</code> göstergesi ve altta başparmak ergonomili 6 düğmeli PWA gezinme çubuğu.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('02_garson_mobil_pwa_siparis_ekrani_scr04.jpg')">
+            <img src="02_garson_mobil_pwa_siparis_ekrani_scr04.jpg" alt="Garson Mobil PWA Sipariş Girişi SCR-04" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">SCR-04 · SİPARİŞ GİRİŞİ (FİYATSIZ)</span></div>
+            <h3>2. Garson Mobil Sipariş ve Koltuk Giriş Ekranı</h3>
+            <p>Masa 08 (<code>A-2026-000184</code>) üzerinde misafir/kuver seçimi, Koltuk 1..4 çipleri, mutfak istasyon etiketli (<code>IZGARA</code>, <code>SOĞUK MUTFAK</code>) fiyatsız ürün kartları ve tek dokunuşlu <code>MUTFAĞA GÖNDER</code> düğmesi.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('03_garson_mobil_pwa_secenek_ve_zamanlama_scr05_06.jpg')">
+            <img src="03_garson_mobil_pwa_secenek_ve_zamanlama_scr05_06.jpg" alt="Garson Mobil PWA Kalem Seçenekleri ve Zamanlama SCR-05 SCR-06" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">SCR-05 & SCR-06 · SEÇENEK & ZAMANLAMA</span></div>
+            <h3>3. Pişme Derecesi, Koltuk Paylaşımı ve Zamanlı Gönderim</h3>
+            <p>Zorunlu pişme derecesi (<code>Orta Pişmiş</code>), hazırlama tercihleri (<code>Limon ayrı</code>, <code>Soğansız</code>), adedi çoğaltmadan çoklu koltuk paylaşımı (<code>[Koltuk 1, 2, 3]</code>) ve ileri saatli (<code>20:15</code>) zamanlama.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 2. RESTORAN YÖNETİCİSİ DOKUNMATİK KASA -->
+    <section class="section" id="yonetici-kasa">
+      <div class="section-head">
+        <small>ROL 2 · RESTORAN YÖNETİCİSİ (18.5" DOKUNMATİK SUNUCU-KASA · TIWOX TP-8610)</small>
+        <h2>Restoran Yöneticisi Dokunmatik Kasa Görselleri</h2>
+        <p>Restoran Yöneticisinin 18.5 inç dokunmatik Tiwox TP-8610 ana terminal üzerinden yürüttüğü canlı operasyon, iptal/VOID onayı, yazdırma kuyruğu ve rapor ekranları.</p>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('04_yonetici_dokunmatik_operasyon_panosu_scr07.jpg')">
+            <img src="04_yonetici_dokunmatik_operasyon_panosu_scr07.jpg" alt="Restoran Yöneticisi Operasyon Panosu SCR-07" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">SCR-07 · YÖNETİCİ OPERASYON PANOSU</span></div>
+            <h3>4. 4 Işıklı Bağlantı Göstergesi ve Öğrenme Modu Anahtarı</h3>
+            <p>Sunucu+PostgreSQL, Windows Spooler (<code>P-2045 Uyarı</code>), Kapalı LAN Archer AX23 ve Garson Heartbeat canlı ışıkları ile yalnız Restoran Yöneticisinin değiştirebildiği <code>Garson Öğrenme Modu</code> anahtarı.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('05_yonetici_dokunmatik_iptal_ve_yazici_kuyrugu_scr09_10.jpg')">
+            <img src="05_yonetici_dokunmatik_iptal_ve_yazici_kuyrugu_scr09_10.jpg" alt="Restoran Yöneticisi İptal Talepleri ve Yazdırma Kuyruğu SCR-09 SCR-10" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">SCR-09 & SCR-10 · İPTAL ONAYI & SPOOLER</span></div>
+            <h3>5. İptal Talebi (VOID) Onayı ve Yazdırma Kuyruğu Yönetimi</h3>
+            <p><code>VOID-2026-0041</code> iptal talebi kararı (talep sahibi kendi talebini onaylayamaz kuralı ile) ve sağda <code>Mutfak-Windows</code> / <code>Adisyon-USB</code> kuyruklarında kontrollü tekrar deneme ekranı.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('06_yonetici_dokunmatik_rapor_merkezi_scr12.jpg')">
+            <img src="06_yonetici_dokunmatik_rapor_merkezi_scr12.jpg" alt="Restoran Yöneticisi Rapor Merkezi SCR-12" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">SCR-12 · 10 OPERASYONEL RAPOR MERKEZİ</span></div>
+            <h3>6. Fiyatsız Operasyonel Rapor Merkezi ve CSV/Baskı Çıktısı</h3>
+            <p>10 rapor kategorisi, yaş sınırı olmadan tüm tarihsel kayıtları sorgulama, etkin filtre özeti şeridi ve finansal alan içermeyen operasyon tablosu.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3. YEREL SİSTEM YÖNETİCİSİ DOKUNMATİK KASA -->
+    <section class="section" id="sistem-yoneticisi">
+      <div class="section-head">
+        <small>ROL 3 · YEREL SİSTEM YÖNETİCİSİ (DONANIM TOPOLOJİSİ, YEDEKLEME VE 6 ADIMLI TANILAMA)</small>
+        <h2>Yerel Sistem Yöneticisi Dokunmatik Ekran Görselleri</h2>
+        <p>Sistem Yöneticisinin donanım paketini, yazıcı istasyonlarını, 15 kopya döngüsel yedeklemeyi ve 6 adımlı sıralı tanılamayı yönettiği ekranlar.</p>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('07_sistem_yoneticisi_donanim_topolojisi_scr17.jpg')">
+            <img src="07_sistem_yoneticisi_donanim_topolojisi_scr17.jpg" alt="Sistem Yöneticisi Donanım Topolojisi SCR-17" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">SCR-17 · DONANIM TOPOLOJİSİ VE YAZICI İSTASYONLARI</span></div>
+            <h3>7. Onaylı Donanım Paketi Topolojisi ve İstasyon Eşlemesi</h3>
+            <p><code>Epson TM-T20III → DIGITUS DN-13003-2 → TP-Link TL-WA801N Client Bridge → TP-Link Archer AX23 → Tiwox TP-8610 → Adisyon-USB</code> fiziksel bağlantı akışı ve <code>TEST / TANILAMA</code> baskı kontrolü.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('08_sistem_yoneticisi_yedekleme_ve_sirali_tanilama_scr18_19.jpg')">
+            <img src="08_sistem_yoneticisi_yedekleme_ve_sirali_tanilama_scr18_19.jpg" alt="Sistem Yöneticisi Yedekleme ve 6 Adımlı Tanılama SCR-18 SCR-19" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">SCR-18 & SCR-19 · 15 KOPYA YEDEK & 6 ADIMLI TANILAMA</span></div>
+            <h3>8. 6 Adımlı Sıralı Tanılama, SHA-256 Audit ve İzinli Onarım</h3>
+            <p>USB (<code>15/15 FIFO</code>) ve Yerel Dizin (<code>15/15 FIFO</code>) yedek durumu, SHA-256 denetim zinciri doğrulaması ve ön yedek alarak çalışan izinli onarım (<code>Allowlisted Repair</code>) modülü.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 4. 80MM TERMAL YAZICI ÇIKTI ÖRNEKLERİ -->
+    <section class="section" id="termal-ciktilar">
+      <div class="section-head">
+        <small>TERMAL YAZICI ÇIKTILARI · EPSON TM-T20III (011) 80MM</small>
+        <h2>80mm Fiyatsız Adisyon Özeti ve Mutfak / VOID Çıktı Görselleri</h2>
+        <p>Kasada doğrudan USB (<code>Adisyon-USB</code>) ve mutfakta Ethernet Print Server + Client Bridge (<code>Mutfak-Windows</code>) üzerinden basılan 80mm termal fişler.</p>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('09_adisyon_cikti_ornegi_80mm_fiyatsiz_scr11.jpg')">
+            <img src="09_adisyon_cikti_ornegi_80mm_fiyatsiz_scr11.jpg" alt="80mm Fiyatsız Adisyon Çıktı Örneği SCR-11" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">SCR-11 · ADİSYON-USB (80MM FİYATSIZ SERVİS ÖZETİ)</span></div>
+            <h3>9. Fiyatsız Adisyon / Servis Özeti Çıktısı (Epson TM-T20III)</h3>
+            <p>Üst ve alt kısmında açıkça <code>FİYATSIZ — TAHSİLAT BELGESİ DEĞİLDİR</code> ibaresi yer alır; aktif kalemleri ve ayrı bölümde iptal edilen kalemleri gösterir.</p>
+            <div class="receipt-paper">==========================================
+         MERIT GARDEN · A LA CARTE
+      FİYATSIZ ADİSYON / SERVİS ÖZETİ
+   FİYATSIZ — TAHSİLAT BELGESİ DEĞİLDİR
+==========================================
+Masa          : Masa 08
+Sipariş Ref   : A-2026-000184
+Garson        : Ayşe Yılmaz
+Misafir/Kuver : 3
+Kapsam        : Tüm gönderilmiş turlar
+Tarih/Saat    : 13.10.2026 19:42
+İş Kodu       : A-000199
+------------------------------------------
+AKTİF GÖNDERİLMİŞ KALEMLER
+------------------------------------------
+[Tur 1 · 19:23] 2x Mevsim Salata (Koltuk 1)
+[Tur 2 · 19:35] 2x Mercimek Çorbası (Koltuk 1)
+[Tur 2 · 19:35] 1x Ortaya Meze Seçkisi
+   Paylaşım: Koltuk 1, 2, 3 (Adet Çoğalmaz)
+------------------------------------------
+Toplam Aktif Kalem Adedi : 5
+------------------------------------------
+İPTAL EDİLEN KALEMLER (Aktif Toplama Dahil Değildir)
+[İPTAL] 1x Izgara Levrek (Tur 1)
+   Neden: Misafir tercihini değiştirdi (VOID-2026-0041)
+==========================================
+   FİYATSIZ — TAHSİLAT BELGESİ DEĞİLDİR
+==========================================</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img-wrap" onclick="openLightbox('10_mutfak_siparis_ve_iptal_void_cikti_ornegi_80mm.jpg')">
+            <img src="10_mutfak_siparis_ve_iptal_void_cikti_ornegi_80mm.jpg" alt="80mm Mutfak Sipariş ve VOID İptal Çıktı Örneği" />
+          </div>
+          <div class="card-body">
+            <div><span class="badge">MUTFAK-WINDOWS · DIGITUS DN-13003-2 + TL-WA801N</span></div>
+            <h3>10. 80mm Mutfak Üretim Fişi ve Mutfak İptal (VOID) Bildirimi</h3>
+            <p>Mutfakta <code>Epson TM-T20III + DIGITUS DN-13003-2 Print Server + TP-Link TL-WA801N Client Bridge</code> üzerinden basılan istasyon üretim fişi ve onaylı iptal (VOID) fişi.</p>
+            <div class="receipt-paper">==========================================
+            MUTFAK SİPARİŞ FİŞİ
+         MERIT GARDEN · A LA CARTE
+==========================================
+MASA: Masa 08                      TUR: 1
+------------------------------------------
+Sipariş Ref : A-2026-000184
+İstasyon    : IZGARA İSTASYONU
+Garson      : Ayşe Yılmaz
+Gönderim    : 13.10.2026 19:23:14
+İş Kodu     : K-000391
+------------------------------------------
+2x  Dana Bonfile
+    Koltuk: Koltuk 1
+    Seçenek: Orta pişmiş, Sos ayrı
+
+1x  Izgara Levrek
+    Koltuk: Koltuk 2
+    Seçenek: Limon ayrı
+------------------------------------------
+Toplam Kalem Adedi: 3 (FİYATSIZ ÜRETİM FİŞİ)
+==========================================
+
+******************************************
+     *** MUTFAK İPTAL / VOID BİLDİRİMİ ***
+******************************************
+MASA: Masa 08                      TUR: 1
+Sipariş Ref : A-2026-000184
+İptal Ref   : VOID-2026-0041
+İstasyon    : IZGARA İSTASYONU
+------------------------------------------
+İPTAL EDİLEN KALEM:
+[İPTAL / VOID] 1x Izgara Levrek (Koltuk 2)
+------------------------------------------
+Talep Eden  : Ayşe Yılmaz
+Onaylayan   : Mehmet Kaya (Restoran Yön.)
+Neden       : Misafir tercihini değiştirdi
+******************************************</div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="lightbox" onclick="closeLightbox()">
+    <img id="lightboxImg" src="" alt="Tam Ekran Görsel Önizleme" />
+  </div>
+
+  <script>
+    function openLightbox(src) {
+      document.getElementById("lightboxImg").src = src;
+      document.getElementById("lightbox").classList.add("show");
+    }
+    function closeLightbox() {
+      document.getElementById("lightbox").classList.remove("show");
+    }
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+    });
+  </script>
+</body>
+</html>

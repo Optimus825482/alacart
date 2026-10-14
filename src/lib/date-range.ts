@@ -8,7 +8,7 @@
  * Bu modul sunucu ve istemci tarafindan guvenle kullanilabilir; server-only import icermez.
  */
 
-const DEFAULT_BUSINESS_TIMEZONE = "Europe/Istanbul";
+const DEFAULT_BUSINESS_TIMEZONE = "Asia/Nicosia";
 
 export function getBusinessTimezone(): string {
   const explicit =

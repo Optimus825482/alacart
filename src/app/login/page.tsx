@@ -152,12 +152,6 @@ export default function LoginPage() {
           </button>
         </form>
       </div>
-
-      {/* Ekran köşesinde parıldayan DEMO MODU rozeti */}
-      <div className="fixed bottom-4 right-4 z-50 pointer-events-none select-none flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/90 border border-red-500/80 text-red-200 text-xs font-black tracking-widest shadow-2xl backdrop-blur demo-blinking-badge">
-        <span className="w-2 h-2 rounded-full bg-red-400 animate-ping inline-block" />
-        <span>DEMO MODU</span>
-      </div>
     </main>
   );
 }
